@@ -17,3 +17,11 @@ def run() -> None:
     except SystemConfigurationException as config_exc:
         click.echo(config_exc, err=True)
         raise config_exc
+
+
+@cli.command(context_settings=dict(
+    ignore_unknown_options=True,
+))
+@click.argument('pr_arguments', nargs=-1, type=click.UNPROCESSED)
+def pr(pr_arguments) -> None:
+    click.echo(pr_arguments)
