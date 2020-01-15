@@ -2,6 +2,7 @@ import subprocess
 
 import click
 
+from danger_python.exceptions import SystemConfigurationException
 from danger_python.shell import resolve_danger_path
 
 
@@ -11,4 +12,8 @@ def cli() -> None:
 
 @cli.command()
 def run() -> None:
-    click.echo(resolve_danger_path())
+    try:
+        click.echo(resolve_danger_path())
+    except SystemConfigurationException as config_exc:
+        click.echo(config_exc, err=True)
+        raise config_exc
