@@ -2,6 +2,8 @@ import subprocess
 
 import click
 
+from danger_python.shell import resolve_danger_path
+
 
 @click.group()
 def cli() -> None:
@@ -9,6 +11,4 @@ def cli() -> None:
 
 @cli.command()
 def run() -> None:
-    process = subprocess.run(['which', 'danger'], capture_output=True)
-    if not process.returncode:
-        click.echo(process.stdout.strip())
+    click.echo(resolve_danger_path())
