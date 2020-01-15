@@ -34,11 +34,12 @@ def test_pr_command_invokes_danger_js_passing_arguments():
     Test that pr command invokes danger_js passing correct arguments.
     """
     runner = CliRunner()
-
-    result = runner.invoke(cli, [
+    arguments = [
         "pr",
         "https://github.com/microsoft/TypeScript/pull/34806",
         "--use-github-checks"
-    ])
+    ]
+
+    result = runner.invoke(cli, arguments)
 
     assert result.exit_code == 0
