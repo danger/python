@@ -3,8 +3,10 @@ from unittest import mock
 
 import pytest
 
-from danger_python.exceptions import SystemConfigurationException
-from danger_python.shell import build_danger_command, resolve_danger_path
+from danger_python.exceptions import (DangerfileException,
+                                      SystemConfigurationException)
+from danger_python.shell import (build_danger_command, execute_dangerfile,
+                                 resolve_danger_path)
 from tests.fixtures.shell import (danger_js_missing_path_fixture,
                                   danger_js_path_fixture, subprocess_fixture)
 
@@ -40,3 +42,41 @@ def test_build_danger_command_works():
 
     assert first_command == ['/usr/bin/danger-js', 'pr', 'https://pr.url', '-p', 'danger-python']
     assert second_command == ['/usr/bin/danger-js', 'ci', '-i', '2020', '-t', '-p', 'danger-python']
+
+
+def test_dangerfile_executor_formats_syntax_error_correctly():
+    """
+    Test that dangerfile executor formats the SyntaxError correctly.
+    """
+    dangerfile = ("a = 2\n"
+                  "b = 8\n"
+                  "This is not a valid Python syntax\n")
+
+    with pytest.raises(DangerfileException) as danger_exc:
+        execute_dangerfile(dangerfile)
+
+    expected_message = ("There was an error when executing dangerfile.py:\n"
+                        "SyntaxError at line 3: invalid syntax\n\n"
+                        "Offending line:\n"
+                        "This is not a valid Python syntax\n")
+
+    assert danger_exc.match(expected_message)
+
+
+def test_dangerfile_executor_formats_name_error_correctly():
+    """
+    Test that dangerfile executor formats the SyntaxError correctly.
+    """
+    dangerfile = ("a = 2\n"
+                  "c += 8\n"
+                  "b = 12\n")
+
+    with pytest.raises(DangerfileException) as danger_exc:
+        execute_dangerfile(dangerfile)
+
+    expected_message = ("There was an error when executing dangerfile.py:\n"
+                        "NameError at line 2: name 'c' is not defined\n\n"
+                        "Offending line:\n"
+                        "c \\+\\= 8\n")
+
+    assert danger_exc.match(expected_message)

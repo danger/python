@@ -3,3 +3,7 @@ class DangerPythonException(Exception):
 
 class SystemConfigurationException(DangerPythonException):
     pass
+
+
+class DangerfileException(Exception):
+    pass

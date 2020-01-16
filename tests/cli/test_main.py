@@ -119,6 +119,26 @@ def test_run_command_invokes_dangerfile():
     assert result.output == "Hello world\nGoodbye world\n"
 
 
+def test_run_command_shows_traceback_when_dangerfile_fails():
+    """
+    Test that run command shows traceback when dangerfile.py fails.
+    """
+    runner = CliRunner(mix_stderr=False)
+    dangerfile = "This is not a valid syntax of Python"
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
+        result = runner.invoke(cli, ["run"])
+        mock_file.assert_called_with("dangerfile.py", "r")
+
+    expected_error = ("There was an error when executing dangerfile.py:\n"
+                      "SyntaxError at line 1: invalid syntax\n\n"
+                      "Offending line:\n"
+                      "This is not a valid syntax of Python\n\n")
+
+    assert result.exit_code == -1
+    assert result.stderr == expected_error
+
+
 def test_default_command_invokes_dangerfile():
     """
     Test that default command invokes dangerfily.py contents.
