@@ -49,18 +49,47 @@ def test_pr_command_invokes_danger_js_passing_arguments():
         "-p",
         "danger-python"
     ]
-    danger_fixture = danger_success_fixture(danger_path, 'danger-js output', expected_arguments)
+    danger_fixture = danger_success_fixture(
+        danger_path=danger_path,
+        output='danger-js output',
+        arguments=expected_arguments
+    )
 
     with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
         result = runner.invoke(cli, arguments)
 
-    assert danger_fixture.commands == [
-        "/usr/bin/danger-js",
-        "pr",
-        "https://github.com/microsoft/TypeScript/pull/34806",
-        "--use-github-checks",
-        "-p",
-        "danger-python",
-    ]
     assert result.exit_code == 0
-    assert result.output == 'danger-js output\n'
+    assert result.output == "danger-js output\n"
+
+
+def test_local_command_invokes_danger_js_passing_arguments():
+    """
+    Test that local command invokes danger_js passing correct arguments.
+    """
+    runner = CliRunner()
+    arguments = [
+        "local",
+        "-i",
+        "fake_danger_id",
+        "-t",
+    ]
+    danger_path = '/usr/bin/js-danger'
+    expected_arguments = [
+        "local",
+        "-i",
+        "fake_danger_id",
+        "-t",
+        "-p",
+        "danger-python"
+    ]
+    danger_fixture = danger_success_fixture(
+        danger_path=danger_path,
+        output='parsed local output',
+        arguments=expected_arguments
+    )
+
+    with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
+        result = runner.invoke(cli, arguments)
+
+    assert result.exit_code == 0
+    assert result.output == "parsed local output\n"
