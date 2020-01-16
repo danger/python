@@ -1,9 +1,10 @@
 import subprocess
+import sys
 
 import click
 
 from danger_python.exceptions import SystemConfigurationException
-from danger_python.shell import resolve_danger_path
+from danger_python.shell import invoke_danger, resolve_danger_path
 
 
 @click.group()
@@ -24,4 +25,9 @@ def run() -> None:
 ))
 @click.argument('pr_arguments', nargs=-1, type=click.UNPROCESSED)
 def pr(pr_arguments) -> None:
-    click.echo(pr_arguments)
+    commands = ['pr']
+    commands.extend(pr_arguments)
+
+    process = invoke_danger(commands)
+    click.echo(process.stdout)
+    sys.exit(process.returncode)
