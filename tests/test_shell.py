@@ -4,7 +4,7 @@ from unittest import mock
 import pytest
 
 from danger_python.exceptions import SystemConfigurationException
-from danger_python.shell import resolve_danger_path
+from danger_python.shell import build_danger_command, resolve_danger_path
 from tests.fixtures.shell import (danger_js_missing_path_fixture,
                                   danger_js_path_fixture, subprocess_fixture)
 
@@ -28,3 +28,15 @@ def test_danger_path_resolver_throws_an_error_if_not_present():
             resolve_danger_path()
 
     assert config_exc.match("danger-js not found in PATH")
+
+
+def test_build_danger_command_works():
+    """
+    Test that building correct danger command works.
+    """
+    with subprocess_fixture(danger_js_path_fixture('/usr/bin/danger-js')):
+        first_command = build_danger_command(['pr', 'https://pr.url'])
+        second_command = build_danger_command(['ci', '-i', '2020', '-t'])
+
+    assert first_command == ['/usr/bin/danger-js', 'pr', 'https://pr.url', '-p', 'danger-python']
+    assert second_command == ['/usr/bin/danger-js', 'ci', '-i', '2020', '-t', '-p', 'danger-python']

@@ -57,13 +57,9 @@ def danger_js_missing_path_fixture():
     )
 
 
-def danger_success_fixture(danger_path: str, arguments: List[str], output: Optional[str]) -> SubprocessFixture:
-    commands = [danger_path]
-    commands.extend(arguments)
-    commands.extend(['-p', 'danger-python'])
-
+def danger_success_fixture(danger_path: str, output: Optional[str], arguments: List[str]) -> SubprocessFixture:
     return SubprocessFixture(
-        commands=commands,
+        commands=[danger_path] + arguments,
         kwargs={'capture_output': True},
         exit_code=0,
         output=output

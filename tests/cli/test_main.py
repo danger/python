@@ -42,7 +42,14 @@ def test_pr_command_invokes_danger_js_passing_arguments():
         "--use-github-checks"
     ]
     danger_path = '/usr/bin/danger-js'
-    danger_fixture = danger_success_fixture(danger_path, arguments, 'danger-js output')
+    expected_arguments = [
+        "pr",
+        "https://github.com/microsoft/TypeScript/pull/34806",
+        "--use-github-checks",
+        "-p",
+        "danger-python"
+    ]
+    danger_fixture = danger_success_fixture(danger_path, 'danger-js output', expected_arguments)
 
     with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
         result = runner.invoke(cli, arguments)
