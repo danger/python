@@ -20,7 +20,7 @@ def test_danger_path_can_be_resolved_if_present():
     """
     Test that danger-js path can be resolved.
     """
-    with subprocess_fixture(danger_js_path_fixture('/usr/bin/fake-danger-js \n \r')):
+    with subprocess_fixture(danger_js_path_fixture("/usr/bin/fake-danger-js \n \r")):
         resolved_path = resolve_danger_path()
 
     assert resolved_path == "/usr/bin/fake-danger-js"
@@ -41,29 +41,43 @@ def test_build_danger_command_works():
     """
     Test that building correct danger command works.
     """
-    with subprocess_fixture(danger_js_path_fixture('/usr/bin/danger-js')):
-        first_command = build_danger_command(['pr', 'https://pr.url'])
-        second_command = build_danger_command(['ci', '-i', '2020', '-t'])
+    with subprocess_fixture(danger_js_path_fixture("/usr/bin/danger-js")):
+        first_command = build_danger_command(["pr", "https://pr.url"])
+        second_command = build_danger_command(["ci", "-i", "2020", "-t"])
 
-    assert first_command == ['/usr/bin/danger-js', 'pr', 'https://pr.url', '-p', 'danger-python']
-    assert second_command == ['/usr/bin/danger-js', 'ci', '-i', '2020', '-t', '-p', 'danger-python']
+    assert first_command == [
+        "/usr/bin/danger-js",
+        "pr",
+        "https://pr.url",
+        "-p",
+        "danger-python",
+    ]
+    assert second_command == [
+        "/usr/bin/danger-js",
+        "ci",
+        "-i",
+        "2020",
+        "-t",
+        "-p",
+        "danger-python",
+    ]
 
 
 def test_dangerfile_executor_formats_syntax_error_correctly():
     """
     Test that dangerfile executor formats the SyntaxError correctly.
     """
-    dangerfile = ("a = 2\n"
-                  "b = 8\n"
-                  "This is not a valid Python syntax\n")
+    dangerfile = "a = 2\n" "b = 8\n" "This is not a valid Python syntax\n"
 
     with pytest.raises(DangerfileException) as danger_exc:
         execute_dangerfile(dangerfile)
 
-    expected_message = ("There was an error when executing dangerfile.py:\n"
-                        "SyntaxError at line 3: invalid syntax\n\n"
-                        "Offending line:\n"
-                        "This is not a valid Python syntax\n")
+    expected_message = (
+        "There was an error when executing dangerfile.py:\n"
+        "SyntaxError at line 3: invalid syntax\n\n"
+        "Offending line:\n"
+        "This is not a valid Python syntax\n"
+    )
 
     assert danger_exc.match(expected_message)
 
@@ -72,16 +86,16 @@ def test_dangerfile_executor_formats_name_error_correctly():
     """
     Test that dangerfile executor formats the SyntaxError correctly.
     """
-    dangerfile = ("a = 2\n"
-                  "c += 8\n"
-                  "b = 12\n")
+    dangerfile = "a = 2\n" "c += 8\n" "b = 12\n"
 
     with pytest.raises(DangerfileException) as danger_exc:
         execute_dangerfile(dangerfile)
 
-    expected_message = ("There was an error when executing dangerfile.py:\n"
-                        "NameError at line 2: name 'c' is not defined\n\n"
-                        "Offending line:\n"
-                        "c \\+\\= 8\n")
+    expected_message = (
+        "There was an error when executing dangerfile.py:\n"
+        "NameError at line 2: name 'c' is not defined\n\n"
+        "Offending line:\n"
+        "c \\+\\= 8\n"
+    )
 
     assert danger_exc.match(expected_message)

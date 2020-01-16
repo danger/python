@@ -19,20 +19,18 @@ def test_pr_command_invokes_danger_js_passing_arguments():
     arguments = [
         "pr",
         "https://github.com/microsoft/TypeScript/pull/34806",
-        "--use-github-checks"
+        "--use-github-checks",
     ]
-    danger_path = '/usr/bin/danger-js'
+    danger_path = "/usr/bin/danger-js"
     expected_arguments = [
         "pr",
         "https://github.com/microsoft/TypeScript/pull/34806",
         "--use-github-checks",
         "-p",
-        "danger-python"
+        "danger-python",
     ]
     danger_fixture = danger_success_fixture(
-        danger_path=danger_path,
-        output='danger-js output',
-        arguments=expected_arguments
+        danger_path=danger_path, output="danger-js output", arguments=expected_arguments
     )
 
     with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
@@ -53,19 +51,12 @@ def test_local_command_invokes_danger_js_passing_arguments():
         "fake_danger_id",
         "-t",
     ]
-    danger_path = '/usr/bin/js-danger'
-    expected_arguments = [
-        "local",
-        "-i",
-        "fake_danger_id",
-        "-t",
-        "-p",
-        "danger-python"
-    ]
+    danger_path = "/usr/bin/js-danger"
+    expected_arguments = ["local", "-i", "fake_danger_id", "-t", "-p", "danger-python"]
     danger_fixture = danger_success_fixture(
         danger_path=danger_path,
-        output='parsed local output',
-        arguments=expected_arguments
+        output="parsed local output",
+        arguments=expected_arguments,
     )
 
     with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
@@ -85,18 +76,10 @@ def test_ci_command_invokes_danger_js_passing_arguments():
         "-v",
         "--no-publish-check",
     ]
-    danger_path = '/usr/bin/very-danger'
-    expected_arguments = [
-        "ci",
-        "-v",
-        "--no-publish-check",
-        "-p",
-        "danger-python"
-    ]
+    danger_path = "/usr/bin/very-danger"
+    expected_arguments = ["ci", "-v", "--no-publish-check", "-p", "danger-python"]
     danger_fixture = danger_success_fixture(
-        danger_path=danger_path,
-        output='The output!',
-        arguments=expected_arguments
+        danger_path=danger_path, output="The output!", arguments=expected_arguments
     )
 
     with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
@@ -111,8 +94,7 @@ def test_run_command_invokes_dangerfile():
     Test that run command invokes dangerfile.py contents.
     """
     runner = CliRunner()
-    dangerfile = "print(\"Hello world\")\n" \
-        "print(\"Goodbye world\")"
+    dangerfile = 'print("Hello world")\n' 'print("Goodbye world")'
 
     with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
         result = runner.invoke(cli, ["run"])
@@ -133,10 +115,12 @@ def test_run_command_shows_traceback_when_dangerfile_fails():
         result = runner.invoke(cli, ["run"])
         mock_file.assert_called_with("dangerfile.py", "r")
 
-    expected_error = ("There was an error when executing dangerfile.py:\n"
-                      "SyntaxError at line 1: invalid syntax\n\n"
-                      "Offending line:\n"
-                      "This is not a valid syntax of Python\n\n")
+    expected_error = (
+        "There was an error when executing dangerfile.py:\n"
+        "SyntaxError at line 1: invalid syntax\n\n"
+        "Offending line:\n"
+        "This is not a valid syntax of Python\n\n"
+    )
 
     assert result.exit_code == -1
     assert result.stderr == expected_error
@@ -147,7 +131,7 @@ def test_default_command_invokes_dangerfile():
     Test that default command invokes dangerfily.py contents.
     """
     runner = CliRunner()
-    dangerfile = "print(\"Default command\")"
+    dangerfile = 'print("Default command")'
 
     with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
         result = runner.invoke(cli)

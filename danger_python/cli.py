@@ -11,27 +11,31 @@ from danger_python.exceptions import DangerfileException, SystemConfigurationExc
 from danger_python.shell import execute_dangerfile, invoke_danger, resolve_danger_path
 
 
-@click.group(cls=DefaultGroup, default='run', default_if_no_args=True)
+@click.group(cls=DefaultGroup, default="run", default_if_no_args=True)
 def cli() -> None:
     pass
 
+
 @cli.command()
 def run() -> None:
-    with open('dangerfile.py', 'r') as dangerfile:
+    with open("dangerfile.py", "r") as dangerfile:
         try:
             execute_dangerfile(dangerfile.read())
         except DangerfileException as exc:
             click.echo(exc, err=True)
             sys.exit(-1)
 
-@danger_command(cli, 'pr')
+
+@danger_command(cli, "pr")
 def pr(exit_code: int) -> None:
     sys.exit(exit_code)
 
-@danger_command(cli, 'local')
+
+@danger_command(cli, "local")
 def local(exit_code: int) -> None:
     sys.exit(exit_code)
 
-@danger_command(cli, 'ci')
+
+@danger_command(cli, "ci")
 def ci(exit_code: int) -> None:
     sys.exit(exit_code)
