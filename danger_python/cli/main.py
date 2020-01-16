@@ -4,12 +4,13 @@ import sys
 
 import click
 
+from click_default_group import DefaultGroup
 from danger_python.decorators import danger_command
 from danger_python.exceptions import SystemConfigurationException
 from danger_python.shell import invoke_danger, resolve_danger_path
 
 
-@click.group()
+@click.group(cls=DefaultGroup, default='run', default_if_no_args=True)
 def cli() -> None:
     pass
 

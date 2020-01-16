@@ -117,3 +117,18 @@ def test_run_command_invokes_dangerfile():
 
     assert result.exit_code == 0
     assert result.output == "Hello world\nGoodbye world\n"
+
+
+def test_default_command_invokes_dangerfile():
+    """
+    Test that default command invokes dangerfily.py contents.
+    """
+    runner = CliRunner()
+    dangerfile = "print(\"Default command\")"
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
+        result = runner.invoke(cli)
+        mock_file.assert_called_with("dangerfile.py", "r")
+
+    assert result.exit_code == 0
+    assert result.output == "Default command\n"
