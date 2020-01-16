@@ -1,5 +1,4 @@
 import functools
-import sys
 from typing import List
 
 import click
@@ -20,6 +19,6 @@ def danger_command(cli, command_name: str):
 
             process = invoke_danger(command)
             click.echo(process.stdout)
-            sys.exit(process.returncode)
+            func(process.returncode)
 
     return wrapper

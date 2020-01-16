@@ -25,13 +25,13 @@ def run() -> None:
             sys.exit(-1)
 
 @danger_command(cli, 'pr')
-def pr() -> None:
-    pass
+def pr(exit_code: int) -> None:
+    sys.exit(exit_code)
 
 @danger_command(cli, 'local')
-def local() -> None:
-    pass
+def local(exit_code: int) -> None:
+    sys.exit(exit_code)
 
 @danger_command(cli, 'ci')
-def ci() -> None:
-    pass
+def ci(exit_code: int) -> None:
+    sys.exit(exit_code)
