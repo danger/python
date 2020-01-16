@@ -4,13 +4,11 @@ import sys
 import traceback
 
 import click
-
 from click_default_group import DefaultGroup
+
 from danger_python.decorators import danger_command
-from danger_python.exceptions import (DangerfileException,
-                                      SystemConfigurationException)
-from danger_python.shell import (execute_dangerfile, invoke_danger,
-                                 resolve_danger_path)
+from danger_python.exceptions import DangerfileException, SystemConfigurationException
+from danger_python.shell import execute_dangerfile, invoke_danger, resolve_danger_path
 
 
 @click.group(cls=DefaultGroup, default='run', default_if_no_args=True)

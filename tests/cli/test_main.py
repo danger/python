@@ -3,9 +3,12 @@ from unittest import mock
 from click.testing import CliRunner
 
 from danger_python.cli.main import cli
-from tests.fixtures.shell import (danger_js_missing_path_fixture,
-                                  danger_js_path_fixture,
-                                  danger_success_fixture, subprocess_fixture)
+from tests.fixtures.shell import (
+    danger_js_missing_path_fixture,
+    danger_js_path_fixture,
+    danger_success_fixture,
+    subprocess_fixture,
+)
 
 
 def test_pr_command_invokes_danger_js_passing_arguments():

@@ -1,5 +1,5 @@
-import sys
 import json
+import sys
 
 # Read in DSL
 data = sys.stdin.read()
