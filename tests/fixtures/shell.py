@@ -16,21 +16,17 @@ class SubprocessFixture:
 @contextmanager
 def subprocess_fixture(*fixtures: List[SubprocessFixture]):
     def match_fixture(fixture: SubprocessFixture, commands: List[str], **kwargs):
-        kwargs_match = all(
-            map(lambda kv: kwargs.get(kv[0], None) == kv[1], fixture.kwargs.items())
-        )
+        kwarg_match = lambda kv: kwargs.get(kv[0], None) == kv[1]
+        kwargs_match = all(map(kwarg_match, fixture.kwargs.items()))
         return fixture.commands == commands and kwargs_match
 
     def fake_run(commands, **kwargs):
         try:
-            fixture = next(
-                filter(lambda f: match_fixture(f, commands, **kwargs), fixtures)
-            )
-            return __completed_process(fixture)
+            matcher = lambda f: match_fixture(f, commands, **kwargs)
+            return __completed_process(next(filter(matcher, fixtures)))
         except StopIteration:
-            raise ValueError(
-                f"Could not find fixture for call with {commands} and {kwargs}"
-            )
+            msg = f"Could not find fixture for call with {commands} and {kwargs}"
+            raise ValueError(msg)
 
     with mock.patch("subprocess.run") as mock_subprocess_run:
         mock_subprocess_run.side_effect = fake_run
