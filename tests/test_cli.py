@@ -2,7 +2,7 @@ from unittest import mock
 
 from click.testing import CliRunner
 
-from danger_python.cli.main import cli
+from danger_python.cli import cli
 from tests.fixtures.shell import (
     danger_js_missing_path_fixture,
     danger_js_path_fixture,
