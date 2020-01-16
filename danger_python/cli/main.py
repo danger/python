@@ -28,3 +28,7 @@ def pr() -> None:
 @danger_command(cli, 'local')
 def local() -> None:
     pass
+
+@danger_command(cli, 'ci')
+def ci() -> None:
+    pass

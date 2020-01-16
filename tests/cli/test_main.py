@@ -93,3 +93,34 @@ def test_local_command_invokes_danger_js_passing_arguments():
 
     assert result.exit_code == 0
     assert result.output == "parsed local output\n"
+
+
+def test_ci_command_invokes_danger_js_passing_arguments():
+    """
+    Test that ci command invokes danger_js passing correct arguments.
+    """
+    runner = CliRunner()
+    arguments = [
+        "ci",
+        "-v",
+        "--no-publish-check",
+    ]
+    danger_path = '/usr/bin/very-danger'
+    expected_arguments = [
+        "ci",
+        "-v",
+        "--no-publish-check",
+        "-p",
+        "danger-python"
+    ]
+    danger_fixture = danger_success_fixture(
+        danger_path=danger_path,
+        output='The output!',
+        arguments=expected_arguments
+    )
+
+    with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
+        result = runner.invoke(cli, arguments)
+
+    assert result.exit_code == 0
+    assert result.output == "The output!\n"
