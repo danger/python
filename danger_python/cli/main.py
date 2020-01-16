@@ -15,11 +15,8 @@ def cli() -> None:
 
 @cli.command()
 def run() -> None:
-    try:
-        click.echo(resolve_danger_path())
-    except SystemConfigurationException as config_exc:
-        click.echo(config_exc, err=True)
-        raise config_exc
+    with open('dangerfile.py', 'r') as dangerfile:
+        exec(dangerfile.read())
 
 @danger_command(cli, 'pr')
 def pr() -> None:

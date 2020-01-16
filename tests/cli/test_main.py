@@ -1,3 +1,5 @@
+from unittest import mock
+
 from click.testing import CliRunner
 
 from danger_python.cli.main import cli
@@ -5,31 +7,6 @@ from tests.fixtures.shell import (danger_js_missing_path_fixture,
                                   danger_js_path_fixture,
                                   danger_success_fixture, subprocess_fixture)
 
-
-def test_runner_discovers_danger_path():
-    """
-    Test that the runner discovers danger path.
-    """
-    runner = CliRunner()
-    danger_path = "/Users/danger/.nvm/versions/node/v10.6.0/bin/danger"
-
-    with subprocess_fixture(danger_js_path_fixture(danger_path)):
-        result = runner.invoke(cli, ["run"])
-
-    assert result.exit_code == 0
-    assert result.output == "/Users/danger/.nvm/versions/node/v10.6.0/bin/danger\n"
-
-def test_runner_errors_out_when_danger_js_is_not_found():
-    """
-    Test that the runner discovers danger path.
-    """
-    runner = CliRunner()
-
-    with subprocess_fixture(danger_js_missing_path_fixture()):
-        result = runner.invoke(cli, ["run"])
-
-    assert result.exit_code == 1
-    assert result.output == "danger-js not found in PATH\n"
 
 def test_pr_command_invokes_danger_js_passing_arguments():
     """
@@ -124,3 +101,19 @@ def test_ci_command_invokes_danger_js_passing_arguments():
 
     assert result.exit_code == 0
     assert result.output == "The output!\n"
+
+
+def test_run_command_invokes_dangerfile():
+    """
+    Test that run command invokes dangerfile.py contents.
+    """
+    runner = CliRunner()
+    dangerfile = "print(\"Hello world\")\n" \
+        "print(\"Goodbye world\")"
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
+        result = runner.invoke(cli, ["run"])
+        mock_file.assert_called_with("dangerfile.py", "r")
+
+    assert result.exit_code == 0
+    assert result.output == "Hello world\nGoodbye world\n"
