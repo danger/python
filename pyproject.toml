@@ -13,6 +13,11 @@ click-default-group = "^1.2.2"
 [tool.poetry.dev-dependencies]
 pytest = "^5.3.2"
 pytest-watch = "^4.2.0"
+pytest-cov = "^2.8.1"
+black = "^19.10b0"
+isort = "^4.3.21"
+mypy = "^0.761"
+flake8 = "^3.7.9"
 
 [tool.poetry.scripts]
 danger-python = 'danger_python.cli.main:cli'
