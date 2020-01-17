@@ -19,6 +19,7 @@ def cli() -> None:
 
 @cli.command()
 def run() -> None:
+    """Runs dangerfile.py as a danger process"""
     with open("dangerfile.py", "r") as dangerfile:
         try:
             execute_dangerfile(dangerfile.read())
@@ -29,16 +30,20 @@ def run() -> None:
 
 @danger_command(cli, "pr")
 def pr(arguments: List[str]) -> None:
+    """Runs your local Dangerfile against an existing GitHub PR.
+       Will not post on the PR"""
     _execute_danger_js("pr", arguments)
 
 
 @danger_command(cli, "local")
 def local(arguments: List[str]) -> None:
+    """Runs danger standalone on a repo, useful for git hooks"""
     _execute_danger_js("local", arguments)
 
 
 @danger_command(cli, "ci")
 def ci(arguments: List[str]) -> None:
+    """Runs Danger on CI"""
     _execute_danger_js("ci", arguments)
 
 
