@@ -31,15 +31,12 @@ def build_danger_command(parameters: List[str]) -> List[str]:
 def execute_dangerfile(dangerfile: str):
     try:
         exec(dangerfile)
-    except SyntaxError as err:
-        error_class = err.__class__.__name__
-        detail = err.args[0]
-        line_number = err.lineno
     except Exception as err:
         error_class = err.__class__.__name__
         detail = err.args[0]
-        cl, exc, tb = sys.exc_info()
-        line_number = traceback.extract_tb(tb)[-1][1]
+        _, _, tb = sys.exc_info()
+        tb = tb.tb_next
+        line_number = err.lineno if isinstance(err, SyntaxError) else tb.tb_lineno
     else:
         return
 
@@ -48,6 +45,9 @@ def execute_dangerfile(dangerfile: str):
         "There was an error when executing dangerfile.py:\n"
         f"{error_class} at line {line_number}: {detail}\n\n"
         "Offending line:\n"
-        f"{line_of_code}\n"
+        f"{line_of_code}\n\n"
+        "Stacktrace:\n"
+        f"{''.join(traceback.format_tb(tb))}"
     )
+ 
     raise DangerfileException(message)

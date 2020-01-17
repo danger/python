@@ -3,17 +3,12 @@ from unittest import mock
 
 import pytest
 
-from danger_python.exceptions import DangerfileException, SystemConfigurationException
-from danger_python.shell import (
-    build_danger_command,
-    execute_dangerfile,
-    resolve_danger_path,
-)
-from tests.fixtures.shell import (
-    danger_js_missing_path_fixture,
-    danger_js_path_fixture,
-    subprocess_fixture,
-)
+from danger_python.exceptions import (DangerfileException,
+                                      SystemConfigurationException)
+from danger_python.shell import (build_danger_command, execute_dangerfile,
+                                 resolve_danger_path)
+from tests.fixtures.shell import (danger_js_missing_path_fixture,
+                                  danger_js_path_fixture, subprocess_fixture)
 
 
 def test_danger_path_can_be_resolved_if_present():
@@ -84,7 +79,7 @@ def test_dangerfile_executor_formats_syntax_error_correctly():
 
 def test_dangerfile_executor_formats_name_error_correctly():
     """
-    Test that dangerfile executor formats the SyntaxError correctly.
+    Test that dangerfile executor formats the NameError correctly.
     """
     dangerfile = "a = 2\n" "c += 8\n" "b = 12\n"
 
@@ -99,3 +94,21 @@ def test_dangerfile_executor_formats_name_error_correctly():
     )
 
     assert danger_exc.match(expected_message)
+
+def test_dangerfile_executor_formats_nester_error_correctly():
+    """
+    Test that dangerfile executor formats the nested error correctly.
+    """
+    dangerfile = "import json\n" """json.loads('this is not a json')"""
+
+    with pytest.raises(DangerfileException) as danger_exc:
+        execute_dangerfile(dangerfile)
+
+    expected_message = (
+        "There was an error when executing dangerfile.py:\n"
+        "JSONDecodeError at line 2: Expecting value: line 1 column 1 (char 0)\n\n"
+        "Offending line:\n"
+        "json.loads('this is not a json')\n"
+    )
+
+    assert expected_message in str(danger_exc.value)
