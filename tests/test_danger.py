@@ -1,4 +1,5 @@
-from danger_python.danger import Violation, serialize_violation
+from danger_python.danger import (DangerResults, Violation, serialize_results,
+                                  serialize_violation)
 
 
 def test_violation_is_correctly_serialized():
@@ -29,3 +30,24 @@ def test_violation_is_correctly_serialized_with_optional_types():
     assert "file" not in json
     assert "line" not in json
     assert json["message"] == "Message"
+
+
+def test_results_are_correctly_serialized():
+    """
+    Test that DangerResults model is correctly serialized.
+    """
+    results = DangerResults(
+        fails=[Violation(message="Fail")],
+        warnings=[Violation(message="Warning", file_name="warning.py", line=99)],
+        messages=[Violation(message="Message")],
+        markdowns=[Violation(message="Markdown")],
+    )
+
+    json = serialize_results(results)
+
+    assert json == {
+        "fails": [{"message": "Fail"},],
+        "warnings": [{"message": "Warning", "file": "warning.py", "line": 99},],
+        "messages": [{"message": "Message"},],
+        "markdowns": [{"message": "Markdown"}],
+    }
