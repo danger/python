@@ -13,11 +13,8 @@ def danger_command(cli, command_name: str):
         )
         @click.argument("arguments", nargs=-1, type=click.UNPROCESSED)
         def execute_command(arguments: List[str]) -> None:
-            command = [command_name]
-            command.extend(arguments)
+            func(arguments)
 
-            process = invoke_danger(command)
-            click.echo(process.stdout)
-            func(process.returncode)
+        return execute_command
 
     return wrapper
