@@ -8,13 +8,10 @@ from danger_python.shell import invoke_danger
 
 def danger_command(cli, command_name: str):
     def wrapper(func):
-        @cli.command(
+        command_wrapper = cli.command(
             context_settings=dict(ignore_unknown_options=True), name=command_name,
         )
-        @click.argument("arguments", nargs=-1, type=click.UNPROCESSED)
-        def execute_command(arguments: List[str]) -> None:
-            func(arguments)
-
-        return execute_command
+        argument_wrapper = click.argument("arguments", nargs=-1, type=click.UNPROCESSED)
+        return command_wrapper(argument_wrapper(func))
 
     return wrapper
