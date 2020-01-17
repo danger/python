@@ -1,7 +1,8 @@
 import subprocess
 import sys
 import traceback
-from typing import List
+from types import TracebackType
+from typing import List, Optional
 
 from .exceptions import DangerfileException, SystemConfigurationException
 
@@ -30,24 +31,32 @@ def build_danger_command(parameters: List[str]) -> List[str]:
 
 def execute_dangerfile(dangerfile: str):
     try:
-        exec(dangerfile)
-    except Exception as err:
-        error_class = err.__class__.__name__
-        detail = err.args[0]
-        _, _, tb = sys.exc_info()
-        tb = tb.tb_next
-        line_number = err.lineno if isinstance(err, SyntaxError) else tb.tb_lineno
+        compiled = compile(dangerfile, "dangerfile.py", "exec")
+        exec(compiled)
+    except Exception as error:
+        _, _, trace = sys.exc_info()
+        message = __format_exception(error, trace)
     else:
         return
 
-    line_of_code = dangerfile.split("\n")[line_number - 1]
+    raise DangerfileException(message)
+
+
+def __format_exception(error: Exception, trace: Optional[TracebackType]) -> str:
+    trace = trace.tb_next
+    error_class = error.__class__.__name__
+    error_detail = error.args[0]
+
+    if isinstance(error, SyntaxError):
+        line_number = error.lineno
+    else:
+        line_number = trace.tb_lineno
+
     message = (
         "There was an error when executing dangerfile.py:\n"
-        f"{error_class} at line {line_number}: {detail}\n\n"
-        "Offending line:\n"
-        f"{line_of_code}\n\n"
+        f"{error_class} at line {line_number}: {error_detail}\n\n"
         "Stacktrace:\n"
-        f"{''.join(traceback.format_tb(tb))}"
+        f"{''.join(traceback.format_tb(trace))}"
     )
- 
-    raise DangerfileException(message)
+
+    return message

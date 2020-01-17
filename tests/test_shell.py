@@ -70,11 +70,10 @@ def test_dangerfile_executor_formats_syntax_error_correctly():
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
         "SyntaxError at line 3: invalid syntax\n\n"
-        "Offending line:\n"
-        "This is not a valid Python syntax\n"
+        "Stacktrace:\n"
     )
 
-    assert danger_exc.match(expected_message)
+    assert expected_message in str(danger_exc.value)
 
 
 def test_dangerfile_executor_formats_name_error_correctly():
@@ -89,11 +88,11 @@ def test_dangerfile_executor_formats_name_error_correctly():
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
         "NameError at line 2: name 'c' is not defined\n\n"
-        "Offending line:\n"
-        "c \\+\\= 8\n"
+        "Stacktrace:\n"
     )
 
-    assert danger_exc.match(expected_message)
+    assert str(danger_exc.value).startswith(expected_message)
+
 
 def test_dangerfile_executor_formats_nester_error_correctly():
     """
@@ -107,8 +106,7 @@ def test_dangerfile_executor_formats_nester_error_correctly():
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
         "JSONDecodeError at line 2: Expecting value: line 1 column 1 (char 0)\n\n"
-        "Offending line:\n"
-        "json.loads('this is not a json')\n"
+        "Stacktrace:\n"
     )
 
-    assert expected_message in str(danger_exc.value)
+    assert str(danger_exc.value).startswith(expected_message)
