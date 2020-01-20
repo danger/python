@@ -14,5 +14,17 @@ class GitDSL:
 
 @dataclass_json
 @dataclass
+class GithubPullRequestDSL:
+    title: str
+
+
+@dataclass_json
+@dataclass
+class GithubDSL:
+    pr: GithubPullRequestDSL
+
+
+@dataclass_json
+@dataclass
 class DangerDSL:
     git: GitDSL
