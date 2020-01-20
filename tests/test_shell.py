@@ -8,7 +8,8 @@ import pytest
 from danger_python.exceptions import (DangerfileException,
                                       SystemConfigurationException)
 from danger_python.shell import (build_danger_command, execute_dangerfile,
-                                 load_dsl, resolve_danger_path)
+                                 resolve_danger_path)
+from tests.fixtures.danger import danger_json_input_fixture, dsl_input_fixture
 from tests.fixtures.shell import (danger_js_missing_path_fixture,
                                   danger_js_path_fixture, subprocess_fixture)
 
@@ -68,8 +69,9 @@ def test_dangerfile_executor_formats_syntax_error_correctly():
     """
     dangerfile = "a = 2\n" "b = 8\n" "This is not a valid Python syntax\n"
 
-    with pytest.raises(DangerfileException) as danger_exc:
-        execute_dangerfile(dangerfile)
+    with danger_json_input_fixture(dsl_input_fixture()):
+        with pytest.raises(DangerfileException) as danger_exc:
+            execute_dangerfile(dangerfile)
 
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
@@ -86,8 +88,9 @@ def test_dangerfile_executor_formats_name_error_correctly():
     """
     dangerfile = "a = 2\n" "c += 8\n" "b = 12\n"
 
-    with pytest.raises(DangerfileException) as danger_exc:
-        execute_dangerfile(dangerfile)
+    with danger_json_input_fixture(dsl_input_fixture()):
+        with pytest.raises(DangerfileException) as danger_exc:
+            execute_dangerfile(dangerfile)
 
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
@@ -104,8 +107,9 @@ def test_dangerfile_executor_formats_nester_error_correctly():
     """
     dangerfile = "import json\n" """json.loads('this is not a json')"""
 
-    with pytest.raises(DangerfileException) as danger_exc:
-        execute_dangerfile(dangerfile)
+    with danger_json_input_fixture(dsl_input_fixture()):
+        with pytest.raises(DangerfileException) as danger_exc:
+            execute_dangerfile(dangerfile)
 
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
@@ -114,35 +118,3 @@ def test_dangerfile_executor_formats_nester_error_correctly():
     )
 
     assert str(danger_exc.value).startswith(expected_message)
-
-
-def test_load_dsl_method_works():
-    """
-    Test that loading DSL from file works.
-    """
-    fake_dsl = """{
-        "danger": {
-            "git": {
-                "modified_files": ["a.py"],
-                "created_files": ["b.py"],
-                "deleted_files": ["c.py"]
-            }
-        }
-    }
-    """
-    stdin = sys.stdin
-    sys.stdin = StringIO(
-        "danger://dsl//var/folders/zx/353y9gws1gg16pl7xdycgtv40000gn/T/danger-dsl.json"
-    )
-    expected_url = "/var/folders/zx/353y9gws1gg16pl7xdycgtv40000gn/T/danger-dsl.json"
-
-    with mock.patch("builtins.open", mock.mock_open(read_data=fake_dsl)) as mock_file:
-        dsl = load_dsl()
-        mock_file.assert_called_with(expected_url, "r")
-
-    sys.stdin = stdin
-
-    assert dsl
-    assert dsl.git.modified_files == ["a.py"]
-    assert dsl.git.created_files == ["b.py"]
-    assert dsl.git.deleted_files == ["c.py"]

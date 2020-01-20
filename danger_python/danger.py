@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from .models import DangerDSL, GitDSL
-from .shell import load_dsl
 
 
 @dataclass
@@ -41,6 +40,14 @@ def serialize_results(results: DangerResults) -> Dict[str, Any]:
         "messages": serializer(results.messages),
         "markdowns": serializer(results.markdowns),
     }
+
+
+def load_dsl() -> DangerDSL:
+    file_url = sys.stdin.read().split("danger://dsl/")[-1]
+
+    with open(file_url, "r") as json_file:
+        input_json = json.loads(json_file.read())
+        return DangerDSL.from_dict(input_json["danger"])
 
 
 class Danger:

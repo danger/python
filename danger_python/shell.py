@@ -5,6 +5,7 @@ import traceback
 from types import TracebackType
 from typing import List, Optional
 
+from .danger import Danger
 from .exceptions import DangerfileException, SystemConfigurationException
 from .models import DangerDSL
 
@@ -34,7 +35,7 @@ def build_danger_command(parameters: List[str]) -> List[str]:
 def execute_dangerfile(dangerfile: str):
     try:
         compiled = compile(dangerfile, "dangerfile.py", "exec")
-        exec(compiled)
+        exec(compiled, {}, {"danger": Danger()})
     except Exception as error:
         _, _, trace = sys.exc_info()
         message = __format_exception(error, trace)
@@ -62,11 +63,3 @@ def __format_exception(error: Exception, trace: Optional[TracebackType]) -> str:
     )
 
     return message
-
-
-def load_dsl() -> DangerDSL:
-    file_url = sys.stdin.read().split("danger://dsl/")[-1]
-
-    with open(file_url, "r") as json_file:
-        input_json = json.loads(json_file.read())
-        return DangerDSL.from_dict(input_json["danger"])

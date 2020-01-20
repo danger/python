@@ -1,4 +1,8 @@
-from danger_python.danger import (Danger, DangerResults, Violation,
+import sys
+from io import StringIO
+from unittest import mock
+
+from danger_python.danger import (Danger, DangerResults, Violation, load_dsl,
                                   serialize_results, serialize_violation)
 from tests.fixtures.danger import danger_json_input_fixture
 
@@ -67,3 +71,35 @@ def test_danger_parses_input_lazily():
         assert danger.git.created_files == ["new_file.py"]
         assert danger.git.deleted_files == ["file_to_delete.py"]
         assert Danger().git.created_files == ["new_file.py"]
+
+
+def test_load_dsl_method_works():
+    """
+    Test that loading DSL from file works.
+    """
+    fake_dsl = """{
+        "danger": {
+            "git": {
+                "modified_files": ["a.py"],
+                "created_files": ["b.py"],
+                "deleted_files": ["c.py"]
+            }
+        }
+    }
+    """
+    stdin = sys.stdin
+    sys.stdin = StringIO(
+        "danger://dsl//var/folders/zx/353y9gws1gg16pl7xdycgtv40000gn/T/danger-dsl.json"
+    )
+    expected_url = "/var/folders/zx/353y9gws1gg16pl7xdycgtv40000gn/T/danger-dsl.json"
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=fake_dsl)) as mock_file:
+        dsl = load_dsl()
+        mock_file.assert_called_with(expected_url, "r")
+
+    sys.stdin = stdin
+
+    assert dsl
+    assert dsl.git.modified_files == ["a.py"]
+    assert dsl.git.created_files == ["b.py"]
+    assert dsl.git.deleted_files == ["c.py"]

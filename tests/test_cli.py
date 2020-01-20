@@ -3,6 +3,7 @@ from unittest import mock
 from click.testing import CliRunner
 
 from danger_python.cli import cli
+from tests.fixtures.danger import danger_json_input_fixture, dsl_input_fixture
 from tests.fixtures.shell import (
     danger_js_missing_path_fixture,
     danger_js_path_fixture,
@@ -105,9 +106,12 @@ def test_run_command_invokes_dangerfile():
     runner = CliRunner()
     dangerfile = 'print("Hello world")\n' 'print("Goodbye world")'
 
-    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
-        result = runner.invoke(cli, ["run"])
-        mock_file.assert_called_with("dangerfile.py", "r")
+    with danger_json_input_fixture(dsl_input_fixture()):
+        with mock.patch(
+            "builtins.open", mock.mock_open(read_data=dangerfile)
+        ) as mock_file:
+            result = runner.invoke(cli, ["run"])
+            mock_file.assert_called_with("dangerfile.py", "r")
 
     assert result.exit_code == 0
     assert result.output == "Hello world\nGoodbye world\n"
@@ -120,9 +124,12 @@ def test_run_command_shows_traceback_when_dangerfile_fails():
     runner = CliRunner(mix_stderr=False)
     dangerfile = "This is not a valid syntax of Python"
 
-    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
-        result = runner.invoke(cli, ["run"])
-        mock_file.assert_called_with("dangerfile.py", "r")
+    with danger_json_input_fixture(dsl_input_fixture()):
+        with mock.patch(
+            "builtins.open", mock.mock_open(read_data=dangerfile)
+        ) as mock_file:
+            result = runner.invoke(cli, ["run"])
+            mock_file.assert_called_with("dangerfile.py", "r")
 
     expected_error = (
         "There was an error when executing dangerfile.py:\n"
@@ -141,9 +148,32 @@ def test_default_command_invokes_dangerfile():
     runner = CliRunner()
     dangerfile = 'print("Default command")'
 
-    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
-        result = runner.invoke(cli)
-        mock_file.assert_called_with("dangerfile.py", "r")
+    with danger_json_input_fixture(dsl_input_fixture()):
+        with mock.patch(
+            "builtins.open", mock.mock_open(read_data=dangerfile)
+        ) as mock_file:
+            result = runner.invoke(cli)
+            mock_file.assert_called_with("dangerfile.py", "r")
 
     assert result.exit_code == 0
     assert result.output == "Default command\n"
+
+
+def test_executing_dangerfile_passes_danger_instance_to_the_script():
+    """
+    Test that executing run command passes danger instance with parsed input
+    to the Dangerfile locals.
+    """
+    runner = CliRunner()
+    dangerfile = "print(danger.git.modified_files)"
+    input_json = dsl_input_fixture(modified_files=["a.py", "b.py"])
+
+    with danger_json_input_fixture(input_json):
+        with mock.patch(
+            "builtins.open", mock.mock_open(read_data=dangerfile)
+        ) as mock_file:
+            result = runner.invoke(cli, ["run"])
+            mock_file.assert_called_with("dangerfile.py", "r")
+
+    assert result.exit_code == 0
+    assert result.output == "['a.py', 'b.py']\n"
