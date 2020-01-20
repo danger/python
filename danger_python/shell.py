@@ -65,5 +65,8 @@ def __format_exception(error: Exception, trace: Optional[TracebackType]) -> str:
 
 
 def load_dsl() -> DangerDSL:
-    input_json = json.loads(sys.stdin.read())
-    return DangerDSL.from_dict(input_json["danger"])
+    file_url = sys.stdin.read().split("danger://dsl/")[-1]
+
+    with open(file_url, "r") as json_file:
+        input_json = json.loads(json_file.read())
+        return DangerDSL.from_dict(input_json["danger"])

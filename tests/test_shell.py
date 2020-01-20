@@ -1,4 +1,6 @@
 import subprocess
+import sys
+from io import StringIO
 from unittest import mock
 
 import pytest
@@ -6,7 +8,7 @@ import pytest
 from danger_python.exceptions import (DangerfileException,
                                       SystemConfigurationException)
 from danger_python.shell import (build_danger_command, execute_dangerfile,
-                                 resolve_danger_path)
+                                 load_dsl, resolve_danger_path)
 from tests.fixtures.shell import (danger_js_missing_path_fixture,
                                   danger_js_path_fixture, subprocess_fixture)
 
@@ -110,3 +112,35 @@ def test_dangerfile_executor_formats_nester_error_correctly():
     )
 
     assert str(danger_exc.value).startswith(expected_message)
+
+
+def test_load_dsl_method_works():
+    """
+    Test that loading DSL from file works.
+    """
+    fake_dsl = """{
+        "danger": {
+            "git": {
+                "modified_files": ["a.py"],
+                "created_files": ["b.py"],
+                "deleted_files": ["c.py"]
+            }
+        }
+    }
+    """
+    stdin = sys.stdin
+    sys.stdin = StringIO(
+        "danger://dsl//var/folders/zx/353y9gws1gg16pl7xdycgtv40000gn/T/danger-dsl.json"
+    )
+    expected_url = "/var/folders/zx/353y9gws1gg16pl7xdycgtv40000gn/T/danger-dsl.json"
+
+    with mock.patch("builtins.open", mock.mock_open(read_data=fake_dsl)) as mock_file:
+        dsl = load_dsl()
+        mock_file.assert_called_with(expected_url, "r")
+
+    sys.stdin = stdin
+
+    assert dsl
+    assert dsl.git.modified_files == ["a.py"]
+    assert dsl.git.created_files == ["b.py"]
+    assert dsl.git.deleted_files == ["c.py"]

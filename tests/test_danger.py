@@ -1,6 +1,6 @@
 from danger_python.danger import (Danger, DangerResults, Violation,
                                   serialize_results, serialize_violation)
-from tests.fixtures.danger import danger_input_fixture
+from tests.fixtures.danger import danger_json_input_fixture
 
 
 def test_violation_is_correctly_serialized():
@@ -60,7 +60,7 @@ def test_danger_parses_input_lazily():
         }
     }
 
-    with danger_input_fixture(input_json) as danger:
+    with danger_json_input_fixture(input_json) as danger:
         input_json["danger"]["git"]["created_files"] = []
 
         assert danger.git.modified_files == ["first_file.py", "module/second_file.py"]
