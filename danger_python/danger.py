@@ -1,5 +1,10 @@
+import json
+import sys
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
+
+from .models import DangerDSL, GitDSL
+from .shell import load_dsl
 
 
 @dataclass
@@ -36,3 +41,15 @@ def serialize_results(results: DangerResults) -> Dict[str, Any]:
         "messages": serializer(results.messages),
         "markdowns": serializer(results.markdowns),
     }
+
+
+class Danger:
+    def __init__(self):
+        if not Danger.dsl:
+            Danger.dsl = load_dsl()
+
+    dsl: DangerDSL = None
+
+    @property
+    def git(self) -> GitDSL:
+        return Danger.dsl.git

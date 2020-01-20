@@ -1,3 +1,4 @@
+import json
 import subprocess
 import sys
 import traceback
@@ -5,6 +6,7 @@ from types import TracebackType
 from typing import List, Optional
 
 from .exceptions import DangerfileException, SystemConfigurationException
+from .models import DangerDSL
 
 
 def resolve_danger_path():
@@ -60,3 +62,8 @@ def __format_exception(error: Exception, trace: Optional[TracebackType]) -> str:
     )
 
     return message
+
+
+def load_dsl() -> DangerDSL:
+    input_json = json.loads(sys.stdin.read())
+    return DangerDSL.from_dict(input_json["danger"])

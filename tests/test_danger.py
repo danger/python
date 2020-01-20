@@ -1,5 +1,6 @@
-from danger_python.danger import (DangerResults, Violation, serialize_results,
-                                  serialize_violation)
+from danger_python.danger import (Danger, DangerResults, Violation,
+                                  serialize_results, serialize_violation)
+from tests.fixtures.danger import danger_input_fixture
 
 
 def test_violation_is_correctly_serialized():
@@ -43,3 +44,26 @@ def test_results_are_correctly_serialized():
         "messages": [{"message": "Message"},],
         "markdowns": [{"message": "Markdown"}],
     }
+
+
+def test_danger_parses_input_lazily():
+    """
+    Test that Danger parses JSON read from the standard input lazily.
+    """
+    input_json = {
+        "danger": {
+            "git": {
+                "modified_files": ["first_file.py", "module/second_file.py"],
+                "created_files": ["new_file.py",],
+                "deleted_files": ["file_to_delete.py",],
+            }
+        }
+    }
+
+    with danger_input_fixture(input_json) as danger:
+        input_json["danger"]["git"]["created_files"] = []
+
+        assert danger.git.modified_files == ["first_file.py", "module/second_file.py"]
+        assert danger.git.created_files == ["new_file.py"]
+        assert danger.git.deleted_files == ["file_to_delete.py"]
+        assert Danger().git.created_files == ["new_file.py"]
