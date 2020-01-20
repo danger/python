@@ -28,9 +28,11 @@ def serialize_violation(violation: Violation) -> Dict[str, Any]:
 
 
 def serialize_results(results: DangerResults) -> Dict[str, Any]:
+    serializer = lambda violations: list(map(serialize_violation, violations))
+
     return {
-        "fails": list(map(serialize_violation, results.fails)),
-        "warnings": list(map(serialize_violation, results.warnings)),
-        "messages": list(map(serialize_violation, results.messages)),
-        "markdowns": list(map(serialize_violation, results.markdowns)),
+        "fails": serializer(results.fails),
+        "warnings": serializer(results.warnings),
+        "messages": serializer(results.messages),
+        "markdowns": serializer(results.markdowns),
     }
