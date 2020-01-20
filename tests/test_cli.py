@@ -28,6 +28,7 @@ def test_pr_command_invokes_danger_js_passing_arguments():
         "--use-github-checks",
         "-p",
         "danger-python",
+        "-u",
     ]
     danger_fixture = danger_success_fixture(
         danger_path=danger_path, output="danger-js output", arguments=expected_arguments
@@ -52,7 +53,15 @@ def test_local_command_invokes_danger_js_passing_arguments():
         "-t",
     ]
     danger_path = "/usr/bin/js-danger"
-    expected_arguments = ["local", "-i", "fake_danger_id", "-t", "-p", "danger-python"]
+    expected_arguments = [
+        "local",
+        "-i",
+        "fake_danger_id",
+        "-t",
+        "-p",
+        "danger-python",
+        "-u",
+    ]
     danger_fixture = danger_success_fixture(
         danger_path=danger_path,
         output="parsed local output",
@@ -77,7 +86,7 @@ def test_ci_command_invokes_danger_js_passing_arguments():
         "--no-publish-check",
     ]
     danger_path = "/usr/bin/very-danger"
-    expected_arguments = ["ci", "-v", "--no-publish-check", "-p", "danger-python"]
+    expected_arguments = ["ci", "-v", "--no-publish-check", "-p", "danger-python", "-u"]
     danger_fixture = danger_success_fixture(
         danger_path=danger_path, output="The output!", arguments=expected_arguments
     )

@@ -48,6 +48,7 @@ def test_build_danger_command_works():
         "https://pr.url",
         "-p",
         "danger-python",
+        "-u",
     ]
     assert second_command == [
         "/usr/bin/danger-js",
@@ -57,6 +58,7 @@ def test_build_danger_command_works():
         "-t",
         "-p",
         "danger-python",
+        "-u",
     ]
 
 

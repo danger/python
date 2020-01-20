@@ -27,7 +27,7 @@ def invoke_danger(parameters: List[str]) -> subprocess.CompletedProcess:
 def build_danger_command(parameters: List[str]) -> List[str]:
     command = [resolve_danger_path()]
     command.extend(parameters)
-    command.extend(["-p", "danger-python"])
+    command.extend(["-p", "danger-python", "-u"])
     return command
 
 
