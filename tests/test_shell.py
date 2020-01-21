@@ -62,7 +62,8 @@ def test_build_danger_command_works():
     ]
 
 
-def test_dangerfile_executor_formats_syntax_error_correctly(danger):
+@pytest.mark.usefixtures("danger")
+def test_dangerfile_executor_formats_syntax_error_correctly():
     """
     Test that dangerfile executor formats the SyntaxError correctly.
     """
@@ -80,7 +81,8 @@ def test_dangerfile_executor_formats_syntax_error_correctly(danger):
     assert expected_message in str(danger_exc.value)
 
 
-def test_dangerfile_executor_formats_name_error_correctly(danger):
+@pytest.mark.usefixtures("danger")
+def test_dangerfile_executor_formats_name_error_correctly():
     """
     Test that dangerfile executor formats the NameError correctly.
     """
@@ -98,7 +100,8 @@ def test_dangerfile_executor_formats_name_error_correctly(danger):
     assert str(danger_exc.value).startswith(expected_message)
 
 
-def test_dangerfile_executor_formats_nester_error_correctly(danger):
+@pytest.mark.usefixtures("danger")
+def test_dangerfile_executor_formats_nester_error_correctly():
     """
     Test that dangerfile executor formats the nested error correctly.
     """
