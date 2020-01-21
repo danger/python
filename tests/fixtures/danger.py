@@ -6,9 +6,9 @@ from typing import Any, Dict, Iterator, List, Optional
 from unittest import mock
 
 import pytest
+from jinja2 import Environment, PackageLoader, select_autoescape
 
 from danger_python.danger import Danger
-from jinja2 import Environment, PackageLoader, select_autoescape
 
 
 def danger_input_file_fixture(**kwargs: Dict[str, Any]) -> str:

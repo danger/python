@@ -5,12 +5,17 @@ from unittest import mock
 
 import pytest
 
-from danger_python.exceptions import (DangerfileException,
-                                      SystemConfigurationException)
-from danger_python.shell import (build_danger_command, execute_dangerfile,
-                                 resolve_danger_path)
-from tests.fixtures.shell import (danger_js_missing_path_fixture,
-                                  danger_js_path_fixture, subprocess_fixture)
+from danger_python.exceptions import DangerfileException, SystemConfigurationException
+from danger_python.shell import (
+    build_danger_command,
+    execute_dangerfile,
+    resolve_danger_path,
+)
+from tests.fixtures.shell import (
+    danger_js_missing_path_fixture,
+    danger_js_path_fixture,
+    subprocess_fixture,
+)
 
 
 def test_danger_path_can_be_resolved_if_present():
