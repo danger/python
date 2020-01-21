@@ -9,7 +9,6 @@ from danger_python.exceptions import (DangerfileException,
                                       SystemConfigurationException)
 from danger_python.shell import (build_danger_command, execute_dangerfile,
                                  resolve_danger_path)
-from tests.fixtures.danger import danger_json_input_fixture, dsl_input_fixture
 from tests.fixtures.shell import (danger_js_missing_path_fixture,
                                   danger_js_path_fixture, subprocess_fixture)
 
@@ -63,15 +62,14 @@ def test_build_danger_command_works():
     ]
 
 
-def test_dangerfile_executor_formats_syntax_error_correctly():
+def test_dangerfile_executor_formats_syntax_error_correctly(danger):
     """
     Test that dangerfile executor formats the SyntaxError correctly.
     """
     dangerfile = "a = 2\n" "b = 8\n" "This is not a valid Python syntax\n"
 
-    with danger_json_input_fixture(dsl_input_fixture()):
-        with pytest.raises(DangerfileException) as danger_exc:
-            execute_dangerfile(dangerfile)
+    with pytest.raises(DangerfileException) as danger_exc:
+        execute_dangerfile(dangerfile)
 
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
@@ -82,15 +80,14 @@ def test_dangerfile_executor_formats_syntax_error_correctly():
     assert expected_message in str(danger_exc.value)
 
 
-def test_dangerfile_executor_formats_name_error_correctly():
+def test_dangerfile_executor_formats_name_error_correctly(danger):
     """
     Test that dangerfile executor formats the NameError correctly.
     """
     dangerfile = "a = 2\n" "c += 8\n" "b = 12\n"
 
-    with danger_json_input_fixture(dsl_input_fixture()):
-        with pytest.raises(DangerfileException) as danger_exc:
-            execute_dangerfile(dangerfile)
+    with pytest.raises(DangerfileException) as danger_exc:
+        execute_dangerfile(dangerfile)
 
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
@@ -101,15 +98,14 @@ def test_dangerfile_executor_formats_name_error_correctly():
     assert str(danger_exc.value).startswith(expected_message)
 
 
-def test_dangerfile_executor_formats_nester_error_correctly():
+def test_dangerfile_executor_formats_nester_error_correctly(danger):
     """
     Test that dangerfile executor formats the nested error correctly.
     """
     dangerfile = "import json\n" """json.loads('this is not a json')"""
 
-    with danger_json_input_fixture(dsl_input_fixture()):
-        with pytest.raises(DangerfileException) as danger_exc:
-            execute_dangerfile(dangerfile)
+    with pytest.raises(DangerfileException) as danger_exc:
+        execute_dangerfile(dangerfile)
 
     expected_message = (
         "There was an error when executing dangerfile.py:\n"
