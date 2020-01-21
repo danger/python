@@ -96,33 +96,29 @@ def test_ci_command_invokes_danger_js_passing_arguments():
     assert result.output == "The output!\n"
 
 
+@pytest.mark.parametrize(
+    "dangerfile", ['print("Hello world")\n' 'print("Goodbye world")']
+)
 @pytest.mark.usefixtures("danger")
 def test_run_command_invokes_dangerfile():
     """
     Test that run command invokes dangerfile.py contents.
     """
     runner = CliRunner()
-    dangerfile = 'print("Hello world")\n' 'print("Goodbye world")'
-
-    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
-        result = runner.invoke(cli, ["run"])
-        mock_file.assert_called_with("dangerfile.py", "r")
+    result = runner.invoke(cli, ["run"])
 
     assert result.exit_code == 0
     assert result.output == "Hello world\nGoodbye world\n"
 
 
+@pytest.mark.parametrize("dangerfile", ["This is not a valid syntax of Python"])
 @pytest.mark.usefixtures("danger")
 def test_run_command_shows_traceback_when_dangerfile_fails():
     """
     Test that run command shows traceback when dangerfile.py fails.
     """
     runner = CliRunner(mix_stderr=False)
-    dangerfile = "This is not a valid syntax of Python"
-
-    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
-        result = runner.invoke(cli, ["run"])
-        mock_file.assert_called_with("dangerfile.py", "r")
+    result = runner.invoke(cli, ["run"])
 
     expected_error = (
         "There was an error when executing dangerfile.py:\n"
@@ -134,23 +130,21 @@ def test_run_command_shows_traceback_when_dangerfile_fails():
     assert result.stderr.startswith(expected_error)
 
 
+@pytest.mark.parametrize("dangerfile", ['print("Default command")'])
 @pytest.mark.usefixtures("danger")
 def test_default_command_invokes_dangerfile():
     """
     Test that default command invokes dangerfily.py contents.
     """
     runner = CliRunner()
-    dangerfile = 'print("Default command")'
-
-    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
-        result = runner.invoke(cli)
-        mock_file.assert_called_with("dangerfile.py", "r")
+    result = runner.invoke(cli)
 
     assert result.exit_code == 0
     assert result.output == "Default command\n"
 
 
 @pytest.mark.parametrize("modified_files", [["a.py", "b.py"]])
+@pytest.mark.parametrize("dangerfile", ["print(danger.git.modified_files)"])
 @pytest.mark.usefixtures("danger")
 def test_executing_dangerfile_passes_danger_instance_to_the_script():
     """
@@ -158,11 +152,7 @@ def test_executing_dangerfile_passes_danger_instance_to_the_script():
     to the Dangerfile locals.
     """
     runner = CliRunner()
-    dangerfile = "print(danger.git.modified_files)"
-
-    with mock.patch("builtins.open", mock.mock_open(read_data=dangerfile)) as mock_file:
-        result = runner.invoke(cli, ["run"])
-        mock_file.assert_called_with("dangerfile.py", "r")
+    result = runner.invoke(cli, ["run"])
 
     assert result.exit_code == 0
     assert result.output == "['a.py', 'b.py']\n"

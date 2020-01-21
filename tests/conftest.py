@@ -1,11 +1,12 @@
 import sys
 from io import StringIO
-from typing import Iterator, List, Optional
+from typing import Dict, Iterator, List, Optional
 from unittest import mock
 
 import pytest
 
 from danger_python.danger import Danger
+from pyfakefs.fake_filesystem_unittest import Patcher
 from tests.fixtures.danger import danger_input_file_fixture
 
 
@@ -25,20 +26,51 @@ def deleted_files() -> List[str]:
 
 
 @pytest.fixture
-def danger(
-    modified_files: List[str], created_files: List[str], deleted_files: List[str]
-) -> Iterator[Danger]:
+def stdin_str() -> str:
+    return "danger://dsl//var/path/to/file.json"
+
+
+@pytest.fixture
+def dangerfile() -> str:
+    return ""
+
+
+@pytest.fixture
+def stdin(stdin_str: str) -> Iterator[None]:
+    real_stdin = sys.stdin
+    sys.stdin = StringIO(stdin_str)
+    yield
+    sys.stdin = real_stdin
+
+
+@pytest.fixture
+def files(
+    modified_files: List[str],
+    created_files: List[str],
+    deleted_files: List[str],
+    dangerfile: str,
+) -> Dict[str, str]:
+    return {
+        "/var/path/to/file.json": danger_input_file_fixture(
+            modified_files=modified_files,
+            created_files=created_files,
+            deleted_files=deleted_files,
+        ),
+        "dangerfile.py": dangerfile,
+    }
+
+
+@pytest.fixture
+def filesystem(files: Dict[str, str]) -> Iterator[None]:
+    with Patcher() as patcher:
+        for (filename, contents) in files.items():
+            patcher.fs.create_file(filename, contents=contents)
+
+        yield
+
+
+@pytest.fixture
+def danger(stdin, filesystem) -> Iterator[Danger]:
     Danger.dsl = None
-    stdin = sys.stdin
-    sys.stdin = StringIO("/var/path/to/json/file.json")
-    read_data = danger_input_file_fixture(
-        modified_files=modified_files,
-        created_files=created_files,
-        deleted_files=deleted_files,
-    )
-
-    with mock.patch("builtins.open", mock.mock_open(read_data=read_data)):
-        yield Danger()
-
-    sys.stdin = stdin
+    yield Danger()
     Danger.dsl = None

@@ -1,5 +1,6 @@
 import sys
 from io import StringIO
+from typing import Dict
 from unittest import mock
 
 import pytest
@@ -52,6 +53,28 @@ def test_results_are_correctly_serialized():
     }
 
 
+def __load_dsl_files() -> Dict[str, str]:
+    danger_dsl_json = danger_input_file_fixture(
+        modified_files=["a.py"], created_files=["b.py"], deleted_files=["c.py"]
+    )
+    return {"/var/folders/zx/danger-dsl.json": danger_dsl_json}
+
+
+@pytest.mark.parametrize("stdin_str", ["danger://dsl//var/folders/zx/danger-dsl.json"])
+@pytest.mark.parametrize("files", [__load_dsl_files()])
+@pytest.mark.usefixtures("stdin", "filesystem")
+def test_load_dsl_method_works():
+    """
+    Test that loading DSL from file works.
+    """
+    dsl = load_dsl()
+
+    assert dsl
+    assert dsl.git.modified_files == ["a.py"]
+    assert dsl.git.created_files == ["b.py"]
+    assert dsl.git.deleted_files == ["c.py"]
+
+
 @pytest.mark.parametrize("modified_files", [["first_file.py", "module/second_file.py"]])
 @pytest.mark.parametrize("created_files", [["new_file.py"]])
 @pytest.mark.parametrize("deleted_files", [["file_to_delete.py"]])
@@ -62,26 +85,3 @@ def test_danger_parses_input(danger):
     assert danger.git.modified_files == ["first_file.py", "module/second_file.py"]
     assert danger.git.created_files == ["new_file.py"]
     assert danger.git.deleted_files == ["file_to_delete.py"]
-
-
-def test_load_dsl_method_works():
-    """
-    Test that loading DSL from file works.
-    """
-    fake_dsl = danger_input_file_fixture(
-        modified_files=["a.py"], created_files=["b.py"], deleted_files=["c.py"]
-    )
-    stdin = sys.stdin
-    sys.stdin = StringIO("danger://dsl//var/folders/zx/123/T/danger-dsl.json")
-    expected_url = "/var/folders/zx/123/T/danger-dsl.json"
-
-    with mock.patch("builtins.open", mock.mock_open(read_data=fake_dsl)) as mock_file:
-        dsl = load_dsl()
-        mock_file.assert_called_with(expected_url, "r")
-
-    sys.stdin = stdin
-
-    assert dsl
-    assert dsl.git.modified_files == ["a.py"]
-    assert dsl.git.created_files == ["b.py"]
-    assert dsl.git.deleted_files == ["c.py"]
