@@ -2,9 +2,11 @@ import sys
 from io import StringIO
 from unittest import mock
 
+import pytest
+
 from danger_python.danger import (Danger, DangerResults, Violation, load_dsl,
                                   serialize_results, serialize_violation)
-from tests.fixtures.danger import danger_json_input_fixture
+from tests.fixtures.danger import danger_input_file_fixture
 
 
 def test_violation_is_correctly_serialized():
@@ -50,48 +52,28 @@ def test_results_are_correctly_serialized():
     }
 
 
-def test_danger_parses_input_lazily():
+@pytest.mark.parametrize("modified_files", [["first_file.py", "module/second_file.py"]])
+@pytest.mark.parametrize("created_files", [["new_file.py"]])
+@pytest.mark.parametrize("deleted_files", [["file_to_delete.py"]])
+def test_danger_parses_input(danger):
     """
-    Test that Danger parses JSON read from the standard input lazily.
+    Test that Danger parses JSON file with the URL read from the standard input.
     """
-    input_json = {
-        "danger": {
-            "git": {
-                "modified_files": ["first_file.py", "module/second_file.py"],
-                "created_files": ["new_file.py",],
-                "deleted_files": ["file_to_delete.py",],
-            }
-        }
-    }
-
-    with danger_json_input_fixture(input_json) as danger:
-        input_json["danger"]["git"]["created_files"] = []
-
-        assert danger.git.modified_files == ["first_file.py", "module/second_file.py"]
-        assert danger.git.created_files == ["new_file.py"]
-        assert danger.git.deleted_files == ["file_to_delete.py"]
-        assert Danger().git.created_files == ["new_file.py"]
+    assert danger.git.modified_files == ["first_file.py", "module/second_file.py"]
+    assert danger.git.created_files == ["new_file.py"]
+    assert danger.git.deleted_files == ["file_to_delete.py"]
 
 
 def test_load_dsl_method_works():
     """
     Test that loading DSL from file works.
     """
-    fake_dsl = """{
-        "danger": {
-            "git": {
-                "modified_files": ["a.py"],
-                "created_files": ["b.py"],
-                "deleted_files": ["c.py"]
-            }
-        }
-    }
-    """
-    stdin = sys.stdin
-    sys.stdin = StringIO(
-        "danger://dsl//var/folders/zx/353y9gws1gg16pl7xdycgtv40000gn/T/danger-dsl.json"
+    fake_dsl = danger_input_file_fixture(
+        modified_files=["a.py"], created_files=["b.py"], deleted_files=["c.py"]
     )
-    expected_url = "/var/folders/zx/353y9gws1gg16pl7xdycgtv40000gn/T/danger-dsl.json"
+    stdin = sys.stdin
+    sys.stdin = StringIO("danger://dsl//var/folders/zx/123/T/danger-dsl.json")
+    expected_url = "/var/folders/zx/123/T/danger-dsl.json"
 
     with mock.patch("builtins.open", mock.mock_open(read_data=fake_dsl)) as mock_file:
         dsl = load_dsl()

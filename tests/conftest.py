@@ -10,16 +10,32 @@ from tests.fixtures.danger import danger_input_file_fixture
 
 
 @pytest.fixture
-def modified_files() -> Optional[List[str]]:
+def modified_files() -> List[str]:
     return []
 
 
 @pytest.fixture
-def danger(modified_files: Optional[List[str]]) -> Iterator[Danger]:
+def created_files() -> List[str]:
+    return []
+
+
+@pytest.fixture
+def deleted_files() -> List[str]:
+    return []
+
+
+@pytest.fixture
+def danger(
+    modified_files: List[str], created_files: List[str], deleted_files: List[str]
+) -> Iterator[Danger]:
     Danger.dsl = None
     stdin = sys.stdin
     sys.stdin = StringIO("/var/path/to/json/file.json")
-    read_data = danger_input_file_fixture(modified_files=modified_files)
+    read_data = danger_input_file_fixture(
+        modified_files=modified_files,
+        created_files=created_files,
+        deleted_files=deleted_files,
+    )
 
     with mock.patch("builtins.open", mock.mock_open(read_data=read_data)):
         yield Danger()
