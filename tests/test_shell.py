@@ -78,7 +78,7 @@ def test_dangerfile_executor_formats_syntax_error_correctly():
         "Stacktrace:\n"
     )
 
-    assert expected_message in str(danger_exc.value)
+    assert str(danger_exc.value).startswith(expected_message)
 
 
 @pytest.mark.usefixtures("danger")
