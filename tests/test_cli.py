@@ -1,3 +1,4 @@
+import json
 from unittest import mock
 
 import pytest
@@ -102,7 +103,7 @@ def test_run_command_invokes_dangerfile():
     result = runner.invoke(cli, ["run"])
 
     assert result.exit_code == 0
-    assert result.output == "Hello world\nGoodbye world\n"
+    assert result.output.startswith("Hello world\nGoodbye world\n")
 
 
 @pytest.mark.parametrize("dangerfile", ["This is not a valid syntax of Python"])
@@ -134,7 +135,7 @@ def test_default_command_invokes_dangerfile():
     result = runner.invoke(cli)
 
     assert result.exit_code == 0
-    assert result.output == "Default command\n"
+    assert result.output.startswith("Default command\n")
 
 
 @pytest.mark.parametrize("modified_files", [["a.py", "b.py"]])
@@ -149,4 +150,32 @@ def test_executing_dangerfile_passes_danger_instance_to_the_script():
     result = runner.invoke(cli, ["run"])
 
     assert result.exit_code == 0
-    assert result.output == "['a.py', 'b.py']\n"
+    assert result.output.startswith("['a.py', 'b.py']\n")
+
+
+@pytest.mark.parametrize(
+    "dangerfile",
+    [
+        'warn("This is the final warning")\n'
+        'fail("You are going to fail")\n'
+        'message("Hello world")\n'
+        'markdown("Test markdown")\n'
+    ],
+)
+@pytest.mark.usefixtures("danger")
+def test_executing_dangerfile_prints_results_to_stdout():
+    """
+    Test that executing run command reports results back to output.
+    """
+    runner = CliRunner()
+    result = runner.invoke(cli, ["run"])
+
+    expected_json = {
+        "fails": [{"message": "You are going to fail"}],
+        "warnings": [{"message": "This is the final warning"}],
+        "messages": [{"message": "Hello world"}],
+        "markdowns": [{"message": "Test markdown"}],
+    }
+
+    assert result.exit_code == 0
+    assert result.output == json.dumps(expected_json) + "\n"

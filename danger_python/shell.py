@@ -5,7 +5,7 @@ import traceback
 from types import TracebackType
 from typing import List, Optional
 
-from .danger import Danger
+from .danger import Danger, fail, markdown, message, serialize_results, warn
 from .exceptions import DangerfileException, SystemConfigurationException
 from .models import DangerDSL
 
@@ -35,14 +35,22 @@ def build_danger_command(parameters: List[str]) -> List[str]:
 def execute_dangerfile(dangerfile: str):
     try:
         compiled = compile(dangerfile, "dangerfile.py", "exec")
-        exec(compiled, {}, {"danger": Danger()})
+        danger_globals = {
+            "danger": Danger(),
+            "fail": fail,
+            "warn": warn,
+            "markdown": markdown,
+            "message": message,
+        }
+        exec(compiled, {}, danger_globals)
+        print(json.dumps(serialize_results(Danger.results)))
     except Exception as error:
         _, _, trace = sys.exc_info()
-        message = __format_exception(error, trace)
+        exception_message = __format_exception(error, trace)
     else:
         return
 
-    raise DangerfileException(message)
+    raise DangerfileException(exception_message)
 
 
 def __format_exception(error: Exception, trace: Optional[TracebackType]) -> str:
