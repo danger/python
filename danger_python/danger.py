@@ -5,7 +5,7 @@ from functools import partial
 from operator import attrgetter
 from typing import Any, Callable, Dict, List, Optional
 
-from .models import DangerDSL, GitDSL
+from .models import DangerDSL, GitDSL, GithubDSL
 
 
 @dataclass
@@ -65,6 +65,10 @@ class Danger:
     @property
     def git(self) -> GitDSL:
         return Danger.dsl.git
+
+    @property
+    def github(self) -> GithubDSL:
+        return Danger.dsl.github
 
 
 def _add_to_results(

@@ -95,6 +95,7 @@ def test_danger_parses_input(danger):
     assert danger.git.modified_files == ["first_file.py", "module/second_file.py"]
     assert danger.git.created_files == ["new_file.py"]
     assert danger.git.deleted_files == ["file_to_delete.py"]
+    assert danger.github.pr.title == "Evaluate RHS of binding/assignment pattern first"
 
 
 @pytest.mark.usefixtures("danger")

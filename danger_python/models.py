@@ -28,3 +28,4 @@ class GithubDSL:
 @dataclass
 class DangerDSL:
     git: GitDSL
+    github: GithubDSL
