@@ -1,18 +1,26 @@
 import json
+from typing import List
 from unittest import mock
 
 import pytest
 from click.testing import CliRunner
 
 from danger_python.cli import cli
-from tests.fixtures.shell import (
-    danger_js_missing_path_fixture,
-    danger_js_path_fixture,
-    danger_success_fixture,
-    subprocess_fixture,
-)
+
+DANGER_PR_ARGUMENTS = [
+    "pr",
+    "https://github.com/microsoft/TypeScript/pull/34806",
+    "--use-github-checks",
+    "-p",
+    "danger-python",
+    "-u",
+]
 
 
+@pytest.mark.parametrize("danger_js_path", ["/usr/bin/danger-js"])
+@pytest.mark.parametrize("danger_js_output", ["danger-js output"])
+@pytest.mark.parametrize("danger_js_arguments", [DANGER_PR_ARGUMENTS])
+@pytest.mark.usefixtures("run_subprocess")
 def test_pr_command_invokes_danger_js_passing_arguments():
     """
     Test that pr command invokes danger_js passing correct arguments.
@@ -23,69 +31,53 @@ def test_pr_command_invokes_danger_js_passing_arguments():
         "https://github.com/microsoft/TypeScript/pull/34806",
         "--use-github-checks",
     ]
-    danger_path = "/usr/bin/danger-js"
-    expected_arguments = [
-        "pr",
-        "https://github.com/microsoft/TypeScript/pull/34806",
-        "--use-github-checks",
-        "-p",
-        "danger-python",
-        "-u",
-    ]
-    danger_fixture = danger_success_fixture(
-        danger_path=danger_path, output="danger-js output", arguments=expected_arguments
-    )
-
-    with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
-        result = runner.invoke(cli, arguments)
+    result = runner.invoke(cli, arguments)
 
     assert result.exit_code == 0
     assert result.output == "danger-js output\n"
 
 
+DANGER_LOCAL_ARGUMENTS = [
+    "local",
+    "-i",
+    "fake_danger_id",
+    "-t",
+    "-p",
+    "danger-python",
+    "-u",
+]
+
+
+@pytest.mark.parametrize("danger_js_path", ["/usr/bin/js-danger"])
+@pytest.mark.parametrize("danger_js_output", ["parsed local output"])
+@pytest.mark.parametrize("danger_js_arguments", [DANGER_LOCAL_ARGUMENTS])
+@pytest.mark.usefixtures("run_subprocess")
 def test_local_command_invokes_danger_js_passing_arguments():
     """
     Test that local command invokes danger_js passing correct arguments.
     """
     runner = CliRunner()
     arguments = ["local", "-i", "fake_danger_id", "-t"]
-    danger_path = "/usr/bin/js-danger"
-    expected_arguments = [
-        "local",
-        "-i",
-        "fake_danger_id",
-        "-t",
-        "-p",
-        "danger-python",
-        "-u",
-    ]
-    danger_fixture = danger_success_fixture(
-        danger_path=danger_path,
-        output="parsed local output",
-        arguments=expected_arguments,
-    )
-
-    with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
-        result = runner.invoke(cli, arguments)
+    result = runner.invoke(cli, arguments)
 
     assert result.exit_code == 0
     assert result.output == "parsed local output\n"
 
 
+DANGER_CI_ARGUMENTS = ["ci", "-v", "--no-publish-check", "-p", "danger-python", "-u"]
+
+
+@pytest.mark.parametrize("danger_js_path", ["/usr/bin/very-danger"])
+@pytest.mark.parametrize("danger_js_arguments", [DANGER_CI_ARGUMENTS])
+@pytest.mark.parametrize("danger_js_output", ["The output!"])
+@pytest.mark.usefixtures("run_subprocess")
 def test_ci_command_invokes_danger_js_passing_arguments():
     """
     Test that ci command invokes danger_js passing correct arguments.
     """
     runner = CliRunner()
     arguments = ["ci", "-v", "--no-publish-check"]
-    danger_path = "/usr/bin/very-danger"
-    expected_arguments = ["ci", "-v", "--no-publish-check", "-p", "danger-python", "-u"]
-    danger_fixture = danger_success_fixture(
-        danger_path=danger_path, output="The output!", arguments=expected_arguments
-    )
-
-    with subprocess_fixture(danger_js_path_fixture(danger_path), danger_fixture):
-        result = runner.invoke(cli, arguments)
+    result = runner.invoke(cli, arguments)
 
     assert result.exit_code == 0
     assert result.output == "The output!\n"

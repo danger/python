@@ -11,41 +11,38 @@ from danger_python.shell import (
     execute_dangerfile,
     resolve_danger_path,
 )
-from tests.fixtures.shell import (
-    danger_js_missing_path_fixture,
-    danger_js_path_fixture,
-    subprocess_fixture,
-)
 
 
+@pytest.mark.parametrize("danger_js_path", ["/usr/bin/fake-danger-js \n \r"])
+@pytest.mark.usefixtures("run_subprocess")
 def test_danger_path_can_be_resolved_if_present():
     """
     Test that danger-js path can be resolved.
     """
-    with subprocess_fixture(danger_js_path_fixture("/usr/bin/fake-danger-js \n \r")):
-        resolved_path = resolve_danger_path()
+    resolved_path = resolve_danger_path()
 
     assert resolved_path == "/usr/bin/fake-danger-js"
 
 
+@pytest.mark.usefixtures("run_subprocess")
 def test_danger_path_resolver_throws_an_error_if_not_present():
     """
     Test that danger-js path resolver throws an error if not present.
     """
-    with subprocess_fixture(danger_js_missing_path_fixture()):
-        with pytest.raises(SystemConfigurationException) as config_exc:
-            resolve_danger_path()
+    with pytest.raises(SystemConfigurationException) as config_exc:
+        resolve_danger_path()
 
     assert config_exc.match("danger-js not found in PATH")
 
 
+@pytest.mark.parametrize("danger_js_path", ["/usr/bin/danger-js \n \r"])
+@pytest.mark.usefixtures("run_subprocess")
 def test_build_danger_command_works():
     """
     Test that building correct danger command works.
     """
-    with subprocess_fixture(danger_js_path_fixture("/usr/bin/danger-js")):
-        first_command = build_danger_command(["pr", "https://pr.url"])
-        second_command = build_danger_command(["ci", "-i", "2020", "-t"])
+    first_command = build_danger_command(["pr", "https://pr.url"])
+    second_command = build_danger_command(["ci", "-i", "2020", "-t"])
 
     assert first_command == [
         "/usr/bin/danger-js",

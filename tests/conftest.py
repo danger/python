@@ -1,3 +1,4 @@
+import subprocess
 import sys
 from io import StringIO
 from typing import Dict, Iterator, List, Optional
@@ -8,6 +9,7 @@ from pyfakefs.fake_filesystem_unittest import Patcher
 
 from danger_python.danger import Danger
 from tests.fixtures.danger import danger_input_file_fixture
+from tests.fixtures.shell import SubprocessFixture
 
 
 @pytest.fixture
@@ -41,6 +43,72 @@ def stdin(stdin_str: str) -> Iterator[None]:
     sys.stdin = StringIO(stdin_str)
     yield
     sys.stdin = real_stdin
+
+
+@pytest.fixture
+def danger_js_path() -> Optional[str]:
+    return None
+
+
+@pytest.fixture
+def danger_js_output() -> str:
+    return ""
+
+
+@pytest.fixture
+def danger_js_arguments() -> List[str]:
+    return []
+
+
+@pytest.fixture
+def subprocesses(
+    danger_js_path: Optional[str], danger_js_output: str, danger_js_arguments: List[str]
+) -> List[SubprocessFixture]:
+    which_danger_subprocess = SubprocessFixture(
+        commands=["which", "danger"],
+        kwargs={"capture_output": True},
+        exit_code=0 if danger_js_path else 1,
+        output=danger_js_path if danger_js_path else "danger not found",
+    )
+
+    danger_subprocess: Optional[SubprocessFixture] = None
+
+    if danger_js_path:
+        danger_subprocess = SubprocessFixture(
+            commands=[danger_js_path] + danger_js_arguments,
+            kwargs={"capture_output": True},
+            exit_code=0,
+            output=danger_js_output,
+        )
+
+    return list(filter(None, (which_danger_subprocess, danger_subprocess)))
+
+
+@pytest.fixture
+def run_subprocess(subprocesses: List[SubprocessFixture]) -> Iterator[None]:
+    def match_fixture(
+        fixture: SubprocessFixture, commands: List[str], **kwargs
+    ) -> bool:
+        kwarg_match = lambda kv: kwargs.get(kv[0], None) == kv[1]
+        kwargs_match = all(map(kwarg_match, fixture.kwargs.items()))
+        return fixture.commands == commands and kwargs_match
+
+    def completed_process(fixture: SubprocessFixture) -> subprocess.CompletedProcess:
+        return subprocess.CompletedProcess(
+            fixture.commands, fixture.exit_code, stdout=fixture.output.encode("utf-8")
+        )
+
+    def fake_run(commands, **kwargs):
+        try:
+            matcher = lambda f: match_fixture(f, commands, **kwargs)
+            return completed_process(next(filter(matcher, subprocesses)))
+        except StopIteration:
+            msg = f"Could not find fixture for call with {commands} and {kwargs}"
+            raise ValueError(msg)
+
+    with mock.patch("subprocess.run") as mock_subprocess_run:
+        mock_subprocess_run.side_effect = fake_run
+        yield
 
 
 @pytest.fixture
