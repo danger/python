@@ -2,7 +2,11 @@
 name = "danger-python"
 version = "0.0.1"
 description = "Write your Dangerfiles in Python."
-authors = ["Jakub Turek <jkbturek@gmail.com>"]
+authors = [
+    "Orta Therox <danger@orta.io>",
+    "Jakub Turek <jkbturek@gmail.com>",
+    "Danger org contributors",
+]
 license = "MIT"
 
 [tool.poetry.dependencies]
