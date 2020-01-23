@@ -47,12 +47,7 @@ def test_local_command_invokes_danger_js_passing_arguments():
     Test that local command invokes danger_js passing correct arguments.
     """
     runner = CliRunner()
-    arguments = [
-        "local",
-        "-i",
-        "fake_danger_id",
-        "-t",
-    ]
+    arguments = ["local", "-i", "fake_danger_id", "-t"]
     danger_path = "/usr/bin/js-danger"
     expected_arguments = [
         "local",
@@ -81,11 +76,7 @@ def test_ci_command_invokes_danger_js_passing_arguments():
     Test that ci command invokes danger_js passing correct arguments.
     """
     runner = CliRunner()
-    arguments = [
-        "ci",
-        "-v",
-        "--no-publish-check",
-    ]
+    arguments = ["ci", "-v", "--no-publish-check"]
     danger_path = "/usr/bin/very-danger"
     expected_arguments = ["ci", "-v", "--no-publish-check", "-p", "danger-python", "-u"]
     danger_fixture = danger_success_fixture(

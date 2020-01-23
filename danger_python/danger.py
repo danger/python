@@ -1,7 +1,9 @@
 import json
 import sys
-from dataclasses import dataclass
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass, field
+from functools import partial
+from operator import attrgetter
+from typing import Any, Callable, Dict, List, Optional
 
 from .models import DangerDSL, GitDSL
 
@@ -15,10 +17,10 @@ class Violation:
 
 @dataclass
 class DangerResults:
-    fails: List[Violation]
-    warnings: List[Violation]
-    messages: List[Violation]
-    markdowns: List[Violation]
+    fails: List[Violation] = field(default_factory=list)
+    warnings: List[Violation] = field(default_factory=list)
+    messages: List[Violation] = field(default_factory=list)
+    markdowns: List[Violation] = field(default_factory=list)
 
 
 def serialize_violation(violation: Violation) -> Dict[str, Any]:
@@ -54,9 +56,28 @@ class Danger:
     def __init__(self):
         if not Danger.dsl:
             Danger.dsl = load_dsl()
+        if not Danger.results:
+            Danger.results = DangerResults()
 
     dsl: DangerDSL = None
+    results: DangerResults = None
 
     @property
     def git(self) -> GitDSL:
         return Danger.dsl.git
+
+
+def _add_to_results(
+    field: Callable[[DangerResults], List[Violation]],
+    message: str,
+    file_name: Optional[str] = None,
+    line: Optional[int] = None,
+):
+    violation = Violation(message=message, file_name=file_name, line=line)
+    field(Danger.results).append(violation)
+
+
+message = partial(_add_to_results, attrgetter("messages"))
+markdown = partial(_add_to_results, attrgetter("markdowns"))
+warn = partial(_add_to_results, attrgetter("warnings"))
+fail = partial(_add_to_results, attrgetter("fails"))

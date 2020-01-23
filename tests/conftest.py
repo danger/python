@@ -72,5 +72,7 @@ def filesystem(files: Dict[str, str]) -> Iterator[None]:
 @pytest.fixture
 def danger(stdin, filesystem) -> Iterator[Danger]:
     Danger.dsl = None
+    Danger.results = None
     yield Danger()
     Danger.dsl = None
+    Danger.results = None

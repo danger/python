@@ -9,9 +9,13 @@ from danger_python.danger import (
     Danger,
     DangerResults,
     Violation,
+    fail,
     load_dsl,
+    markdown,
+    message,
     serialize_results,
     serialize_violation,
+    warn,
 )
 from tests.fixtures.danger import danger_input_file_fixture
 
@@ -91,3 +95,63 @@ def test_danger_parses_input(danger):
     assert danger.git.modified_files == ["first_file.py", "module/second_file.py"]
     assert danger.git.created_files == ["new_file.py"]
     assert danger.git.deleted_files == ["file_to_delete.py"]
+
+
+@pytest.mark.usefixtures("danger")
+def test_message_method_appends_message_to_results():
+    """
+    Test that message method appends a message to results.
+    """
+    message("Hey, this is great!")
+    message("This file is too big", "big_file.py", 2049)
+
+    assert len(Danger.results.messages) == 2
+    assert Danger.results.messages[0] == Violation(message="Hey, this is great!")
+    assert Danger.results.messages[1] == Violation(
+        message="This file is too big", file_name="big_file.py", line=2049
+    )
+
+
+@pytest.mark.usefixtures("danger")
+def test_markdown_method_appends_markdown_to_results():
+    """
+    Test that markdown method appends a message to results.
+    """
+    markdown("Markdown #1")
+    markdown("Markdown #2", "README.md", 1)
+
+    assert len(Danger.results.markdowns) == 2
+    assert Danger.results.markdowns[0] == Violation(message="Markdown #1")
+    assert Danger.results.markdowns[1] == Violation(
+        message="Markdown #2", file_name="README.md", line=1
+    )
+
+
+@pytest.mark.usefixtures("danger")
+def test_warn_method_appends_warning_to_results():
+    """
+    Test that warn method appends a warning to results.
+    """
+    warn("Possible memory leak")
+    warn("This method is deprecated", "deprecated.py", 29)
+
+    assert len(Danger.results.warnings) == 2
+    assert Danger.results.warnings[0] == Violation(message="Possible memory leak")
+    assert Danger.results.warnings[1] == Violation(
+        message="This method is deprecated", file_name="deprecated.py", line=29
+    )
+
+
+@pytest.mark.usefixtures("danger")
+def test_fail_method_appends_failure_to_results():
+    """
+    Test that fail method appends a failure to results.
+    """
+    fail("Division by zero")
+    fail("This crashes due to invalid shoe size", "shoes.py", 99)
+
+    assert len(Danger.results.fails) == 2
+    assert Danger.results.fails[0] == Violation(message="Division by zero")
+    assert Danger.results.fails[1] == Violation(
+        message="This crashes due to invalid shoe size", file_name="shoes.py", line=99
+    )
