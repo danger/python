@@ -1,25 +1,57 @@
 # python
 
+Write your Dangerfiles in Python.
 
+### Requirements
 
-### Fixtures
+Running `danger-python` requires:
 
-Generating a fixture: 
+* Python 3.7 (tested under Python 3.7.5)
+* danger-js 9.2 (tested under danger-js 9.2.10)
+
+### Installation
+
+:warning: The script is currently work in progress. Installation requires:
+
+* Poetry 1.0.2
+
+In order to test the script please run the following commands:
 
 ```sh
 # install danger
-npm install -g danger
-# generate a JSON fixture of what danger-js will pass to the python
-danger pr https://github.com/microsoft/TypeScript/pull/34806 --json > fixtures/typescript-34806.json
+npm install -g dange
+# install poetry
+pip install poetry
+# install project dependencies
+poetry install
+# activate virtual environment
+poetry shell
+# run danger-python
+danger-python pr https://github.com/microsoft/TypeScript/pull/34806
 ```
 
-Then to work on the process
+### dangerfile.py
 
-```sh
-# Using a fixture
-cat fixtures/typescript-34806.json | python danger_runner.py
+You can choose between shorter untyped version of `dangerfile.py`:
 
-# Using Danger
-
-
+```python
+title = danger.github.pr.title
+markdown(title)
 ```
+
+Or more verbose typed version:
+
+```python
+from danger_python import Danger, markdown
+
+danger = Danger()
+title = danger.github.pr.title
+markdown(title)
+```
+
+### TODOs
+
+- [ ] Parse complete Danger DSL
+- [ ] Plugin infrastructure
+- [ ] Release the initial version of the package
+
