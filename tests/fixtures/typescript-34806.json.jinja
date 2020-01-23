@@ -1,26 +1,15 @@
 {
   "danger": {
     "git": {
-      "modified_files": [
-        "src/compiler/factory.ts",
-        "src/compiler/transformers/destructuring.ts",
-        "tests/baselines/reference/blockScopedBindingUsedBeforeDef.js",
-        "tests/baselines/reference/computedPropertiesInDestructuring1.js",
-        "tests/baselines/reference/computedPropertiesInDestructuring2.js",
-        "tests/baselines/reference/crashInGetTextOfComputedPropertyName.js",
-        "tests/baselines/reference/destructureComputedProperty.js",
-        "tests/baselines/reference/destructuredMaappedTypeIsNotImplicitlyAny.js",
-        "tests/baselines/reference/destructuringAssignment_private.js",
-        "tests/baselines/reference/destructuringControlFlow.js",
-        "tests/baselines/reference/genericObjectRest.js",
-        "tests/baselines/reference/lateBoundDestructuringImplicitAnyError.js"
-      ],
-      "created_files": [],
-      "deleted_files": [],
+      "modified_files": {{ modified_files|tojson }},
+      "created_files": {{ created_files|tojson }},
+      "deleted_files": {{ deleted_files|tojson }},
       "commits": [
         {
           "sha": "d3a433ae6416d2d79eaba9477dc1988de0f99db1",
-          "parents": ["554bd24734f95a4d82f43c01df1fefbfe1021a88"],
+          "parents": [
+            "554bd24734f95a4d82f43c01df1fefbfe1021a88"
+          ],
           "author": {
             "name": "Ron Buckton",
             "email": "rbuckton@chronicles.org",
@@ -80,7 +69,7 @@
         "milestone": null,
         "comments": 1,
         "created_at": "2019-10-29T19:09:48Z",
-        "updated_at": "2019-10-30T00:42:32Z",
+        "updated_at": "2019-12-16T22:57:28Z",
         "closed_at": "2019-10-30T00:42:31Z",
         "author_association": "MEMBER",
         "pull_request": {
@@ -145,7 +134,7 @@
         },
         "body": "This forces caching the destructured variable prior to evaluating non-literal-valued computed property names in a binding or assignment pattern. We only cache up front when we detect non-literal-valued computed property names so that we can avoid emitting excessive temporary variables.\r\n\r\nFixes #32305\r\n",
         "created_at": "2019-10-29T19:09:48Z",
-        "updated_at": "2019-10-30T00:42:32Z",
+        "updated_at": "2019-12-16T22:57:28Z",
         "closed_at": "2019-10-30T00:42:31Z",
         "merged_at": "2019-10-30T00:42:31Z",
         "merge_commit_sha": "87cc8c4af8fb2adcde0dfe92cb6f4703236b3291",
@@ -251,27 +240,27 @@
             "releases_url": "https://api.github.com/repos/microsoft/TypeScript/releases{/id}",
             "deployments_url": "https://api.github.com/repos/microsoft/TypeScript/deployments",
             "created_at": "2014-06-17T15:28:39Z",
-            "updated_at": "2019-10-30T18:25:55Z",
-            "pushed_at": "2019-10-30T18:28:28Z",
+            "updated_at": "2020-01-15T13:38:10Z",
+            "pushed_at": "2020-01-15T13:15:26Z",
             "git_url": "git://github.com/microsoft/TypeScript.git",
             "ssh_url": "git@github.com:microsoft/TypeScript.git",
             "clone_url": "https://github.com/microsoft/TypeScript.git",
             "svn_url": "https://github.com/microsoft/TypeScript",
             "homepage": "https://www.typescriptlang.org",
-            "size": 1177951,
-            "stargazers_count": 55211,
-            "watchers_count": 55211,
+            "size": 1219058,
+            "stargazers_count": 57277,
+            "watchers_count": 57277,
             "language": "TypeScript",
             "has_issues": true,
             "has_projects": true,
             "has_downloads": true,
             "has_wiki": true,
             "has_pages": false,
-            "forks_count": 7524,
+            "forks_count": 7782,
             "mirror_url": null,
             "archived": false,
             "disabled": false,
-            "open_issues_count": 3927,
+            "open_issues_count": 4307,
             "license": {
               "key": "apache-2.0",
               "name": "Apache License 2.0",
@@ -279,9 +268,9 @@
               "url": "https://api.github.com/licenses/apache-2.0",
               "node_id": "MDc6TGljZW5zZTI="
             },
-            "forks": 7524,
-            "open_issues": 3927,
-            "watchers": 55211,
+            "forks": 7782,
+            "open_issues": 4307,
+            "watchers": 57277,
             "default_branch": "master"
           }
         },
@@ -376,27 +365,27 @@
             "releases_url": "https://api.github.com/repos/microsoft/TypeScript/releases{/id}",
             "deployments_url": "https://api.github.com/repos/microsoft/TypeScript/deployments",
             "created_at": "2014-06-17T15:28:39Z",
-            "updated_at": "2019-10-30T18:25:55Z",
-            "pushed_at": "2019-10-30T18:28:28Z",
+            "updated_at": "2020-01-15T13:38:10Z",
+            "pushed_at": "2020-01-15T13:15:26Z",
             "git_url": "git://github.com/microsoft/TypeScript.git",
             "ssh_url": "git@github.com:microsoft/TypeScript.git",
             "clone_url": "https://github.com/microsoft/TypeScript.git",
             "svn_url": "https://github.com/microsoft/TypeScript",
             "homepage": "https://www.typescriptlang.org",
-            "size": 1177951,
-            "stargazers_count": 55211,
-            "watchers_count": 55211,
+            "size": 1219058,
+            "stargazers_count": 57277,
+            "watchers_count": 57277,
             "language": "TypeScript",
             "has_issues": true,
             "has_projects": true,
             "has_downloads": true,
             "has_wiki": true,
             "has_pages": false,
-            "forks_count": 7524,
+            "forks_count": 7782,
             "mirror_url": null,
             "archived": false,
             "disabled": false,
-            "open_issues_count": 3927,
+            "open_issues_count": 4307,
             "license": {
               "key": "apache-2.0",
               "name": "Apache License 2.0",
@@ -404,9 +393,9 @@
               "url": "https://api.github.com/licenses/apache-2.0",
               "node_id": "MDc6TGljZW5zZTI="
             },
-            "forks": 7524,
-            "open_issues": 3927,
-            "watchers": 55211,
+            "forks": 7782,
+            "open_issues": 4307,
+            "watchers": 57277,
             "default_branch": "master"
           }
         },
@@ -603,7 +592,7 @@
     },
     "settings": {
       "github": {
-        "accessToken": "NO_T...",
+        "accessToken": "99ba...",
         "additionalHeaders": {}
       },
       "cliArgs": {}
