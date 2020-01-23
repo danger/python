@@ -19,7 +19,7 @@ In order to test the script please run the following commands:
 
 ```sh
 # install danger
-npm install -g dange
+npm install -g danger
 # install poetry
 pip install poetry
 # install project dependencies
