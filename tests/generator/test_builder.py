@@ -30,8 +30,10 @@ def test_type_builder_builds_correct_model_for_simple_class():
     assert build_result[0] == ClassDefinition(
         name="TestClass",
         properties=[
-            PropertyDefinition(name="string_value", value_type="str"),
-            PropertyDefinition(name="boolean_value", value_type="bool"),
+            PropertyDefinition(name="string_value", value_type="str", known_type=True),
+            PropertyDefinition(
+                name="boolean_value", value_type="bool", known_type=True
+            ),
         ],
     )
 
@@ -60,15 +62,21 @@ def test_type_builder_handles_reference_types():
     assert len(build_result) == 3
     assert build_result[0] == ClassDefinition(
         name="ObjectC",
-        properties=[PropertyDefinition(name="int_value", value_type="int")],
+        properties=[
+            PropertyDefinition(name="int_value", value_type="int", known_type=True)
+        ],
     )
     assert build_result[1] == ClassDefinition(
         name="ObjectB",
-        properties=[PropertyDefinition(name="ref_c", value_type="ObjectC")],
+        properties=[
+            PropertyDefinition(name="ref_c", value_type="ObjectC", known_type=False)
+        ],
     )
     assert build_result[2] == ClassDefinition(
         name="ObjectA",
-        properties=[PropertyDefinition(name="ref_b", value_type="ObjectB")],
+        properties=[
+            PropertyDefinition(name="ref_b", value_type="ObjectB", known_type=False)
+        ],
     )
 
 
@@ -100,8 +108,12 @@ def test_type_builder_handles_enums():
     assert build_result[1] == ClassDefinition(
         name="ClassWithEnums",
         properties=[
-            PropertyDefinition(name="string_value", value_type="str"),
-            PropertyDefinition(name="enum_value", value_type="ClassWithEnumsEnumValue"),
+            PropertyDefinition(name="string_value", value_type="str", known_type=True),
+            PropertyDefinition(
+                name="enum_value",
+                value_type="ClassWithEnumsEnumValue",
+                known_type=False,
+            ),
         ],
     )
 
@@ -139,9 +151,11 @@ def test_type_builder_handles_nested_properties():
     assert build_result[1] == ClassDefinition(
         name="ClassWithNestedClassNestedValue",
         properties=[
-            PropertyDefinition(name="string_value", value_type="str"),
+            PropertyDefinition(name="string_value", value_type="str", known_type=True),
             PropertyDefinition(
-                name="enum_value", value_type="ClassWithNestedClassNestedValueEnumValue"
+                name="enum_value",
+                value_type="ClassWithNestedClassNestedValueEnumValue",
+                known_type=False,
             ),
         ],
     )
@@ -149,7 +163,9 @@ def test_type_builder_handles_nested_properties():
         name="ClassWithNestedClass",
         properties=[
             PropertyDefinition(
-                name="nested_value", value_type="ClassWithNestedClassNestedValue"
+                name="nested_value",
+                value_type="ClassWithNestedClassNestedValue",
+                known_type=False,
             ),
         ],
     )
