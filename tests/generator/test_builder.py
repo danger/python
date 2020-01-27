@@ -1,8 +1,13 @@
 from danger_python.generator.builder import build_types
-from danger_python.generator.models import (ClassDefinition, EnumDefinition,
-                                            PropertyDefinition, SchemaEnum,
-                                            SchemaObject, SchemaReference,
-                                            SchemaValue)
+from danger_python.generator.models import (
+    ClassDefinition,
+    EnumDefinition,
+    PropertyDefinition,
+    SchemaEnum,
+    SchemaObject,
+    SchemaReference,
+    SchemaValue,
+)
 
 
 def test_type_builder_builds_correct_model_for_simple_class():
@@ -13,8 +18,8 @@ def test_type_builder_builds_correct_model_for_simple_class():
         SchemaObject(
             name="TestClass",
             properties=[
-                SchemaValue(name="string_value", value_type="string"),
-                SchemaValue(name="boolean_value", value_type="boolean"),
+                SchemaValue(name="stringValue", value_type="string"),
+                SchemaValue(name="booleanValue", value_type="boolean"),
             ],
         )
     ]
@@ -38,15 +43,15 @@ def test_type_builder_handles_reference_types():
     schema = [
         SchemaObject(
             name="ObjectA",
-            properties=[SchemaReference(name="ref_b", reference="ObjectB")],
+            properties=[SchemaReference(name="refB", reference="ObjectB")],
         ),
         SchemaObject(
             name="ObjectB",
-            properties=[SchemaReference(name="ref_c", reference="ObjectC")],
+            properties=[SchemaReference(name="refC", reference="ObjectC")],
         ),
         SchemaObject(
             name="ObjectC",
-            properties=[SchemaValue(name="int_value", value_type="number")],
+            properties=[SchemaValue(name="intValue", value_type="number")],
         ),
     ]
 
@@ -77,7 +82,7 @@ def test_type_builder_handles_enums():
             properties=[
                 SchemaValue(name="string_value", value_type="string"),
                 SchemaEnum(
-                    name="enum_value",
+                    name="enumValue",
                     value_type="string",
                     values=["first", "second", "third"],
                 ),

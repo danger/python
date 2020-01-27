@@ -56,11 +56,15 @@ def _build_property(
 
 def _property_from_value(value: SchemaValue) -> PropertyDefinition:
     mappings = {"string": "str", "boolean": "bool", "number": "int"}
-    return PropertyDefinition(name=value.name, value_type=mappings[value.value_type])
+    return PropertyDefinition(
+        name=stringcase.snakecase(value.name), value_type=mappings[value.value_type]
+    )
 
 
 def _property_from_reference(reference: SchemaReference) -> PropertyDefinition:
-    return PropertyDefinition(name=reference.name, value_type=reference.reference)
+    return PropertyDefinition(
+        name=stringcase.snakecase(reference.name), value_type=reference.reference
+    )
 
 
 def _property_from_enum(
@@ -70,6 +74,6 @@ def _property_from_enum(
     values = list(map(lambda v: (stringcase.constcase(v), v), enum.values))
 
     return (
-        PropertyDefinition(name=enum.name, value_type=type_name),
+        PropertyDefinition(name=stringcase.snakecase(enum.name), value_type=type_name),
         EnumDefinition(name=type_name, values=values),
     )
