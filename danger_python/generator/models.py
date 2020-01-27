@@ -35,3 +35,15 @@ class SchemaArray(SchemaItem):
 @dataclass
 class SchemaAllOf(SchemaItem):
     all_of: [SchemaItem]
+
+
+@dataclass
+class PropertyDefinition:
+    name: str
+    value_type: str
+
+
+@dataclass
+class ClassDefinition:
+    name: str
+    properties: List[PropertyDefinition] = field(default_factory=list)
