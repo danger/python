@@ -35,6 +35,7 @@ def test_type_builder_builds_correct_model_for_simple_class():
                 name="boolean_value", value_type="bool", known_type=True
             ),
         ],
+        depends_on=set(),
     )
 
 
@@ -65,18 +66,21 @@ def test_type_builder_handles_reference_types():
         properties=[
             PropertyDefinition(name="int_value", value_type="int", known_type=True)
         ],
+        depends_on=set(),
     )
     assert build_result[1] == ClassDefinition(
         name="ObjectB",
         properties=[
             PropertyDefinition(name="ref_c", value_type="ObjectC", known_type=False)
         ],
+        depends_on={"ObjectC"},
     )
     assert build_result[2] == ClassDefinition(
         name="ObjectA",
         properties=[
             PropertyDefinition(name="ref_b", value_type="ObjectB", known_type=False)
         ],
+        depends_on={"ObjectB"},
     )
 
 
@@ -104,6 +108,7 @@ def test_type_builder_handles_enums():
     assert build_result[0] == EnumDefinition(
         name="ClassWithEnumsEnumValue",
         values=[("FIRST", "first"), ("SECOND", "second"), ("THIRD", "third")],
+        depends_on=set(),
     )
     assert build_result[1] == ClassDefinition(
         name="ClassWithEnums",
@@ -115,6 +120,7 @@ def test_type_builder_handles_enums():
                 known_type=False,
             ),
         ],
+        depends_on={"ClassWithEnumsEnumValue"},
     )
 
 
@@ -147,6 +153,7 @@ def test_type_builder_handles_nested_properties():
     assert build_result[0] == EnumDefinition(
         name="ClassWithNestedClassNestedValueEnumValue",
         values=[("HEY", "hey"), ("NEW", "new"), ("VALUE", "value")],
+        depends_on=set(),
     )
     assert build_result[1] == ClassDefinition(
         name="ClassWithNestedClassNestedValue",
@@ -158,6 +165,7 @@ def test_type_builder_handles_nested_properties():
                 known_type=False,
             ),
         ],
+        depends_on={"ClassWithNestedClassNestedValueEnumValue"},
     )
     assert build_result[2] == ClassDefinition(
         name="ClassWithNestedClass",
@@ -168,4 +176,5 @@ def test_type_builder_handles_nested_properties():
                 known_type=False,
             ),
         ],
+        depends_on={"ClassWithNestedClassNestedValue"},
     )

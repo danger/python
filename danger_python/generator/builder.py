@@ -18,10 +18,6 @@ from .models import (
 )
 
 
-def unzip(iterable: Iterable[Any]) -> Iterable[Any]:
-    return zip(*iterable)
-
-
 def build_types(schema: List[SchemaObject]) -> List[TypeDefinition]:
     built_types = [(type, refs) for s in schema for type, refs in _build_types(s)]
     types_by_names = {type.name: type for type, _ in built_types}
@@ -35,15 +31,16 @@ def _build_types(
     object: SchemaObject, prefix: Optional[str] = None
 ) -> List[Tuple[TypeDefinition, Set[str]]]:
     class_name = _nested_object_name(object, prefix)
-    props, refs = unzip(
-        (_build_property(prop, class_name) for prop in object.properties)
-    )
-    definition = ClassDefinition(name=class_name, properties=list(props))
-    references = set(
-        map(lambda p: p.value_type, filter(lambda p: not p.known_type, props))
+    properties = [_build_property(p, class_name) for p in object.properties]
+    definition = ClassDefinition(
+        name=class_name,
+        properties=properties,
+        depends_on=set(
+            map(lambda p: p.value_type, filter(lambda p: not p.known_type, properties))
+        ),
     )
 
-    types = [(definition, references)]
+    types = [(definition, definition.depends_on)]
     types.extend(_build_nested_enums(object, class_name))
     types.extend(_build_nested_objects(object, class_name))
 
@@ -56,7 +53,7 @@ def _build_nested_enums(
     def build_enum(schema: SchemaEnum) -> EnumDefinition:
         type_name = _nested_object_name(schema, parent_class_name)
         values = list(map(lambda v: (stringcase.constcase(v), v), schema.values))
-        return EnumDefinition(name=type_name, values=values)
+        return EnumDefinition(name=type_name, values=values, depends_on=set())
 
     return map(
         lambda e: (e, set()),
@@ -75,17 +72,13 @@ def _build_nested_objects(
     )
 
 
-def _build_property(
-    item: SchemaItem, class_name: str
-) -> (PropertyDefinition, Optional[str]):
+def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinition:
     if isinstance(item, SchemaReference):
-        property = _property(item.name, item.reference, False)
-        return (property, property.value_type)
+        return _property(item.name, item.reference, False)
     if isinstance(item, SchemaEnum) or isinstance(item, SchemaObject):
-        property = _property_from_object(item, class_name)
-        return (property, property.value_type)
+        return _property_from_object(item, parent_class_name)
 
-    return (_property_from_value(item), None)
+    return _property_from_value(item)
 
 
 def _property_from_value(value: SchemaValue) -> PropertyDefinition:

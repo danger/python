@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, List, Tuple
+from typing import Any, List, Set, Tuple
 
 
 @dataclass
@@ -47,6 +47,7 @@ class PropertyDefinition:
 @dataclass
 class TypeDefinition:
     name: str
+    depends_on: Set["TypeDefinition"]
 
 
 @dataclass
