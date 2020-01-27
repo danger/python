@@ -1,18 +1,13 @@
-from danger_python.generator.builder import build_classes
-from danger_python.generator.models import (
-    ClassDefinition,
-    EnumDefinition,
-    PropertyDefinition,
-    SchemaEnum,
-    SchemaObject,
-    SchemaReference,
-    SchemaValue,
-)
+from danger_python.generator.builder import build_types
+from danger_python.generator.models import (ClassDefinition, EnumDefinition,
+                                            PropertyDefinition, SchemaEnum,
+                                            SchemaObject, SchemaReference,
+                                            SchemaValue)
 
 
-def test_class_builder_builds_correct_model_for_simple_class():
+def test_type_builder_builds_correct_model_for_simple_class():
     """
-    Test class builder builds correct model for simple class.
+    Test type builder builds correct model for simple class.
     """
     schema = [
         SchemaObject(
@@ -24,7 +19,7 @@ def test_class_builder_builds_correct_model_for_simple_class():
         )
     ]
 
-    build_result = build_classes(schema)
+    build_result = build_types(schema)
 
     assert len(build_result) == 1
     assert build_result[0] == ClassDefinition(
@@ -36,9 +31,9 @@ def test_class_builder_builds_correct_model_for_simple_class():
     )
 
 
-def test_class_builder_handles_reference_types():
+def test_type_builder_handles_reference_types():
     """
-    Test class builder handles reference types correctly.
+    Test type builder handles reference types correctly.
     """
     schema = [
         SchemaObject(
@@ -55,7 +50,7 @@ def test_class_builder_handles_reference_types():
         ),
     ]
 
-    build_result = build_classes(schema)
+    build_result = build_types(schema)
 
     assert len(build_result) == 3
     assert build_result[0] == ClassDefinition(
@@ -72,9 +67,9 @@ def test_class_builder_handles_reference_types():
     )
 
 
-def test_class_builder_handles_enums():
+def test_type_builder_handles_enums():
     """
-    Test class builder handles enums correctly.
+    Test type builder handles enums correctly.
     """
     schema = [
         SchemaObject(
@@ -90,7 +85,7 @@ def test_class_builder_handles_enums():
         )
     ]
 
-    build_result = build_classes(schema)
+    build_result = build_types(schema)
 
     assert len(build_result) == 2
     assert build_result[0] == EnumDefinition(

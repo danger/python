@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from itertools import chain
-from typing import Any, Dict, Iterable, List, Optional, Set
+from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 import stringcase
 from toposort import toposort_flatten
@@ -22,47 +22,24 @@ def unzip(iterable: Iterable[Any]) -> Iterable[Any]:
     return zip(*iterable)
 
 
-def build_classes(schema: List[SchemaObject]) -> List[TypeDefinition]:
-    classes, references, enums = unzip(map(_build_class, schema))
-    references_by_names = _group_references_by_names(classes, references)
-    types_by_names = _group_types_by_names(classes, enums)
-    references_by_type_names = {
-        type_name: references_by_names.get(type_name, set())
-        for type_name in types_by_names
-    }
-
+def build_types(schema: List[SchemaObject]) -> List[TypeDefinition]:
+    built_types = [(type, refs) for s in schema for type, refs in _build_types(s)]
+    types_by_names = {type.name: type for type, _ in built_types}
+    references_by_type_names = {type.name: refs for type, refs in built_types}
     sorted_types = toposort_flatten(references_by_type_names)
+
     return list(map(lambda t: types_by_names[t], sorted_types))
 
 
-def _group_references_by_names(
-    classes: List[ClassDefinition], references: List[List[str]]
-) -> Dict[str, Set[str]]:
-    return {_class.name: set(refs) for _class, refs in zip(classes, references)}
-
-
-def _group_types_by_names(
-    classes: List[ClassDefinition], enums: List[List[EnumDefinition]]
-) -> Dict[str, TypeDefinition]:
-    class_names = map(lambda _class: (_class.name, _class), classes)
-    enum_names = map(
-        lambda enum: (enum.name, enum), [enum for inner in enums for enum in inner]
+def _build_types(object: SchemaObject) -> List[Tuple[TypeDefinition, Set[str]]]:
+    props, refs, enums = unzip(
+        (_build_property(prop, object) for prop in object.properties)
     )
-    return OrderedDict(chain(class_names, enum_names))
+    definition = ClassDefinition(name=object.name, properties=list(props))
+    types = [(definition, set(filter(None, refs)))]
+    types.extend(map(lambda enum: (enum, set()), filter(None, enums)))
 
-
-def _build_class(
-    object: SchemaObject,
-) -> (ClassDefinition, List[str], List[EnumDefinition]):
-    properties, references, enums = unzip(
-        (_build_property(property, object) for property in object.properties)
-    )
-
-    return (
-        ClassDefinition(name=object.name, properties=list(properties)),
-        list(filter(None, references)),
-        list(filter(None, enums)),
-    )
+    return types
 
 
 def _build_property(
