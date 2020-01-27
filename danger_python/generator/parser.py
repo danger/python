@@ -71,8 +71,8 @@ def _parse_array(name: str, json: Dict[str, Any]) -> Optional[SchemaArray]:
 
 
 def _parse_all_of(name: str, json: Dict[str, Any]) -> Optional[SchemaAllOf]:
-    all_of = json.get("allOf", None)
-    if all_of:
-        return SchemaAllOf(name=name, all_of=[_parse_item(name, i) for i in all_of])
+    if json.get("allOf", None):
+        items = [_parse_item(name, item) for item in json["allOf"]]
+        return SchemaAllOf(name=name, all_of=items)
 
     return None
