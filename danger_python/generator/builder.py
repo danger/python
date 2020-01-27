@@ -19,17 +19,17 @@ from .models import (
 
 
 def build_types(schema: List[SchemaObject]) -> List[TypeDefinition]:
-    built_types = [(type, refs) for s in schema for type, refs in _build_types(s)]
-    types_by_names = {type.name: type for type, _ in built_types}
-    references_by_type_names = {type.name: refs for type, refs in built_types}
+    built_types = list(chain.from_iterable(map(_build_types_for_object, schema)))
+    types_by_names = {type.name: type for type in built_types}
+    references_by_type_names = {type.name: type.depends_on for type in built_types}
     sorted_types = toposort_flatten(references_by_type_names)
 
     return list(map(lambda t: types_by_names[t], sorted_types))
 
 
-def _build_types(
+def _build_types_for_object(
     object: SchemaObject, prefix: Optional[str] = None
-) -> List[Tuple[TypeDefinition, Set[str]]]:
+) -> List[TypeDefinition]:
     class_name = _nested_object_name(object, prefix)
     properties = [_build_property(p, class_name) for p in object.properties]
     definition = ClassDefinition(
@@ -40,7 +40,7 @@ def _build_types(
         ),
     )
 
-    types = [(definition, definition.depends_on)]
+    types = [definition]
     types.extend(_build_nested_enums(object, class_name))
     types.extend(_build_nested_objects(object, class_name))
 
@@ -49,24 +49,23 @@ def _build_types(
 
 def _build_nested_enums(
     object: SchemaObject, parent_class_name: str
-) -> Iterable[Tuple[TypeDefinition, Set[str]]]:
+) -> Iterable[TypeDefinition]:
     def build_enum(schema: SchemaEnum) -> EnumDefinition:
         type_name = _nested_object_name(schema, parent_class_name)
         values = list(map(lambda v: (stringcase.constcase(v), v), schema.values))
         return EnumDefinition(name=type_name, values=values, depends_on=set())
 
     return map(
-        lambda e: (e, set()),
-        map(build_enum, filter(lambda p: isinstance(p, SchemaEnum), object.properties)),
+        build_enum, filter(lambda p: isinstance(p, SchemaEnum), object.properties)
     )
 
 
 def _build_nested_objects(
     object: SchemaObject, parent_class_name: str
-) -> Iterable[Tuple[TypeDefinition, Set[str]]]:
+) -> Iterable[TypeDefinition]:
     return chain.from_iterable(
         map(
-            lambda o: _build_types(o, parent_class_name),
+            lambda o: _build_types_for_object(o, parent_class_name),
             filter(lambda p: isinstance(p, SchemaObject), object.properties),
         )
     )
