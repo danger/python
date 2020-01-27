@@ -1,5 +1,7 @@
 from typing import Any, Iterable, List, Optional
 
+from toposort import toposort_flatten
+
 from .models import (
     ClassDefinition,
     PropertyDefinition,
@@ -16,17 +18,12 @@ def unzip(iterable: Iterable[Any]) -> Iterable[Any]:
 
 def build_classes(schema: List[SchemaObject]) -> List[ClassDefinition]:
     built_classes = list(_build_class(schema_object) for schema_object in schema)
-    resolved = []
-    resolved_names = set()
+    classes_by_names = {_class.name: _class for _class, _ in built_classes}
+    sorted_classes = toposort_flatten(
+        {_class.name: set(reference) for _class, reference in built_classes}
+    )
 
-    while len(resolved) != len(built_classes):
-        unresolved = filter(lambda b: b[0].name not in resolved_names, built_classes)
-        for (_class, references) in unresolved:
-            if all(map(lambda r: r in resolved_names, references)):
-                resolved_names.add(_class.name)
-                resolved.append(_class)
-
-    return resolved
+    return list(map(lambda n: classes_by_names[n], sorted_classes))
 
 
 def _build_class(object: SchemaObject) -> (ClassDefinition, List[str]):
@@ -41,10 +38,10 @@ def _build_class(object: SchemaObject) -> (ClassDefinition, List[str]):
 
 
 def _build_property(item: SchemaItem) -> (PropertyDefinition, Optional[str]):
-    if isinstance(item, SchemaValue):
-        return (_property_from_value(item), None)
     if isinstance(item, SchemaReference):
         return (_property_from_reference(item), item.reference)
+
+    return (_property_from_value(item), None)
 
 
 def _property_from_value(value: SchemaValue) -> PropertyDefinition:
