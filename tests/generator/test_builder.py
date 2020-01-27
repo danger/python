@@ -104,3 +104,52 @@ def test_type_builder_handles_enums():
             PropertyDefinition(name="enum_value", value_type="ClassWithEnumsEnumValue"),
         ],
     )
+
+
+def test_type_builder_handles_nested_properties():
+    """
+    Test type builder handles nested properties correctly.
+    """
+    schema = [
+        SchemaObject(
+            name="ClassWithNestedClass",
+            properties=[
+                SchemaObject(
+                    name="nestedValue",
+                    properties=[
+                        SchemaValue(name="string_value", value_type="string"),
+                        SchemaEnum(
+                            name="enum_value",
+                            value_type="string",
+                            values=["hey", "new", "value"],
+                        ),
+                    ],
+                ),
+            ],
+        )
+    ]
+
+    build_result = build_types(schema)
+
+    assert len(build_result) == 3
+    assert build_result[0] == EnumDefinition(
+        name="ClassWithNestedClassNestedValueEnumValue",
+        values=[("HEY", "hey"), ("NEW", "new"), ("VALUE", "value")],
+    )
+    assert build_result[1] == ClassDefinition(
+        name="ClassWithNestedClassNestedValue",
+        properties=[
+            PropertyDefinition(name="string_value", value_type="str"),
+            PropertyDefinition(
+                name="enum_value", value_type="ClassWithNestedClassNestedValueEnumValue"
+            ),
+        ],
+    )
+    assert build_result[2] == ClassDefinition(
+        name="ClassWithNestedClass",
+        properties=[
+            PropertyDefinition(
+                name="nested_value", value_type="ClassWithNestedClassNestedValue"
+            ),
+        ],
+    )
