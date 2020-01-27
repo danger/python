@@ -27,6 +27,7 @@ pylint = "^2.4.4"
 jinja2 = "^2.10.3"
 pyfakefs = "^3.7.1"
 toposort = "^1.5"
+stringcase = "^1.2.0"
 
 [tool.poetry.scripts]
 danger-python = 'danger_python.cli:cli'

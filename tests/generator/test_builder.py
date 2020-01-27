@@ -1,7 +1,13 @@
 from danger_python.generator.builder import build_classes
-from danger_python.generator.models import (ClassDefinition,
-                                            PropertyDefinition, SchemaObject,
-                                            SchemaReference, SchemaValue)
+from danger_python.generator.models import (
+    ClassDefinition,
+    EnumDefinition,
+    PropertyDefinition,
+    SchemaEnum,
+    SchemaObject,
+    SchemaReference,
+    SchemaValue,
+)
 
 
 def test_class_builder_builds_correct_model_for_simple_class():
@@ -63,4 +69,38 @@ def test_class_builder_handles_reference_types():
     assert build_result[2] == ClassDefinition(
         name="ObjectA",
         properties=[PropertyDefinition(name="ref_b", value_type="ObjectB")],
+    )
+
+
+def test_class_builder_handles_enums():
+    """
+    Test class builder handles enums correctly.
+    """
+    schema = [
+        SchemaObject(
+            name="ClassWithEnums",
+            properties=[
+                SchemaValue(name="string_value", value_type="string"),
+                SchemaEnum(
+                    name="enum_value",
+                    value_type="string",
+                    values=["first", "second", "third"],
+                ),
+            ],
+        )
+    ]
+
+    build_result = build_classes(schema)
+
+    assert len(build_result) == 2
+    assert build_result[0] == EnumDefinition(
+        name="ClassWithEnumsEnumValue",
+        values=[("FIRST", "first"), ("SECOND", "second"), ("THIRD", "third")],
+    )
+    assert build_result[1] == ClassDefinition(
+        name="ClassWithEnums",
+        properties=[
+            PropertyDefinition(name="string_value", value_type="str"),
+            PropertyDefinition(name="enum_value", value_type="ClassWithEnumsEnumValue"),
+        ],
     )

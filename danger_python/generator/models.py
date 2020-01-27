@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Any, List
+from typing import Any, List, Tuple
 
 
 @dataclass
@@ -44,6 +44,15 @@ class PropertyDefinition:
 
 
 @dataclass
-class ClassDefinition:
+class TypeDefinition:
     name: str
+
+
+@dataclass
+class ClassDefinition(TypeDefinition):
     properties: List[PropertyDefinition] = field(default_factory=list)
+
+
+@dataclass
+class EnumDefinition(TypeDefinition):
+    values: List[Tuple[str, str]] = field(default_factory=list)
