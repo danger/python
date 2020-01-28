@@ -5,10 +5,10 @@ from enum import Enum
 {% if 'EnumDefinition' in type.__class__.__name__ %}
 class {{ type.name }}(Enum):
     {% for key, value in type.values %}{{ key }} = "{{ value }}"
-    {% endfor %}
+    {% else %}pass{% endfor %}
 {% elif 'ClassDefinition' in type.__class__.__name__ %}@dataclass
 class {{ type.name }}:
     {% for property in type.properties %}{{ property.name }}: {{ property.value_type }}
-    {% endfor %}
+    {% else %}pass{% endfor %}
 {% endif %}
 {% endfor %}
