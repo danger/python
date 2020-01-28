@@ -1,0 +1,14 @@
+from dataclasses import dataclass
+from enum import Enum
+
+{% for type in types %}
+{% if 'EnumDefinition' in type.__class__.__name__ %}
+class {{ type.name }}(Enum):
+    {% for key, value in type.values %}{{ key }} = "{{ value }}"
+    {% endfor %}
+{% elif 'ClassDefinition' in type.__class__.__name__ %}@dataclass
+class {{ type.name }}:
+    {% for property in type.properties %}{{ property.name }}: {{ property.value_type }}
+    {% endfor %}
+{% endif %}
+{% endfor %}
