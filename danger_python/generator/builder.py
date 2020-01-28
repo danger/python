@@ -47,8 +47,11 @@ def _build_types_for_item(
 def _build_types_for_enum(
     schema: SchemaEnum, prefix: Optional[str] = None
 ) -> List[TypeDefinition]:
+    def format_case(enum_case: str) -> str:
+        return stringcase.constcase(enum_case.lower())
+
     type_name = _nested_object_name(schema, prefix)
-    values = list(map(lambda v: (stringcase.constcase(v), v), schema.values))
+    values = list(map(lambda v: (format_case(v), v), schema.values))
     return [EnumDefinition(name=type_name, values=values, depends_on=set())]
 
 

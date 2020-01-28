@@ -349,3 +349,29 @@ def test_type_builder_handles_top_level_enumerations():
     assert build_result[0] == EnumDefinition(
         name="TestEnum", values=[("A", "a"), ("B", "b"), ("C", "c")], depends_on=set(),
     )
+
+
+def test_type_builder_handles_enumerations_with_uppercase_values():
+    """
+    Test type builder handles enumerations with uppercase values.
+    """
+    schema = [
+        SchemaEnum(
+            name="UppercaseEnum",
+            value_type="string",
+            values=["HELLO_WORLD", "UPPERCASE_VALUE", "SOME_VALUE"],
+        ),
+    ]
+
+    build_result = build_types(schema)
+
+    assert len(build_result) == 1
+    assert build_result[0] == EnumDefinition(
+        name="UppercaseEnum",
+        values=[
+            ("HELLO_WORLD", "HELLO_WORLD"),
+            ("UPPERCASE_VALUE", "UPPERCASE_VALUE"),
+            ("SOME_VALUE", "SOME_VALUE"),
+        ],
+        depends_on=set(),
+    )
