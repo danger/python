@@ -323,3 +323,20 @@ def test_type_builder_handles_arrays():
         ],
         depends_on={"ClassWithPropertyArrayPropertiesArray"},
     )
+
+
+def test_type_builder_handles_top_level_enumerations():
+    """
+    Test type builder handles top-level enumerations.
+    """
+    schema = [
+        SchemaEnum(name="TestEnum", value_type="string", values=["a", "b", "c"]),
+    ]
+
+    build_result = build_types(schema)
+
+    assert len(build_result) == 1
+    assert build_result[0] == EnumDefinition(
+        name="TestEnum", values=[("A", "a"), ("B", "b"), ("C", "c")], depends_on=set(),
+    )
+

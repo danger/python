@@ -20,8 +20,8 @@ from .models import (
 )
 
 
-def build_types(schema: List[SchemaObject]) -> List[TypeDefinition]:
-    built_types = list(chain.from_iterable(map(_build_types_for_object, schema)))
+def build_types(schema: List[SchemaItem]) -> List[TypeDefinition]:
+    built_types = list(chain.from_iterable(map(_build_types_for_item, schema)))
     types_by_names = {type.name: type for type in built_types}
     references_by_type_names = {type.name: type.depends_on for type in built_types}
     sorted_types = toposort_flatten(references_by_type_names)
@@ -33,40 +33,42 @@ def _normalize_typename(typename: str) -> str:
     return typename[5:-1] if typename.startswith("List[") else typename
 
 
-def _build_types_for_object(
+def _build_types_for_item(
+    item: SchemaItem, prefix: Optional[str] = None
+) -> List[TypeDefinition]:
+    if isinstance(item, SchemaEnum):
+        return _build_types_for_enum(item, prefix)
+    elif isinstance(item, SchemaObject):
+        return _build_types_for_class(item, prefix)
+    else:
+        return []
+
+
+def _build_types_for_enum(
+    schema: SchemaEnum, prefix: Optional[str] = None
+) -> List[TypeDefinition]:
+    type_name = _nested_object_name(schema, prefix)
+    values = list(map(lambda v: (stringcase.constcase(v), v), schema.values))
+    return [EnumDefinition(name=type_name, values=values, depends_on=set())]
+
+
+def _build_types_for_class(
     object: SchemaObject, prefix: Optional[str] = None
 ) -> List[TypeDefinition]:
     class_name = _nested_object_name(object, prefix)
     properties = [_build_property(p, class_name) for p in object.properties]
+    depends_on = map(
+        lambda p: _normalize_typename(p.value_type),
+        filter(lambda p: not p.known_type, properties),
+    )
     definition = ClassDefinition(
-        name=class_name,
-        properties=properties,
-        depends_on=set(
-            map(
-                lambda p: _normalize_typename(p.value_type),
-                filter(lambda p: not p.known_type, properties),
-            )
-        ),
+        name=class_name, properties=properties, depends_on=set(depends_on)
     )
 
     types = [definition]
-    types.extend(_build_nested_enums(object, class_name))
     types.extend(_build_nested_objects(object, class_name))
 
     return types
-
-
-def _build_nested_enums(
-    object: SchemaObject, parent_class_name: str
-) -> Iterable[TypeDefinition]:
-    def build_enum(schema: SchemaEnum) -> EnumDefinition:
-        type_name = _nested_object_name(schema, parent_class_name)
-        values = list(map(lambda v: (stringcase.constcase(v), v), schema.values))
-        return EnumDefinition(name=type_name, values=values, depends_on=set())
-
-    return map(
-        build_enum, filter(lambda p: isinstance(p, SchemaEnum), object.properties)
-    )
 
 
 def _build_nested_objects(
@@ -74,11 +76,8 @@ def _build_nested_objects(
 ) -> Iterable[TypeDefinition]:
     return chain.from_iterable(
         map(
-            lambda o: _build_types_for_object(o, parent_class_name),
-            filter(
-                lambda p: isinstance(p, SchemaObject),
-                map(_item_for_nesting, object.properties),
-            ),
+            lambda p: _build_types_for_item(_item_for_nesting(p), parent_class_name),
+            object.properties,
         )
     )
 
