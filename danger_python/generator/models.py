@@ -47,7 +47,7 @@ class PropertyDefinition:
 @dataclass
 class TypeDefinition:
     name: str
-    depends_on: Set["TypeDefinition"]
+    depends_on: Set["TypeDefinition"] = field(default_factory=set)
 
 
 @dataclass
