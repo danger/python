@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import Any, List, Set, Tuple
+from dataclasses import InitVar, dataclass, field
+from typing import Any, List, Optional, Set, Tuple
 
 
 @dataclass
@@ -14,7 +14,12 @@ class SchemaObject(SchemaItem):
 
 @dataclass
 class SchemaValue(SchemaItem):
-    value_type: str
+    value_types: List[str] = field(default_factory=list)
+    value_type: InitVar[str] = None
+
+    def __post_init__(self, value_type: Optional[str]):
+        if value_type:
+            self.value_types = [value_type]
 
 
 @dataclass

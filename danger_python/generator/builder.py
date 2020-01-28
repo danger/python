@@ -109,7 +109,7 @@ def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinit
 
 def _property_from_value(value: SchemaValue) -> PropertyDefinition:
     mappings = {"string": "str", "boolean": "bool", "number": "int"}
-    return _property(value.name, mappings[value.value_type], True)
+    return _property(value.name, mappings[value.value_types[0]], True)
 
 
 def _property_from_object(object: SchemaObject, parent_name: str) -> PropertyDefinition:

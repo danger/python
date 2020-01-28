@@ -44,8 +44,10 @@ def _parse_object(name: str, json: Dict[str, Any]) -> Optional[SchemaObject]:
 
 
 def _parse_value(name: str, json: Dict[str, Any]) -> Optional[SchemaValue]:
-    if json.get("type", None):
-        return SchemaValue(name=name, value_type=json["type"])
+    value_types = json.get("type", None)
+    if value_types:
+        value_types = value_types if isinstance(value_types, list) else [value_types]
+        return SchemaValue(name=name, value_types=value_types)
 
     return SchemaValue(name=name, value_type="any")
 

@@ -136,6 +136,36 @@ def test_schema_parser_parses_definitions():
     ]
 
 
+def test_schema_parser_parses_multiple_type_definitions():
+    """
+    Test schema parser handles multiple type definitions.
+    """
+    schema = """{
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "definitions": {
+            "MultiTypedObject": {
+                "properties": {
+                    "html": {
+                        "type": [
+                            "string",
+                            "null"
+                        ]
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }"""
+
+    definitions = parse_schema(schema)
+
+    assert len(definitions) == 1
+    assert definitions[0] == SchemaObject(
+        name="MultiTypedObject",
+        properties=[SchemaValue(name="html", value_types=["string", "null"])],
+    )
+
+
 def test_schema_parser_parses_real_schema():
     """
     Test schema parser parses real schema.
