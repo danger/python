@@ -10,6 +10,7 @@ from .models import (
     EnumDefinition,
     PropertyDefinition,
     SchemaAllOf,
+    SchemaArray,
     SchemaEnum,
     SchemaItem,
     SchemaObject,
@@ -25,7 +26,11 @@ def build_types(schema: List[SchemaObject]) -> List[TypeDefinition]:
     references_by_type_names = {type.name: type.depends_on for type in built_types}
     sorted_types = toposort_flatten(references_by_type_names)
 
-    return list(map(lambda t: types_by_names[t], sorted_types))
+    return list(map(lambda t: types_by_names[_normalize_typename(t)], sorted_types))
+
+
+def _normalize_typename(typename: str) -> str:
+    return typename[5:-1] if typename.startswith("List[") else typename
 
 
 def _build_types_for_object(
@@ -37,7 +42,10 @@ def _build_types_for_object(
         name=class_name,
         properties=properties,
         depends_on=set(
-            map(lambda p: p.value_type, filter(lambda p: not p.known_type, properties))
+            map(
+                lambda p: _normalize_typename(p.value_type),
+                filter(lambda p: not p.known_type, properties),
+            )
         ),
     )
 
@@ -67,9 +75,24 @@ def _build_nested_objects(
     return chain.from_iterable(
         map(
             lambda o: _build_types_for_object(o, parent_class_name),
-            filter(lambda p: isinstance(p, SchemaObject), object.properties),
+            filter(
+                lambda p: isinstance(p, SchemaObject),
+                map(_item_for_nesting, object.properties),
+            ),
         )
     )
+
+
+def _item_for_nesting(item: SchemaItem) -> SchemaItem:
+    if isinstance(item, SchemaArray):
+        item.item.name = item.name
+        return _item_for_nesting(item.item)
+    if isinstance(item, SchemaAllOf):
+        first_item = item.all_of[0]
+        first_item.name = item.name
+        return _item_for_nesting(first_item)
+    else:
+        return item
 
 
 def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinition:
@@ -78,7 +101,9 @@ def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinit
     if isinstance(item, SchemaEnum) or isinstance(item, SchemaObject):
         return _property_from_object(item, parent_class_name)
     if isinstance(item, SchemaAllOf):
-        return _property_from_all_of(item, parent_class_name)
+        return _build_property(_item_for_nesting(item), parent_class_name)
+    if isinstance(item, SchemaArray):
+        return _property_from_array(item, parent_class_name)
 
     return _property_from_value(item)
 
@@ -93,10 +118,13 @@ def _property_from_object(object: SchemaObject, parent_name: str) -> PropertyDef
     return _property(object.name, type_name, False)
 
 
-def _property_from_all_of(object: SchemaAllOf, parent_name: str) -> PropertyDefinition:
-    first_item = object.all_of[0]
-    first_item.name = object.name
-    return _build_property(first_item, parent_name)
+def _property_from_array(object: SchemaArray, parent_name: str) -> PropertyDefinition:
+    nested_property = _build_property(_item_for_nesting(object), parent_name)
+    return _property(
+        name=object.name,
+        type_name=f"List[{nested_property.value_type}]",
+        known_type=nested_property.known_type,
+    )
 
 
 def _property(name: str, type_name: str, known_type: bool) -> PropertyDefinition:

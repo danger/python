@@ -4,6 +4,7 @@ from danger_python.generator.models import (
     EnumDefinition,
     PropertyDefinition,
     SchemaAllOf,
+    SchemaArray,
     SchemaEnum,
     SchemaObject,
     SchemaReference,
@@ -193,7 +194,14 @@ def test_type_builder_handles_all_of_references():
                     name="authorValue",
                     all_of=[
                         SchemaReference(name="", reference="ReferencedObject"),
-                        SchemaEnum(name="", value_type="string", values=["AUTHOR"]),
+                        SchemaObject(
+                            name="role",
+                            properties=[
+                                SchemaEnum(
+                                    name="", value_type="string", values=["AUTHOR"]
+                                ),
+                            ],
+                        ),
                     ],
                 )
             ],
@@ -224,3 +232,94 @@ def test_type_builder_handles_all_of_references():
         depends_on={"ReferencedObject"},
     )
 
+
+def test_type_builder_handles_arrays():
+    """
+    Test that type builder handles arrays.
+    """
+    schema = [
+        SchemaObject(
+            name="ClassWithAllOfArray",
+            properties=[
+                SchemaArray(
+                    name="authorsArray",
+                    item=SchemaAllOf(
+                        name="",
+                        all_of=[
+                            SchemaReference(name="", reference="SomeOtherObject"),
+                            SchemaObject(
+                                name="role",
+                                properties=[
+                                    SchemaEnum(
+                                        name="",
+                                        value_type="string",
+                                        values=["PARTICIPANT"],
+                                    )
+                                ],
+                            ),
+                        ],
+                    ),
+                )
+            ],
+        ),
+        SchemaObject(
+            name="SomeOtherObject",
+            properties=[SchemaValue(name="anyProperty", value_type="number")],
+        ),
+        SchemaObject(
+            name="ClassWithPropertyArray",
+            properties=[
+                SchemaArray(
+                    name="propertiesArray",
+                    item=SchemaObject(
+                        name="",
+                        properties=[
+                            SchemaValue(name="firstField", value_type="string"),
+                            SchemaValue(name="secondField", value_type="number"),
+                        ],
+                    ),
+                )
+            ],
+        ),
+    ]
+
+    build_result = build_types(schema)
+
+    assert len(build_result) == 4
+    assert build_result[0] == ClassDefinition(
+        name="ClassWithPropertyArrayPropertiesArray",
+        properties=[
+            PropertyDefinition(name="first_field", value_type="str", known_type=True),
+            PropertyDefinition(name="second_field", value_type="int", known_type=True),
+        ],
+        depends_on=set(),
+    )
+    assert build_result[1] == ClassDefinition(
+        name="SomeOtherObject",
+        properties=[
+            PropertyDefinition(name="any_property", value_type="int", known_type=True)
+        ],
+        depends_on=set(),
+    )
+    assert build_result[2] == ClassDefinition(
+        name="ClassWithAllOfArray",
+        properties=[
+            PropertyDefinition(
+                name="authors_array",
+                value_type="List[SomeOtherObject]",
+                known_type=False,
+            )
+        ],
+        depends_on={"SomeOtherObject"},
+    )
+    assert build_result[3] == ClassDefinition(
+        name="ClassWithPropertyArray",
+        properties=[
+            PropertyDefinition(
+                name="properties_array",
+                value_type="List[ClassWithPropertyArrayPropertiesArray]",
+                known_type=False,
+            )
+        ],
+        depends_on={"ClassWithPropertyArrayPropertiesArray"},
+    )
