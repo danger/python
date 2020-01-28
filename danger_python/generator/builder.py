@@ -108,8 +108,25 @@ def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinit
 
 
 def _property_from_value(value: SchemaValue) -> PropertyDefinition:
-    mappings = {"string": "str", "boolean": "bool", "number": "int"}
-    return _property(value.name, mappings[value.value_types[0]], True)
+    return _property(value.name, _resolve_type(value.value_types), True)
+
+
+def _resolve_type(value_types: List[str]) -> str:
+    mappings = {
+        "string": "str",
+        "boolean": "bool",
+        "number": "int",
+        "any": "Any",
+        "null": "Any",
+    }
+
+    real_type = next(filter(lambda v: v != "null", value_types), "null")
+    real_type = mappings[real_type]
+
+    if "null" in value_types and len(value_types) > 1:
+        real_type = f"Optional[{real_type}]"
+
+    return real_type
 
 
 def _property_from_object(object: SchemaObject, parent_name: str) -> PropertyDefinition:

@@ -22,6 +22,9 @@ def test_type_builder_builds_correct_model_for_simple_class():
             properties=[
                 SchemaValue(name="stringValue", value_type="string"),
                 SchemaValue(name="booleanValue", value_type="boolean"),
+                SchemaValue(name="anyValue", value_type="any"),
+                SchemaValue(name="nullValue", value_type="null"),
+                SchemaValue(name="optionalStringValue", value_types=["null", "string"]),
             ],
         )
     ]
@@ -35,6 +38,13 @@ def test_type_builder_builds_correct_model_for_simple_class():
             PropertyDefinition(name="string_value", value_type="str", known_type=True),
             PropertyDefinition(
                 name="boolean_value", value_type="bool", known_type=True
+            ),
+            PropertyDefinition(name="any_value", value_type="Any", known_type=True),
+            PropertyDefinition(name="null_value", value_type="Any", known_type=True),
+            PropertyDefinition(
+                name="optional_string_value",
+                value_type="Optional[str]",
+                known_type=True,
             ),
         ],
         depends_on=set(),
@@ -339,4 +349,3 @@ def test_type_builder_handles_top_level_enumerations():
     assert build_result[0] == EnumDefinition(
         name="TestEnum", values=[("A", "a"), ("B", "b"), ("C", "c")], depends_on=set(),
     )
-
