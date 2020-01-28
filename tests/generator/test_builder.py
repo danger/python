@@ -3,6 +3,7 @@ from danger_python.generator.models import (
     ClassDefinition,
     EnumDefinition,
     PropertyDefinition,
+    SchemaAllOf,
     SchemaEnum,
     SchemaObject,
     SchemaReference,
@@ -178,3 +179,48 @@ def test_type_builder_handles_nested_properties():
         ],
         depends_on={"ClassWithNestedClassNestedValue"},
     )
+
+
+def test_type_builder_handles_all_of_references():
+    """
+    Test type builder handles all of references.
+    """
+    schema = [
+        SchemaObject(
+            name="ClassWithAllOf",
+            properties=[
+                SchemaAllOf(
+                    name="authorValue",
+                    all_of=[
+                        SchemaReference(name="", reference="ReferencedObject"),
+                        SchemaEnum(name="", value_type="string", values=["AUTHOR"]),
+                    ],
+                )
+            ],
+        ),
+        SchemaObject(
+            name="ReferencedObject",
+            properties=[SchemaValue(name="stringValue", value_type="string")],
+        ),
+    ]
+
+    build_result = build_types(schema)
+
+    assert len(build_result) == 2
+    assert build_result[0] == ClassDefinition(
+        name="ReferencedObject",
+        properties=[
+            PropertyDefinition(name="string_value", value_type="str", known_type=True)
+        ],
+        depends_on=set(),
+    )
+    assert build_result[1] == ClassDefinition(
+        name="ClassWithAllOf",
+        properties=[
+            PropertyDefinition(
+                name="author_value", value_type="ReferencedObject", known_type=False
+            )
+        ],
+        depends_on={"ReferencedObject"},
+    )
+

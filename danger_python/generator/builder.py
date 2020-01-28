@@ -9,6 +9,7 @@ from .models import (
     ClassDefinition,
     EnumDefinition,
     PropertyDefinition,
+    SchemaAllOf,
     SchemaEnum,
     SchemaItem,
     SchemaObject,
@@ -76,6 +77,8 @@ def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinit
         return _property(item.name, item.reference, False)
     if isinstance(item, SchemaEnum) or isinstance(item, SchemaObject):
         return _property_from_object(item, parent_class_name)
+    if isinstance(item, SchemaAllOf):
+        return _property_from_all_of(item, parent_class_name)
 
     return _property_from_value(item)
 
@@ -88,6 +91,12 @@ def _property_from_value(value: SchemaValue) -> PropertyDefinition:
 def _property_from_object(object: SchemaObject, parent_name: str) -> PropertyDefinition:
     type_name = _nested_object_name(object, parent_name)
     return _property(object.name, type_name, False)
+
+
+def _property_from_all_of(object: SchemaAllOf, parent_name: str) -> PropertyDefinition:
+    first_item = object.all_of[0]
+    first_item.name = object.name
+    return _build_property(first_item, parent_name)
 
 
 def _property(name: str, type_name: str, known_type: bool) -> PropertyDefinition:
