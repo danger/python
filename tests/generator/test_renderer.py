@@ -34,6 +34,7 @@ def test_renderer_renders_definitions_correctly():
     assert rendered_code == (
         "from dataclasses import dataclass\n"
         "from enum import Enum\n"
+        "from typing import Any, List, Optional\n"
         "\n"
         "\n"
         "class SomeNiceEnum(Enum):\n"
@@ -63,6 +64,7 @@ def test_renderer_handles_empty_classes_and_enums():
     assert rendered_code == (
         "from dataclasses import dataclass\n"
         "from enum import Enum\n"
+        "from typing import Any, List, Optional\n"
         "\n"
         "\n"
         "class EmptyEnum(Enum):\n"
@@ -72,5 +74,50 @@ def test_renderer_handles_empty_classes_and_enums():
         "@dataclass\n"
         "class EmptyClass:\n"
         "    pass\n"
+        "\n"
+    )
+
+
+def test_renderer_renders_custom_attributes_correctly():
+    """
+    Test that renderer renders definitions correctly.
+    """
+    to_render = [
+        ClassDefinition(
+            name="ClassWithUnknownTypes",
+            depends_on=set(),
+            properties=[
+                PropertyDefinition(
+                    name="first_prop", value_type="FirstUnknownType", known_type=False
+                ),
+                PropertyDefinition(
+                    name="second_prop",
+                    value_type="List[SecondUnknownType]",
+                    known_type=False,
+                ),
+                PropertyDefinition(
+                    name="third_prop",
+                    value_type="Optional[ThirdUnknownType]",
+                    known_type=False,
+                ),
+                PropertyDefinition(name="any_prop", value_type="Any", known_type=True),
+            ],
+        ),
+    ]
+
+    rendered_code = render_classes(to_render)
+
+    assert rendered_code == (
+        "from dataclasses import dataclass\n"
+        "from enum import Enum\n"
+        "from typing import Any, List, Optional\n"
+        "\n"
+        "\n"
+        "@dataclass\n"
+        "class ClassWithUnknownTypes:\n"
+        '    first_prop: "FirstUnknownType"\n'
+        '    second_prop: List["SecondUnknownType"]\n'
+        '    third_prop: Optional["ThirdUnknownType"]\n'
+        "    any_prop: Any\n"
         "\n"
     )

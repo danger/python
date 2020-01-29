@@ -48,6 +48,19 @@ class PropertyDefinition:
     value_type: str
     known_type: bool
 
+    @property
+    def formatted_type(self) -> str:
+        prefixes = {"List[", "Optional["}
+        prefix = next(filter(lambda p: self.value_type.startswith(p), prefixes), None)
+
+        if self.known_type:
+            return self.value_type
+        elif prefix:
+            stripped = self.value_type[len(prefix) : -1]
+            return f"{prefix}'{stripped}']"
+        else:
+            return f"'{self.value_type}'"
+
 
 @dataclass
 class TypeDefinition:

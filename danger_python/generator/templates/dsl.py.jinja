@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any, List, Optional
 
 {% for type in types %}
 {% if 'EnumDefinition' in type.__class__.__name__ %}
@@ -8,7 +9,7 @@ class {{ type.name }}(Enum):
     {% else %}pass{% endfor %}
 {% elif 'ClassDefinition' in type.__class__.__name__ %}@dataclass
 class {{ type.name }}:
-    {% for property in type.properties %}{{ property.name }}: {{ property.value_type }}
+    {% for property in type.properties %}{{ property.name }}: {{ property.formatted_type }}
     {% else %}pass{% endfor %}
 {% endif %}
 {% endfor %}
