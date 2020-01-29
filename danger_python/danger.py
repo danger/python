@@ -1,47 +1,38 @@
 import json
 import sys
-from dataclasses import dataclass, field
 from functools import partial
 from operator import attrgetter
 from typing import Any, Callable, Dict, List, Optional
 
+from pydantic import BaseModel
+from pydantic.dataclasses import dataclass
+
 from .models import DangerDSL, GitDSL, GithubDSL
 
 
-@dataclass
-class Violation:
+class Violation(BaseModel):
     message: str
     file_name: Optional[str] = None
     line: Optional[int] = None
 
+    class Config:
+        allow_population_by_field_name = True
+        fields = {"message": "message", "file_name": "file", "line": "line"}
 
-@dataclass
-class DangerResults:
-    fails: List[Violation] = field(default_factory=list)
-    warnings: List[Violation] = field(default_factory=list)
-    messages: List[Violation] = field(default_factory=list)
-    markdowns: List[Violation] = field(default_factory=list)
+
+class DangerResults(BaseModel):
+    fails: List[Violation] = []
+    warnings: List[Violation] = []
+    messages: List[Violation] = []
+    markdowns: List[Violation] = []
 
 
 def serialize_violation(violation: Violation) -> Dict[str, Any]:
-    violation_json = {
-        "message": violation.message,
-        "file": violation.file_name,
-        "line": violation.line,
-    }
-
-    return {key: value for key, value in violation_json.items() if value}
+    return violation.dict(exclude_none=True, by_alias=True)
 
 
 def serialize_results(results: DangerResults) -> Dict[str, Any]:
-    serializer = lambda violations: list(map(serialize_violation, violations))
-
-    return {
-        "fails": serializer(results.fails),
-        "warnings": serializer(results.warnings),
-        "messages": serializer(results.messages),
-        "markdowns": serializer(results.markdowns),
-    }
+    return results.dict(exclude_none=True, by_alias=True)
 
 
 def load_dsl() -> DangerDSL:
@@ -49,7 +40,7 @@ def load_dsl() -> DangerDSL:
 
     with open(file_url, "r") as json_file:
         input_json = json.loads(json_file.read())
-        return DangerDSL.from_dict(input_json["danger"])
+        return DangerDSL(**input_json["danger"])
 
 
 class Danger:

@@ -1,31 +1,22 @@
-from dataclasses import dataclass
 from typing import List
 
-from dataclasses_json import dataclass_json
+from pydantic import BaseModel
 
 
-@dataclass_json
-@dataclass
-class GitDSL:
+class GitDSL(BaseModel):
     modified_files: List[str]
     created_files: List[str]
     deleted_files: List[str]
 
 
-@dataclass_json
-@dataclass
-class GithubPullRequestDSL:
+class GithubPullRequestDSL(BaseModel):
     title: str
 
 
-@dataclass_json
-@dataclass
-class GithubDSL:
+class GithubDSL(BaseModel):
     pr: GithubPullRequestDSL
 
 
-@dataclass_json
-@dataclass
-class DangerDSL:
+class DangerDSL(BaseModel):
     git: GitDSL
     github: GithubDSL
