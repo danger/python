@@ -58,6 +58,10 @@ def test_renderer_renders_definitions_correctly():
         '            "int_val": "intVal",\n'
         "        }\n"
         "\n"
+        "\n"
+        "APythonClass.update_forward_refs()"
+        "\n"
+        "\n"
     )
 
 
@@ -85,6 +89,10 @@ def test_renderer_handles_empty_classes_and_enums():
         "\n"
         "class EmptyClass(BaseModel):\n"
         "    pass\n"
+        "\n"
+        "\n"
+        "EmptyClass.update_forward_refs()"
+        "\n"
         "\n"
     )
 
@@ -146,6 +154,10 @@ def test_renderer_renders_custom_attributes_correctly():
         '            "any_prop": "anyProp",\n'
         "        }\n"
         "\n"
+        "\n"
+        "ClassWithUnknownTypes.update_forward_refs()"
+        "\n"
+        "\n"
     )
 
 
@@ -194,5 +206,9 @@ def test_renderer_aliases_properties():
         '            "from_": "from",\n'
         '            "non_aliased": "nonAliased",\n'
         "        }\n"
+        "\n"
+        "\n"
+        "ClassWithAliases.update_forward_refs()"
+        "\n"
         "\n"
     )

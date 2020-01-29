@@ -19,3 +19,7 @@ class {{ type.name }}(BaseModel):
     {% endif %}
 {% endif %}
 {% endfor %}
+
+{% for type in types %}
+{% if 'ClassDefinition' in type.__class__.__name__ %}{{ type.name }}.update_forward_refs(){% endif %}
+{% endfor %}
