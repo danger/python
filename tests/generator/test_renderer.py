@@ -22,9 +22,14 @@ def test_renderer_renders_definitions_correctly():
             depends_on=set(),
             properties=[
                 PropertyDefinition(
-                    name="string_val", value_type="str", known_type=True
+                    name="string_val",
+                    key="stringVal",
+                    value_type="str",
+                    known_type=True,
                 ),
-                PropertyDefinition(name="int_val", value_type="int", known_type=True),
+                PropertyDefinition(
+                    name="int_val", key="intVal", value_type="int", known_type=True
+                ),
             ],
         ),
     ]
@@ -88,19 +93,26 @@ def test_renderer_renders_custom_attributes_correctly():
             depends_on=set(),
             properties=[
                 PropertyDefinition(
-                    name="first_prop", value_type="FirstUnknownType", known_type=False
+                    name="first_prop",
+                    key="firstProp",
+                    value_type="FirstUnknownType",
+                    known_type=False,
                 ),
                 PropertyDefinition(
                     name="second_prop",
+                    key="secondProp",
                     value_type="List[SecondUnknownType]",
                     known_type=False,
                 ),
                 PropertyDefinition(
                     name="third_prop",
+                    key="thirdProp",
                     value_type="Optional[ThirdUnknownType]",
                     known_type=False,
                 ),
-                PropertyDefinition(name="any_prop", value_type="Any", known_type=True),
+                PropertyDefinition(
+                    name="any_prop", key="anyProp", value_type="Any", known_type=True
+                ),
             ],
         ),
     ]
@@ -132,10 +144,17 @@ def test_renderer_aliases_properties():
             name="ClassWithAliases",
             depends_on=set(),
             properties=[
-                PropertyDefinition(name="self", value_type="str", known_type=True),
-                PropertyDefinition(name="from", value_type="int", known_type=True),
                 PropertyDefinition(
-                    name="non_aliased", value_type="Optional[str]", known_type=True,
+                    name="self", key="self", value_type="str", known_type=True
+                ),
+                PropertyDefinition(
+                    name="from", key="self", value_type="int", known_type=True
+                ),
+                PropertyDefinition(
+                    name="non_aliased",
+                    key="nonAliased",
+                    value_type="Optional[str]",
+                    known_type=True,
                 ),
             ],
         ),

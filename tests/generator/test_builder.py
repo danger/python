@@ -35,14 +35,27 @@ def test_type_builder_builds_correct_model_for_simple_class():
     assert build_result[0] == ClassDefinition(
         name="TestClass",
         properties=[
-            PropertyDefinition(name="string_value", value_type="str", known_type=True),
             PropertyDefinition(
-                name="boolean_value", value_type="bool", known_type=True
+                name="string_value",
+                key="stringValue",
+                value_type="str",
+                known_type=True,
             ),
-            PropertyDefinition(name="any_value", value_type="Any", known_type=True),
-            PropertyDefinition(name="null_value", value_type="Any", known_type=True),
+            PropertyDefinition(
+                name="boolean_value",
+                key="booleanValue",
+                value_type="bool",
+                known_type=True,
+            ),
+            PropertyDefinition(
+                name="any_value", key="anyValue", value_type="Any", known_type=True
+            ),
+            PropertyDefinition(
+                name="null_value", key="nullValue", value_type="Any", known_type=True
+            ),
             PropertyDefinition(
                 name="optional_string_value",
+                key="optionalStringValue",
                 value_type="Optional[str]",
                 known_type=True,
             ),
@@ -76,21 +89,27 @@ def test_type_builder_handles_reference_types():
     assert build_result[0] == ClassDefinition(
         name="ObjectC",
         properties=[
-            PropertyDefinition(name="int_value", value_type="int", known_type=True)
+            PropertyDefinition(
+                name="int_value", key="intValue", value_type="int", known_type=True
+            )
         ],
         depends_on=set(),
     )
     assert build_result[1] == ClassDefinition(
         name="ObjectB",
         properties=[
-            PropertyDefinition(name="ref_c", value_type="ObjectC", known_type=False)
+            PropertyDefinition(
+                name="ref_c", key="refC", value_type="ObjectC", known_type=False
+            )
         ],
         depends_on={"ObjectC"},
     )
     assert build_result[2] == ClassDefinition(
         name="ObjectA",
         properties=[
-            PropertyDefinition(name="ref_b", value_type="ObjectB", known_type=False)
+            PropertyDefinition(
+                name="ref_b", key="refB", value_type="ObjectB", known_type=False
+            )
         ],
         depends_on={"ObjectB"},
     )
@@ -125,9 +144,15 @@ def test_type_builder_handles_enums():
     assert build_result[1] == ClassDefinition(
         name="ClassWithEnums",
         properties=[
-            PropertyDefinition(name="string_value", value_type="str", known_type=True),
+            PropertyDefinition(
+                name="string_value",
+                key="string_value",
+                value_type="str",
+                known_type=True,
+            ),
             PropertyDefinition(
                 name="enum_value",
+                key="enumValue",
                 value_type="ClassWithEnumsEnumValue",
                 known_type=False,
             ),
@@ -170,9 +195,15 @@ def test_type_builder_handles_nested_properties():
     assert build_result[1] == ClassDefinition(
         name="ClassWithNestedClassNestedValue",
         properties=[
-            PropertyDefinition(name="string_value", value_type="str", known_type=True),
+            PropertyDefinition(
+                name="string_value",
+                key="string_value",
+                value_type="str",
+                known_type=True,
+            ),
             PropertyDefinition(
                 name="enum_value",
+                key="enum_value",
                 value_type="ClassWithNestedClassNestedValueEnumValue",
                 known_type=False,
             ),
@@ -184,6 +215,7 @@ def test_type_builder_handles_nested_properties():
         properties=[
             PropertyDefinition(
                 name="nested_value",
+                key="nestedValue",
                 value_type="ClassWithNestedClassNestedValue",
                 known_type=False,
             ),
@@ -228,7 +260,12 @@ def test_type_builder_handles_all_of_references():
     assert build_result[0] == ClassDefinition(
         name="ReferencedObject",
         properties=[
-            PropertyDefinition(name="string_value", value_type="str", known_type=True)
+            PropertyDefinition(
+                name="string_value",
+                key="stringValue",
+                value_type="str",
+                known_type=True,
+            )
         ],
         depends_on=set(),
     )
@@ -236,7 +273,10 @@ def test_type_builder_handles_all_of_references():
         name="ClassWithAllOf",
         properties=[
             PropertyDefinition(
-                name="author_value", value_type="ReferencedObject", known_type=False
+                name="author_value",
+                key="authorValue",
+                value_type="ReferencedObject",
+                known_type=False,
             )
         ],
         depends_on={"ReferencedObject"},
@@ -299,15 +339,27 @@ def test_type_builder_handles_arrays():
     assert build_result[0] == ClassDefinition(
         name="ClassWithPropertyArrayPropertiesArray",
         properties=[
-            PropertyDefinition(name="first_field", value_type="str", known_type=True),
-            PropertyDefinition(name="second_field", value_type="int", known_type=True),
+            PropertyDefinition(
+                name="first_field", key="firstField", value_type="str", known_type=True
+            ),
+            PropertyDefinition(
+                name="second_field",
+                key="secondField",
+                value_type="int",
+                known_type=True,
+            ),
         ],
         depends_on=set(),
     )
     assert build_result[1] == ClassDefinition(
         name="SomeOtherObject",
         properties=[
-            PropertyDefinition(name="any_property", value_type="int", known_type=True)
+            PropertyDefinition(
+                name="any_property",
+                key="anyProperty",
+                value_type="int",
+                known_type=True,
+            )
         ],
         depends_on=set(),
     )
@@ -316,6 +368,7 @@ def test_type_builder_handles_arrays():
         properties=[
             PropertyDefinition(
                 name="authors_array",
+                key="authorsArray",
                 value_type="List[SomeOtherObject]",
                 known_type=False,
             )
@@ -327,6 +380,7 @@ def test_type_builder_handles_arrays():
         properties=[
             PropertyDefinition(
                 name="properties_array",
+                key="propertiesArray",
                 value_type="List[ClassWithPropertyArrayPropertiesArray]",
                 known_type=False,
             )

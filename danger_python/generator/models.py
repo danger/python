@@ -45,6 +45,7 @@ class SchemaAllOf(SchemaItem):
 @dataclass
 class PropertyDefinition:
     name: str
+    key: str
     value_type: str
     known_type: bool
 

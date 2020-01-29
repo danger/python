@@ -148,7 +148,10 @@ def _property_from_array(object: SchemaArray, parent_name: str) -> PropertyDefin
 
 def _property(name: str, type_name: str, known_type: bool) -> PropertyDefinition:
     return PropertyDefinition(
-        name=stringcase.snakecase(name), value_type=type_name, known_type=known_type
+        name=stringcase.snakecase(name),
+        key=name,
+        value_type=type_name,
+        known_type=known_type,
     )
 
 
