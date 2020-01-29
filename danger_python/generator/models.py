@@ -61,6 +61,11 @@ class PropertyDefinition:
         else:
             return f"'{self.value_type}'"
 
+    @property
+    def non_reserved_name(self) -> str:
+        reserved_names = {"from", "self"}
+        return f"{self.name}_" if self.name in reserved_names else self.name
+
 
 @dataclass
 class TypeDefinition:

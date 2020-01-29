@@ -121,3 +121,38 @@ def test_renderer_renders_custom_attributes_correctly():
         "    any_prop: Any\n"
         "\n"
     )
+
+
+def test_renderer_aliases_properties():
+    """
+    Test that renderer aliases properties.
+    """
+    to_render = [
+        ClassDefinition(
+            name="ClassWithAliases",
+            depends_on=set(),
+            properties=[
+                PropertyDefinition(name="self", value_type="str", known_type=True),
+                PropertyDefinition(name="from", value_type="int", known_type=True),
+                PropertyDefinition(
+                    name="non_aliased", value_type="Optional[str]", known_type=True,
+                ),
+            ],
+        ),
+    ]
+
+    rendered_code = render_classes(to_render)
+
+    assert rendered_code == (
+        "from dataclasses import dataclass\n"
+        "from enum import Enum\n"
+        "from typing import Any, List, Optional\n"
+        "\n"
+        "\n"
+        "@dataclass\n"
+        "class ClassWithAliases:\n"
+        "    self_: str\n"
+        "    from_: int\n"
+        "    non_aliased: Optional[str]\n"
+        "\n"
+    )
