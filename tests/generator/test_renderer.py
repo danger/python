@@ -37,9 +37,10 @@ def test_renderer_renders_definitions_correctly():
     rendered_code = render_classes(to_render)
 
     assert rendered_code == (
-        "from dataclasses import dataclass\n"
         "from enum import Enum\n"
         "from typing import Any, List, Optional\n"
+        "\n"
+        "from pydantic import BaseModel\n"
         "\n"
         "\n"
         "class SomeNiceEnum(Enum):\n"
@@ -47,8 +48,7 @@ def test_renderer_renders_definitions_correctly():
         '    SECOND_VALUE = "second_value"\n'
         "\n"
         "\n"
-        "@dataclass\n"
-        "class APythonClass:\n"
+        "class APythonClass(BaseModel):\n"
         "    string_val: str\n"
         "    int_val: int\n"
         "\n"
@@ -67,17 +67,17 @@ def test_renderer_handles_empty_classes_and_enums():
     rendered_code = render_classes(to_render)
 
     assert rendered_code == (
-        "from dataclasses import dataclass\n"
         "from enum import Enum\n"
         "from typing import Any, List, Optional\n"
+        "\n"
+        "from pydantic import BaseModel\n"
         "\n"
         "\n"
         "class EmptyEnum(Enum):\n"
         "    pass\n"
         "\n"
         "\n"
-        "@dataclass\n"
-        "class EmptyClass:\n"
+        "class EmptyClass(BaseModel):\n"
         "    pass\n"
         "\n"
     )
@@ -120,13 +120,13 @@ def test_renderer_renders_custom_attributes_correctly():
     rendered_code = render_classes(to_render)
 
     assert rendered_code == (
-        "from dataclasses import dataclass\n"
         "from enum import Enum\n"
         "from typing import Any, List, Optional\n"
         "\n"
+        "from pydantic import BaseModel\n"
         "\n"
-        "@dataclass\n"
-        "class ClassWithUnknownTypes:\n"
+        "\n"
+        "class ClassWithUnknownTypes(BaseModel):\n"
         '    first_prop: "FirstUnknownType"\n'
         '    second_prop: List["SecondUnknownType"]\n'
         '    third_prop: Optional["ThirdUnknownType"]\n'
@@ -163,13 +163,13 @@ def test_renderer_aliases_properties():
     rendered_code = render_classes(to_render)
 
     assert rendered_code == (
-        "from dataclasses import dataclass\n"
         "from enum import Enum\n"
         "from typing import Any, List, Optional\n"
         "\n"
+        "from pydantic import BaseModel\n"
         "\n"
-        "@dataclass\n"
-        "class ClassWithAliases:\n"
+        "\n"
+        "class ClassWithAliases(BaseModel):\n"
         "    self_: str\n"
         "    from_: int\n"
         "    non_aliased: Optional[str]\n"
