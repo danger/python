@@ -7,7 +7,6 @@ from typing import List, Optional
 
 from .danger import Danger, fail, markdown, message, serialize_results, warn
 from .exceptions import DangerfileException, SystemConfigurationException
-from .models import DangerDSL
 
 
 def resolve_danger_path():

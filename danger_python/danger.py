@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict, List, Optional
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
-from .models import DangerDSL, GitDSL, GithubDSL
+from .models import DangerDSLJSONType, GitHubDSL, GitJSONDSL
 
 
 class Violation(BaseModel):
@@ -35,12 +35,12 @@ def serialize_results(results: DangerResults) -> Dict[str, Any]:
     return results.dict(exclude_none=True, by_alias=True)
 
 
-def load_dsl() -> DangerDSL:
+def load_dsl() -> DangerDSLJSONType:
     file_url = sys.stdin.read().split("danger://dsl/")[-1]
 
     with open(file_url, "r") as json_file:
         input_json = json.loads(json_file.read())
-        return DangerDSL(**input_json["danger"])
+        return DangerDSLJSONType(**input_json["danger"])
 
 
 class Danger:
@@ -50,15 +50,15 @@ class Danger:
         if not Danger.results:
             Danger.results = DangerResults()
 
-    dsl: DangerDSL = None
+    dsl: DangerDSLJSONType = None
     results: DangerResults = None
 
     @property
-    def git(self) -> GitDSL:
+    def git(self) -> GitJSONDSL:
         return Danger.dsl.git
 
     @property
-    def github(self) -> GithubDSL:
+    def github(self) -> GitHubDSL:
         return Danger.dsl.github
 
 

@@ -1,4 +1,4 @@
-from danger_python.models import GithubDSL
+from danger_python.models import GitHubDSL
 
 
 def test_that_github_model_is_parsed_correctly():
@@ -7,6 +7,6 @@ def test_that_github_model_is_parsed_correctly():
     """
     github_json = {"pr": {"title": "Tie-tle"}}
 
-    dsl = GithubDSL(**github_json)
+    dsl = GitHubDSL(**github_json)
 
     assert dsl.pr.title == "Tie-tle"
