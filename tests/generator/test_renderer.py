@@ -52,6 +52,12 @@ def test_renderer_renders_definitions_correctly():
         "    string_val: str\n"
         "    int_val: int\n"
         "\n"
+        "    class Config:\n"
+        "        fields = {\n"
+        '            "string_val": "stringVal",\n'
+        '            "int_val": "intVal",\n'
+        "        }\n"
+        "\n"
     )
 
 
@@ -132,6 +138,14 @@ def test_renderer_renders_custom_attributes_correctly():
         '    third_prop: Optional["ThirdUnknownType"]\n'
         "    any_prop: Any\n"
         "\n"
+        "    class Config:\n"
+        "        fields = {\n"
+        '            "first_prop": "firstProp",\n'
+        '            "second_prop": "secondProp",\n'
+        '            "third_prop": "thirdProp",\n'
+        '            "any_prop": "anyProp",\n'
+        "        }\n"
+        "\n"
     )
 
 
@@ -148,7 +162,7 @@ def test_renderer_aliases_properties():
                     name="self", key="self", value_type="str", known_type=True
                 ),
                 PropertyDefinition(
-                    name="from", key="self", value_type="int", known_type=True
+                    name="from", key="from", value_type="int", known_type=True
                 ),
                 PropertyDefinition(
                     name="non_aliased",
@@ -173,5 +187,12 @@ def test_renderer_aliases_properties():
         "    self_: str\n"
         "    from_: int\n"
         "    non_aliased: Optional[str]\n"
+        "\n"
+        "    class Config:\n"
+        "        fields = {\n"
+        '            "self_": "self",\n'
+        '            "from_": "from",\n'
+        '            "non_aliased": "nonAliased",\n'
+        "        }\n"
         "\n"
     )

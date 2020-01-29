@@ -12,5 +12,10 @@ class {{ type.name }}(Enum):
 class {{ type.name }}(BaseModel):
     {% for property in type.properties %}{{ property.non_reserved_name }}: {{ property.formatted_type }}
     {% else %}pass{% endfor %}
+    {% if type.properties %}class Config:
+        fields = {
+{% for property in type.properties %}            "{{ property.non_reserved_name }}": "{{ property.key }}",
+{% endfor %}        }
+    {% endif %}
 {% endif %}
 {% endfor %}
