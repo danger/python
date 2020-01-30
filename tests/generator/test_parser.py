@@ -2,6 +2,7 @@ import pytest
 
 from danger_python.generator.models import (
     SchemaAllOf,
+    SchemaAnyOf,
     SchemaArray,
     SchemaEnum,
     SchemaObject,
@@ -163,6 +164,48 @@ def test_schema_parser_parses_multiple_type_definitions():
     assert definitions[0] == SchemaObject(
         name="MultiTypedObject",
         properties=[SchemaValue(name="html", value_types=["string", "null"])],
+    )
+
+
+def test_schema_parser_parses_any_of_type():
+    """
+    Test schema parser parses any of type.
+    """
+    schema = """{
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "definitions": {
+            "AnyOfObject": {
+                "properties": {
+                    "user": {
+                        "anyOf": [
+                            {
+                                "$ref": "#/definitions/GitLabUser"
+                            },
+                            {
+                                "type": "null"
+                            }
+                        ]
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }"""
+
+    definitions = parse_schema(schema)
+
+    assert len(definitions) == 1
+    assert definitions[0] == SchemaObject(
+        name="AnyOfObject",
+        properties=[
+            SchemaAnyOf(
+                name="user",
+                any_of=[
+                    SchemaReference(name="user", reference="GitLabUser"),
+                    SchemaValue(name="user", value_type="null"),
+                ],
+            )
+        ],
     )
 
 

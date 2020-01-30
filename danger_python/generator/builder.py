@@ -10,6 +10,7 @@ from .models import (
     EnumDefinition,
     PropertyDefinition,
     SchemaAllOf,
+    SchemaAnyOf,
     SchemaArray,
     SchemaEnum,
     SchemaItem,
@@ -26,7 +27,9 @@ def build_types(schema: List[SchemaItem]) -> List[TypeDefinition]:
 
 
 def _normalize_typename(typename: str) -> str:
-    return typename[5:-1] if typename.startswith("List[") else typename
+    prefixes = {"List[", "Optional["}
+    prefix = next(filter(lambda p: typename.startswith(p), prefixes), None)
+    return typename[len(prefix) : -1] if prefix else typename
 
 
 def _build_types_for_item(
@@ -89,6 +92,10 @@ def _item_for_nesting(item: SchemaItem) -> SchemaItem:
         first_item = item.all_of[0]
         first_item.name = item.name
         return _item_for_nesting(first_item)
+    if isinstance(item, SchemaAnyOf):
+        first_item = item.any_of[0]
+        first_item.name = item.name
+        return _item_for_nesting(first_item)
     else:
         return item
 
@@ -102,6 +109,8 @@ def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinit
         return _build_property(_item_for_nesting(item), parent_class_name)
     if isinstance(item, SchemaArray):
         return _property_from_array(item, parent_class_name)
+    if isinstance(item, SchemaAnyOf):
+        return _property_from_any_of(item, parent_class_name)
 
     return _property_from_value(item)
 
@@ -140,6 +149,23 @@ def _property_from_array(object: SchemaArray, parent_name: str) -> PropertyDefin
         type_name=f"List[{nested_property.value_type}]",
         known_type=nested_property.known_type,
     )
+
+
+def _property_from_any_of(object: SchemaAnyOf, parent_name: str) -> PropertyDefinition:
+    def is_null(item: SchemaItem) -> bool:
+        return isinstance(item, SchemaValue) and item.value_types == ["null"]
+
+    nested_property = _build_property(_item_for_nesting(object), parent_name)
+    is_optional = any(map(is_null, object.any_of))
+
+    if is_optional:
+        return _property(
+            name=object.name,
+            type_name=f"Optional[{nested_property.value_type}]",
+            known_type=nested_property.known_type,
+        )
+    else:
+        return _property(name=object.name, type_name="Any", known_type=True)
 
 
 def _property(name: str, type_name: str, known_type: bool) -> PropertyDefinition:

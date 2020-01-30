@@ -4,6 +4,7 @@ from danger_python.generator.models import (
     EnumDefinition,
     PropertyDefinition,
     SchemaAllOf,
+    SchemaAnyOf,
     SchemaArray,
     SchemaEnum,
     SchemaObject,
@@ -426,6 +427,101 @@ def test_type_builder_handles_enumerations_with_uppercase_values():
             ("HELLO_WORLD", "HELLO_WORLD"),
             ("UPPERCASE_VALUE", "UPPERCASE_VALUE"),
             ("SOME_VALUE", "SOME_VALUE"),
+        ],
+        depends_on=set(),
+    )
+
+
+def test_type_builder_handles_optional_references():
+    """
+    Test type builder handles optional references.
+    """
+    schema = [
+        SchemaObject(
+            name="ObjectA",
+            properties=[
+                SchemaAnyOf(
+                    name="refB",
+                    any_of=[
+                        SchemaReference(name="refB", reference="ObjectB"),
+                        SchemaValue(name="refB", value_type="null"),
+                    ],
+                )
+            ],
+        ),
+        SchemaObject(
+            name="ObjectB",
+            properties=[SchemaValue(name="strField", value_type="string")],
+        ),
+    ]
+
+    build_result = build_types(schema)
+
+    assert len(build_result) == 2
+    assert build_result[0] == ClassDefinition(
+        name="ObjectA",
+        properties=[
+            PropertyDefinition(
+                name="ref_b",
+                key="refB",
+                value_type="Optional[ObjectB]",
+                known_type=False,
+            )
+        ],
+        depends_on={"ObjectB"},
+    )
+    assert build_result[1] == ClassDefinition(
+        name="ObjectB",
+        properties=[
+            PropertyDefinition(
+                name="str_field", key="strField", value_type="str", known_type=True
+            )
+        ],
+        depends_on=set(),
+    )
+
+
+def test_type_builder_resolves_union_types_to_any():
+    """
+    Test type builder resolves union types to Any.
+    """
+    schema = [
+        SchemaObject(
+            name="ObjectA",
+            properties=[
+                SchemaAnyOf(
+                    name="refB",
+                    any_of=[
+                        SchemaReference(name="refB", reference="ObjectB"),
+                        SchemaValue(name="refB", value_type="str"),
+                    ],
+                )
+            ],
+        ),
+        SchemaObject(
+            name="ObjectB",
+            properties=[SchemaValue(name="strField", value_type="string")],
+        ),
+    ]
+
+    build_result = build_types(schema)
+
+    assert len(build_result) == 2
+    assert build_result[0] == ClassDefinition(
+        name="ObjectA",
+        properties=[
+            PropertyDefinition(
+                name="ref_b", key="refB", value_type="Any", known_type=True,
+            )
+        ],
+        depends_on=set(),
+    )
+    assert build_result[1] == ClassDefinition(
+        name="ObjectB",
+        properties=[
+            PropertyDefinition(
+                name="str_field", key="strField", value_type="str", known_type=True
+            )
         ],
         depends_on=set(),
     )
