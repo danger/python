@@ -72,6 +72,15 @@ class PropertyDefinition:
         reserved_names = {"from", "self"}
         return f"{self.name}_" if self.name in reserved_names else self.name
 
+    @property
+    def patched_type(self) -> str:
+        formatted_type = self.formatted_type
+
+        if formatted_type.startswith("Optional["):
+            return formatted_type
+
+        return f"Optional[{formatted_type}]"
+
 
 @dataclass
 class TypeDefinition:

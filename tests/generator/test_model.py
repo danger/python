@@ -37,3 +37,24 @@ def test_property_definition_returns_non_reserved_name():
     assert "from_" == from_string.non_reserved_name
     assert "self_" == self_custom_type.non_reserved_name
     assert "id" == id_int.non_reserved_name
+
+
+def test_patched_property_type_formats_the_type_correctly():
+    """
+    Test that patched properties are guaranteed to be of Optional type.
+    """
+    optional_string = PropertyDefinition(
+        name="", key="", value_type="Optional[str]", known_type=True
+    )
+    list_custom_type = PropertyDefinition(
+        name="", key="", value_type="List[CustomType]", known_type=False
+    )
+    custom_type = PropertyDefinition(
+        name="", key="", value_type="TheType", known_type=False
+    )
+    integer = PropertyDefinition(name="", key="", value_type="int", known_type=True)
+
+    assert "Optional[str]" == optional_string.patched_type
+    assert "Optional[List['CustomType']]" == list_custom_type.patched_type
+    assert "Optional['TheType']" == custom_type.patched_type
+    assert "Optional[int]" == integer.patched_type
