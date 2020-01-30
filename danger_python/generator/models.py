@@ -43,6 +43,11 @@ class SchemaAllOf(SchemaItem):
 
 
 @dataclass
+class SchemaAnyOf(SchemaItem):
+    any_of: [SchemaItem]
+
+
+@dataclass
 class PropertyDefinition:
     name: str
     key: str

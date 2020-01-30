@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional
 
 from .models import (
     SchemaAllOf,
+    SchemaAnyOf,
     SchemaArray,
     SchemaEnum,
     SchemaItem,
@@ -29,6 +30,7 @@ def _parse_item(name: str, json: Dict[str, Any]) -> Optional[SchemaItem]:
         _parse_reference,
         _parse_array,
         _parse_all_of,
+        _parse_any_of,
         _parse_value,
     )
     values = filter(None, map(lambda p: p(name, json), parsers))
@@ -76,5 +78,13 @@ def _parse_all_of(name: str, json: Dict[str, Any]) -> Optional[SchemaAllOf]:
     if json.get("allOf", None):
         items = [_parse_item(name, item) for item in json["allOf"]]
         return SchemaAllOf(name=name, all_of=items)
+
+    return None
+
+
+def _parse_any_of(name: str, json: Dict[str, Any]) -> Optional[SchemaAnyOf]:
+    if json.get("anyOf", None):
+        items = [_parse_item(name, item) for item in json["anyOf"]]
+        return SchemaAnyOf(name=name, any_of=items)
 
     return None
