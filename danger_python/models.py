@@ -297,7 +297,7 @@ class BitBucketCloudPRComment(BaseModel):
 class BitBucketCloudPRCommentInline(BaseModel):
     from_: Optional[int]
     path: Optional[str]
-    to: Optional[Optional[int]]
+    to: Optional[int]
 
     class Config:
         fields = {
@@ -850,29 +850,29 @@ class DangerDSLJSONTypeSettings(BaseModel):
 
 class DangerDSLJSONTypeSettingsGithub(BaseModel):
     access_token: Optional[str]
-    additional_headers: Optional[Any]
-    base_u_r_l: Optional[str]
+    additional_headers: Any
+    base_url: Optional[str]
 
     class Config:
         fields = {
             "access_token": "accessToken",
             "additional_headers": "additionalHeaders",
-            "base_u_r_l": "baseURL",
+            "base_url": "baseURL",
         }
 
 
 class Endpoint(BaseModel):
-    d_e_f_a_u_l_t_s: Optional["EndpointOptions"]
+    defaults: Optional["EndpointOptions"]
 
     class Config:
         fields = {
-            "d_e_f_a_u_l_t_s": "DEFAULTS",
+            "defaults": "DEFAULTS",
         }
 
 
 class EndpointOptions(BaseModel):
     base_url: Optional[str]
-    data: Optional[Any]
+    data: Any
     headers: Optional["EndpointOptionsHeaders"]
     method: Optional["EndpointOptionsMethod"]
     request: Optional["EndpointOptionsRequest"]
@@ -912,7 +912,7 @@ class GitCommit(BaseModel):
     message: Optional[str]
     parents: Optional[List[str]]
     sha: Optional[str]
-    tree: Optional[Any]
+    tree: Any
     url: Optional[str]
 
     class Config:
@@ -979,7 +979,7 @@ class GitHubDSL(BaseModel):
     pr: Optional["GitHubPRDSL"]
     requested_reviewers: Optional["GitHubReviewers"]
     reviews: Optional[List["GitHubReview"]]
-    this_p_r: Optional["GitHubAPIPR"]
+    this_pr: Optional["GitHubAPIPR"]
     utils: Optional["GitHubUtilsDSL"]
 
     class Config:
@@ -990,7 +990,7 @@ class GitHubDSL(BaseModel):
             "pr": "pr",
             "requested_reviewers": "requested_reviewers",
             "reviews": "reviews",
-            "this_p_r": "thisPR",
+            "this_pr": "thisPR",
             "utils": "utils",
         }
 
@@ -1044,7 +1044,7 @@ class GitHubPRDSL(BaseModel):
     base: Optional["GitHubMergeRef"]
     body: Optional[str]
     changed_files: Optional[int]
-    closed_at: Optional[Optional[str]]
+    closed_at: Optional[str]
     comments: Optional[int]
     commits: Optional[int]
     created_at: Optional[str]
@@ -1053,7 +1053,7 @@ class GitHubPRDSL(BaseModel):
     html_url: Optional[str]
     locked: Optional[bool]
     merged: Optional[bool]
-    merged_at: Optional[Optional[str]]
+    merged_at: Optional[str]
     number: Optional[int]
     review_comments: Optional[int]
     state: Optional["GitHubPRDSLState"]
@@ -1193,14 +1193,14 @@ class GitHubUserType(Enum):
 
 class GitHubUtilsDSL(BaseModel):
     create_or_add_label: Optional["GitHubUtilsDSLCreateOrAddLabel"]
-    create_or_update_p_r: Optional["GitHubUtilsDSLCreateOrUpdatePR"]
-    create_updated_issue_with_i_d: Optional["GitHubUtilsDSLCreateUpdatedIssueWithID"]
+    create_or_update_pr: Optional["GitHubUtilsDSLCreateOrUpdatePR"]
+    create_updated_issue_with_id: Optional["GitHubUtilsDSLCreateUpdatedIssueWithID"]
 
     class Config:
         fields = {
             "create_or_add_label": "createOrAddLabel",
-            "create_or_update_p_r": "createOrUpdatePR",
-            "create_updated_issue_with_i_d": "createUpdatedIssueWithID",
+            "create_or_update_pr": "createOrUpdatePR",
+            "create_updated_issue_with_id": "createUpdatedIssueWithID",
         }
 
 
@@ -1253,27 +1253,27 @@ class GitLabDSLUtils(BaseModel):
 class GitLabMR(BaseModel):
     allow_collaboration: Optional[bool]
     allow_maintainer_to_push: Optional[bool]
-    approvals_before_merge: Optional[Any]
+    approvals_before_merge: Any
     assignee: Optional["GitLabUser"]
     author: Optional["GitLabUser"]
     changes_count: Optional[str]
-    closed_at: Optional[Optional[str]]
-    closed_by: Optional[Any]
+    closed_at: Optional[str]
+    closed_by: Optional["GitLabUser"]
     created_at: Optional[str]
     description: Optional[str]
     diff_refs: Optional["GitLabMRDiffRefs"]
-    discussion_locked: Optional[Any]
+    discussion_locked: Any
     diverged_commits_count: Optional[int]
     downvotes: Optional[int]
-    first_deployed_to_production_at: Optional[Optional[str]]
+    first_deployed_to_production_at: Optional[str]
     force_remove_source_branch: Optional[bool]
     id: Optional[int]
     iid: Optional[int]
     labels: Optional[List[str]]
     latest_build_finished_at: Optional[str]
     latest_build_started_at: Optional[str]
-    merge_commit_sha: Optional[Optional[str]]
-    merge_error: Optional[Any]
+    merge_commit_sha: Optional[str]
+    merge_error: Any
     merge_status: Optional["GitLabMRMergeStatus"]
     merge_when_pipeline_succeeds: Optional[bool]
     merged_at: Optional[str]
@@ -1350,6 +1350,37 @@ class GitLabMR(BaseModel):
             "user_notes_count": "user_notes_count",
             "web_url": "web_url",
             "work_in_progress": "work_in_progress",
+        }
+
+
+class GitLabMRCommit(BaseModel):
+    author_email: Optional[str]
+    author_name: Optional[str]
+    authored_date: Optional[str]
+    committed_date: Optional[str]
+    committer_email: Optional[str]
+    committer_name: Optional[str]
+    created_at: Optional[str]
+    id: Optional[str]
+    message: Optional[str]
+    parent_ids: Optional[List[str]]
+    short_id: Optional[str]
+    title: Optional[str]
+
+    class Config:
+        fields = {
+            "author_email": "author_email",
+            "author_name": "author_name",
+            "authored_date": "authored_date",
+            "committed_date": "committed_date",
+            "committer_email": "committer_email",
+            "committer_name": "committer_name",
+            "created_at": "created_at",
+            "id": "id",
+            "message": "message",
+            "parent_ids": "parent_ids",
+            "short_id": "short_id",
+            "title": "title",
         }
 
 
@@ -1438,8 +1469,8 @@ class GitLabMRState(Enum):
 
 
 class GitLabMRTimeStats(BaseModel):
-    human_time_estimate: Optional[Optional[int]]
-    human_total_time_spent: Optional[Optional[int]]
+    human_time_estimate: Optional[int]
+    human_total_time_spent: Optional[int]
     time_estimate: Optional[int]
     total_time_spent: Optional[int]
 
@@ -1461,39 +1492,8 @@ class GitLabMRUser(BaseModel):
         }
 
 
-class GitLabMRCommit(BaseModel):
-    author_email: Optional[str]
-    author_name: Optional[str]
-    authored_date: Optional[str]
-    committed_date: Optional[str]
-    committer_email: Optional[str]
-    committer_name: Optional[str]
-    created_at: Optional[str]
-    id: Optional[str]
-    message: Optional[str]
-    parent_ids: Optional[List[str]]
-    short_id: Optional[str]
-    title: Optional[str]
-
-    class Config:
-        fields = {
-            "author_email": "author_email",
-            "author_name": "author_name",
-            "authored_date": "authored_date",
-            "committed_date": "committed_date",
-            "committer_email": "committer_email",
-            "committer_name": "committer_name",
-            "created_at": "created_at",
-            "id": "id",
-            "message": "message",
-            "parent_ids": "parent_ids",
-            "short_id": "short_id",
-            "title": "title",
-        }
-
-
 class GitLabUser(BaseModel):
-    avatar_url: Optional[Optional[str]]
+    avatar_url: Optional[str]
     id: Optional[int]
     name: Optional[str]
     state: Optional["GitLabUserState"]
@@ -7314,12 +7314,12 @@ class PaginateIterator(BaseModel):
 
 
 class RepoMetaData(BaseModel):
-    pull_request_i_d: Optional[str]
+    pull_request_id: Optional[str]
     repo_slug: Optional[str]
 
     class Config:
         fields = {
-            "pull_request_i_d": "pullRequestID",
+            "pull_request_id": "pullRequestID",
             "repo_slug": "repoSlug",
         }
 
@@ -7503,6 +7503,8 @@ GitLabDSLUtils.update_forward_refs()
 
 GitLabMR.update_forward_refs()
 
+GitLabMRCommit.update_forward_refs()
+
 GitLabMRDiffRefs.update_forward_refs()
 
 
@@ -7515,8 +7517,6 @@ GitLabMRPipeline.update_forward_refs()
 GitLabMRTimeStats.update_forward_refs()
 
 GitLabMRUser.update_forward_refs()
-
-GitLabMRCommit.update_forward_refs()
 
 GitLabUser.update_forward_refs()
 
@@ -8570,3 +8570,4 @@ PaginateIterator.update_forward_refs()
 RepoMetaData.update_forward_refs()
 
 Request.update_forward_refs()
+
