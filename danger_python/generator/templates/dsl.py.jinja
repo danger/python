@@ -10,7 +10,7 @@ class {{ type.name }}(Enum):
     {% else %}pass{% endfor %}
 {% elif 'ClassDefinition' in type.__class__.__name__ %}
 class {{ type.name }}(BaseModel):
-    {% for property in type.properties %}{{ property.non_reserved_name }}: {{ property.formatted_type }}
+    {% for property in type.properties %}{{ property.non_reserved_name }}: {{ property.patched_type }}
     {% else %}pass{% endfor %}
     {% if type.properties %}class Config:
         fields = {

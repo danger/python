@@ -78,6 +78,8 @@ class PropertyDefinition:
 
         if formatted_type.startswith("Optional["):
             return formatted_type
+        if formatted_type == "Any":
+            return formatted_type
 
         return f"Optional[{formatted_type}]"
 

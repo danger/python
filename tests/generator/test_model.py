@@ -53,8 +53,10 @@ def test_patched_property_type_formats_the_type_correctly():
         name="", key="", value_type="TheType", known_type=False
     )
     integer = PropertyDefinition(name="", key="", value_type="int", known_type=True)
+    any_type = PropertyDefinition(name="", key="", value_type="Any", known_type=True)
 
     assert "Optional[str]" == optional_string.patched_type
     assert "Optional[List['CustomType']]" == list_custom_type.patched_type
     assert "Optional['TheType']" == custom_type.patched_type
     assert "Optional[int]" == integer.patched_type
+    assert "Any" == any_type.patched_type

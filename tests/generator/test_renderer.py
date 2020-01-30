@@ -49,8 +49,8 @@ def test_renderer_renders_definitions_correctly():
         "\n"
         "\n"
         "class APythonClass(BaseModel):\n"
-        "    string_val: str\n"
-        "    int_val: int\n"
+        "    string_val: Optional[str]\n"
+        "    int_val: Optional[int]\n"
         "\n"
         "    class Config:\n"
         "        fields = {\n"
@@ -141,8 +141,8 @@ def test_renderer_renders_custom_attributes_correctly():
         "\n"
         "\n"
         "class ClassWithUnknownTypes(BaseModel):\n"
-        '    first_prop: "FirstUnknownType"\n'
-        '    second_prop: List["SecondUnknownType"]\n'
+        '    first_prop: Optional["FirstUnknownType"]\n'
+        '    second_prop: Optional[List["SecondUnknownType"]]\n'
         '    third_prop: Optional["ThirdUnknownType"]\n'
         "    any_prop: Any\n"
         "\n"
@@ -196,8 +196,8 @@ def test_renderer_aliases_properties():
         "\n"
         "\n"
         "class ClassWithAliases(BaseModel):\n"
-        "    self_: str\n"
-        "    from_: int\n"
+        "    self_: Optional[str]\n"
+        "    from_: Optional[int]\n"
         "    non_aliased: Optional[str]\n"
         "\n"
         "    class Config:\n"
