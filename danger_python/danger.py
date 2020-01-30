@@ -7,7 +7,15 @@ from typing import Any, Callable, Dict, List, Optional
 from pydantic import BaseModel
 from pydantic.dataclasses import dataclass
 
-from .models import DangerDSLJSONType, GitHubDSL, GitJSONDSL
+from .models import (
+    BitBucketCloudJSONDSL,
+    BitBucketServerJSONDSL,
+    DangerDSLJSONType,
+    DangerDSLJSONTypeSettings,
+    GitHubDSL,
+    GitJSONDSL,
+    GitLabDSL,
+)
 
 
 class Violation(BaseModel):
@@ -60,6 +68,22 @@ class Danger:
     @property
     def github(self) -> GitHubDSL:
         return Danger.dsl.github
+
+    @property
+    def bitbucket_cloud(self) -> BitBucketCloudJSONDSL:
+        return Danger.dsl.bitbucket_cloud
+
+    @property
+    def bitbucket_server(self) -> BitBucketServerJSONDSL:
+        return Danger.dsl.bitbucket_server
+
+    @property
+    def gitlab(self) -> GitLabDSL:
+        return Danger.dsl.gitlab
+
+    @property
+    def settings(self) -> DangerDSLJSONTypeSettings:
+        return Danger.dsl.settings
 
 
 def _add_to_results(
