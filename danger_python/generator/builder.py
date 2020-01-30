@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from functools import reduce
 from itertools import chain
 from operator import attrgetter
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
@@ -169,8 +170,12 @@ def _property_from_any_of(object: SchemaAnyOf, parent_name: str) -> PropertyDefi
 
 
 def _property(name: str, type_name: str, known_type: bool) -> PropertyDefinition:
+    name_patches = {"ID": "Id", "URL": "Url", "PR": "Pr", "DEFAULTS": "defaults"}
+    patched_name = reduce(
+        lambda n, p: n.replace(p[0], p[1]), name_patches.items(), name
+    )
     return PropertyDefinition(
-        name=stringcase.snakecase(name),
+        name=stringcase.snakecase(patched_name),
         key=name,
         value_type=type_name,
         known_type=known_type,

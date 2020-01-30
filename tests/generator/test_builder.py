@@ -525,3 +525,42 @@ def test_type_builder_resolves_union_types_to_any():
         ],
         depends_on=set(),
     )
+
+
+def test_type_builder_handles_specific_non_camel_case_property_names():
+    """
+    Test type builder handles specific non-camel case property names.
+    """
+    schema = [
+        SchemaObject(
+            name="NonStandardObject",
+            properties=[
+                SchemaValue(name="baseURL", value_type="string"),
+                SchemaValue(name="DEFAULTS", value_type="any"),
+                SchemaValue(name="thisPR", value_type="null"),
+                SchemaValue(name="instanceID", value_type="number"),
+            ],
+        )
+    ]
+
+    build_result = build_types(schema)
+
+    assert len(build_result) == 1
+    assert build_result[0] == ClassDefinition(
+        name="NonStandardObject",
+        properties=[
+            PropertyDefinition(
+                name="base_url", key="baseURL", value_type="str", known_type=True,
+            ),
+            PropertyDefinition(
+                name="defaults", key="DEFAULTS", value_type="Any", known_type=True,
+            ),
+            PropertyDefinition(
+                name="this_pr", key="thisPR", value_type="Any", known_type=True
+            ),
+            PropertyDefinition(
+                name="instance_id", key="instanceID", value_type="int", known_type=True
+            ),
+        ],
+        depends_on=set(),
+    )
