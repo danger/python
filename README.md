@@ -23,7 +23,7 @@ npm install -g danger
 # install poetry
 pip install poetry
 # install project dependencies
-poetry install
+poetry install --no-dev
 # activate virtual environment
 poetry shell
 # run danger-python
@@ -49,9 +49,35 @@ title = danger.github.pr.title
 markdown(title)
 ```
 
+### Development
+
+To develop the code, clone the repository and run the following commands:
+
+```sh
+# install danger
+npm install -g danger
+# install poetry
+pip install poetry
+# install project dependencies
+poetry install
+# activate virtual environment
+poetry shell
+# run tests
+pytest
+```
+
+To regenerate the input JSONSchema, put the latest version in `scripts/input_schema.json` and run the following commands:
+
+```sh
+cd scripts
+python generate_scheme.py
+```
+
+This should update the `danger_python/models.py` file.
+
 ### TODOs
 
-- [ ] Parse complete Danger DSL
+- [x] Parse complete Danger DSL
 - [ ] Plugin infrastructure
 - [ ] Release the initial version of the package
 
