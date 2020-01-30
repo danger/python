@@ -1,9 +1,9 @@
 from collections import OrderedDict
 from itertools import chain
+from operator import attrgetter
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
 
 import stringcase
-from toposort import toposort_flatten
 
 from .models import (
     ClassDefinition,
@@ -22,11 +22,7 @@ from .models import (
 
 def build_types(schema: List[SchemaItem]) -> List[TypeDefinition]:
     built_types = list(chain.from_iterable(map(_build_types_for_item, schema)))
-    types_by_names = {type.name: type for type in built_types}
-    references_by_type_names = {type.name: type.depends_on for type in built_types}
-    sorted_types = toposort_flatten(references_by_type_names)
-
-    return list(map(lambda t: types_by_names[_normalize_typename(t)], sorted_types))
+    return sorted(built_types, key=attrgetter("name"))
 
 
 def _normalize_typename(typename: str) -> str:

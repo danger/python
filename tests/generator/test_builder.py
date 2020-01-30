@@ -87,13 +87,13 @@ def test_type_builder_handles_reference_types():
 
     assert len(build_result) == 3
     assert build_result[0] == ClassDefinition(
-        name="ObjectC",
+        name="ObjectA",
         properties=[
             PropertyDefinition(
-                name="int_value", key="intValue", value_type="int", known_type=True
+                name="ref_b", key="refB", value_type="ObjectB", known_type=False
             )
         ],
-        depends_on=set(),
+        depends_on={"ObjectB"},
     )
     assert build_result[1] == ClassDefinition(
         name="ObjectB",
@@ -105,13 +105,13 @@ def test_type_builder_handles_reference_types():
         depends_on={"ObjectC"},
     )
     assert build_result[2] == ClassDefinition(
-        name="ObjectA",
+        name="ObjectC",
         properties=[
             PropertyDefinition(
-                name="ref_b", key="refB", value_type="ObjectB", known_type=False
+                name="int_value", key="intValue", value_type="int", known_type=True
             )
         ],
-        depends_on={"ObjectB"},
+        depends_on=set(),
     )
 
 
@@ -136,12 +136,7 @@ def test_type_builder_handles_enums():
     build_result = build_types(schema)
 
     assert len(build_result) == 2
-    assert build_result[0] == EnumDefinition(
-        name="ClassWithEnumsEnumValue",
-        values=[("FIRST", "first"), ("SECOND", "second"), ("THIRD", "third")],
-        depends_on=set(),
-    )
-    assert build_result[1] == ClassDefinition(
+    assert build_result[0] == ClassDefinition(
         name="ClassWithEnums",
         properties=[
             PropertyDefinition(
@@ -158,6 +153,11 @@ def test_type_builder_handles_enums():
             ),
         ],
         depends_on={"ClassWithEnumsEnumValue"},
+    )
+    assert build_result[1] == EnumDefinition(
+        name="ClassWithEnumsEnumValue",
+        values=[("FIRST", "first"), ("SECOND", "second"), ("THIRD", "third")],
+        depends_on=set(),
     )
 
 
@@ -187,10 +187,17 @@ def test_type_builder_handles_nested_properties():
     build_result = build_types(schema)
 
     assert len(build_result) == 3
-    assert build_result[0] == EnumDefinition(
-        name="ClassWithNestedClassNestedValueEnumValue",
-        values=[("HEY", "hey"), ("NEW", "new"), ("VALUE", "value")],
-        depends_on=set(),
+    assert build_result[0] == ClassDefinition(
+        name="ClassWithNestedClass",
+        properties=[
+            PropertyDefinition(
+                name="nested_value",
+                key="nestedValue",
+                value_type="ClassWithNestedClassNestedValue",
+                known_type=False,
+            ),
+        ],
+        depends_on={"ClassWithNestedClassNestedValue"},
     )
     assert build_result[1] == ClassDefinition(
         name="ClassWithNestedClassNestedValue",
@@ -210,17 +217,10 @@ def test_type_builder_handles_nested_properties():
         ],
         depends_on={"ClassWithNestedClassNestedValueEnumValue"},
     )
-    assert build_result[2] == ClassDefinition(
-        name="ClassWithNestedClass",
-        properties=[
-            PropertyDefinition(
-                name="nested_value",
-                key="nestedValue",
-                value_type="ClassWithNestedClassNestedValue",
-                known_type=False,
-            ),
-        ],
-        depends_on={"ClassWithNestedClassNestedValue"},
+    assert build_result[2] == EnumDefinition(
+        name="ClassWithNestedClassNestedValueEnumValue",
+        values=[("HEY", "hey"), ("NEW", "new"), ("VALUE", "value")],
+        depends_on=set(),
     )
 
 
@@ -258,18 +258,6 @@ def test_type_builder_handles_all_of_references():
 
     assert len(build_result) == 2
     assert build_result[0] == ClassDefinition(
-        name="ReferencedObject",
-        properties=[
-            PropertyDefinition(
-                name="string_value",
-                key="stringValue",
-                value_type="str",
-                known_type=True,
-            )
-        ],
-        depends_on=set(),
-    )
-    assert build_result[1] == ClassDefinition(
         name="ClassWithAllOf",
         properties=[
             PropertyDefinition(
@@ -280,6 +268,18 @@ def test_type_builder_handles_all_of_references():
             )
         ],
         depends_on={"ReferencedObject"},
+    )
+    assert build_result[1] == ClassDefinition(
+        name="ReferencedObject",
+        properties=[
+            PropertyDefinition(
+                name="string_value",
+                key="stringValue",
+                value_type="str",
+                known_type=True,
+            )
+        ],
+        depends_on=set(),
     )
 
 
@@ -337,6 +337,30 @@ def test_type_builder_handles_arrays():
 
     assert len(build_result) == 4
     assert build_result[0] == ClassDefinition(
+        name="ClassWithAllOfArray",
+        properties=[
+            PropertyDefinition(
+                name="authors_array",
+                key="authorsArray",
+                value_type="List[SomeOtherObject]",
+                known_type=False,
+            )
+        ],
+        depends_on={"SomeOtherObject"},
+    )
+    assert build_result[1] == ClassDefinition(
+        name="ClassWithPropertyArray",
+        properties=[
+            PropertyDefinition(
+                name="properties_array",
+                key="propertiesArray",
+                value_type="List[ClassWithPropertyArrayPropertiesArray]",
+                known_type=False,
+            )
+        ],
+        depends_on={"ClassWithPropertyArrayPropertiesArray"},
+    )
+    assert build_result[2] == ClassDefinition(
         name="ClassWithPropertyArrayPropertiesArray",
         properties=[
             PropertyDefinition(
@@ -351,7 +375,7 @@ def test_type_builder_handles_arrays():
         ],
         depends_on=set(),
     )
-    assert build_result[1] == ClassDefinition(
+    assert build_result[3] == ClassDefinition(
         name="SomeOtherObject",
         properties=[
             PropertyDefinition(
@@ -362,30 +386,6 @@ def test_type_builder_handles_arrays():
             )
         ],
         depends_on=set(),
-    )
-    assert build_result[2] == ClassDefinition(
-        name="ClassWithAllOfArray",
-        properties=[
-            PropertyDefinition(
-                name="authors_array",
-                key="authorsArray",
-                value_type="List[SomeOtherObject]",
-                known_type=False,
-            )
-        ],
-        depends_on={"SomeOtherObject"},
-    )
-    assert build_result[3] == ClassDefinition(
-        name="ClassWithPropertyArray",
-        properties=[
-            PropertyDefinition(
-                name="properties_array",
-                key="propertiesArray",
-                value_type="List[ClassWithPropertyArrayPropertiesArray]",
-                known_type=False,
-            )
-        ],
-        depends_on={"ClassWithPropertyArrayPropertiesArray"},
     )
 
 
