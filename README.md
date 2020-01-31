@@ -78,6 +78,6 @@ This should update the `danger_python/models.py` file.
 ### TODOs
 
 - [x] Parse complete Danger DSL
-- [ ] Plugin infrastructure
+- [x] Plugin infrastructure
 - [ ] Release the initial version of the package
 
