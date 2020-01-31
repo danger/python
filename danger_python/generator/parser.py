@@ -13,17 +13,17 @@ from .models import (
 )
 
 
-def parse_schema(schema: str) -> List[SchemaObject]:
+def parse_schema(schema: str) -> List[SchemaItem]:
     objects = json.loads(schema).get("definitions", {})
     return _parse_items(objects)
 
 
-def _parse_items(json: Dict[str, Any]) -> List[SchemaObject]:
+def _parse_items(json: Dict[str, Any]) -> List[SchemaItem]:
     keys = sorted(json.keys())
     return list(filter(None, (_parse_item(name, json[name]) for name in keys)))
 
 
-def _parse_item(name: str, json: Dict[str, Any]) -> Optional[SchemaItem]:
+def _parse_item(name: str, json: Dict[str, Any]) -> SchemaItem:
     parsers = (
         _parse_object,
         _parse_enum,
@@ -45,7 +45,7 @@ def _parse_object(name: str, json: Dict[str, Any]) -> Optional[SchemaObject]:
     return None
 
 
-def _parse_value(name: str, json: Dict[str, Any]) -> Optional[SchemaValue]:
+def _parse_value(name: str, json: Dict[str, Any]) -> SchemaValue:
     value_types = json.get("type", None)
     if value_types:
         value_types = value_types if isinstance(value_types, list) else [value_types]
