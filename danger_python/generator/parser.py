@@ -66,6 +66,8 @@ def _parse_enum(name: str, json: Dict[str, Any]) -> Optional[SchemaEnum]:
     if json.get("enum", None):
         return SchemaEnum(name=name, value_type=json["type"], values=json["enum"])
 
+    return None
+
 
 def _parse_array(name: str, json: Dict[str, Any]) -> Optional[SchemaArray]:
     if json.get("type", None) == "array":
