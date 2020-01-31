@@ -62,27 +62,27 @@ class Danger:
     results: DangerResults = None
 
     @property
-    def git(self) -> GitJSONDSL:
+    def git(self) -> Optional[GitJSONDSL]:
         return Danger.dsl.git
 
     @property
-    def github(self) -> GitHubDSL:
+    def github(self) -> Optional[GitHubDSL]:
         return Danger.dsl.github
 
     @property
-    def bitbucket_cloud(self) -> BitBucketCloudJSONDSL:
+    def bitbucket_cloud(self) -> Optional[BitBucketCloudJSONDSL]:
         return Danger.dsl.bitbucket_cloud
 
     @property
-    def bitbucket_server(self) -> BitBucketServerJSONDSL:
+    def bitbucket_server(self) -> Optional[BitBucketServerJSONDSL]:
         return Danger.dsl.bitbucket_server
 
     @property
-    def gitlab(self) -> GitLabDSL:
+    def gitlab(self) -> Optional[GitLabDSL]:
         return Danger.dsl.gitlab
 
     @property
-    def settings(self) -> DangerDSLJSONTypeSettings:
+    def settings(self) -> Optional[DangerDSLJSONTypeSettings]:
         return Danger.dsl.settings
 
 
