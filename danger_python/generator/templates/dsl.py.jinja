@@ -1,0 +1,25 @@
+from enum import Enum
+from typing import Any, List, Optional
+
+from pydantic import BaseModel
+
+{% for type in types %}
+{% if 'EnumDefinition' in type.__class__.__name__ %}
+class {{ type.name }}(Enum):
+    {% for key, value in type.values %}{{ key }} = "{{ value }}"
+    {% else %}pass{% endfor %}
+{% elif 'ClassDefinition' in type.__class__.__name__ %}
+class {{ type.name }}(BaseModel):
+    {% for property in type.properties %}{{ property.non_reserved_name }}: {{ property.patched_type }}
+    {% else %}pass{% endfor %}
+    {% if type.properties %}class Config:
+        fields = {
+{% for property in type.properties %}            "{{ property.non_reserved_name }}": "{{ property.key }}",
+{% endfor %}        }
+    {% endif %}
+{% endif %}
+{% endfor %}
+
+{% for type in types %}
+{% if 'ClassDefinition' in type.__class__.__name__ %}{{ type.name }}.update_forward_refs(){% endif %}
+{% endfor %}

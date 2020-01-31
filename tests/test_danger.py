@@ -156,3 +156,54 @@ def test_fail_method_appends_failure_to_results():
     assert Danger.results.fails[1] == Violation(
         message="This crashes due to invalid shoe size", file_name="shoes.py", line=99
     )
+
+
+def _load_top_level_json() -> Dict[str, str]:
+    danger_dsl_json = """{
+        "danger": {
+            "bitbucket_cloud": {
+                "pr": {
+                    "description": "Bitbucket Cloud PR Description"
+                }
+            },
+            "bitbucket_server": {
+                "pr": {
+                    "description": "Bitbucket Server PR Description"
+                }
+            },
+            "git": {
+                "modified_files": ["python.py"]
+            },
+            "github": {
+                "pr": {
+                    "body": "The test issue body"
+                }
+            },
+            "gitlab": {
+                "mr": {
+                    "changes_count": "10"
+                }
+            },
+            "settings": {
+                "github": {
+                    "accessToken": "99ba..."
+                }
+            }
+        }
+    }"""
+    return {"/var/dsl.json": danger_dsl_json}
+
+
+@pytest.mark.parametrize("stdin_str", ["danger://dsl//var/dsl.json"])
+@pytest.mark.parametrize("files", [_load_top_level_json()])
+def test_danger_wraps_top_level_json_properties(danger: Danger):
+    """
+    Test that all top-level properties of the Danger JSON can be accessed
+    from the Danger object.
+    """
+    assert danger.git.modified_files == ["python.py"]
+    assert danger.github.pr.body == "The test issue body"
+    assert danger.bitbucket_cloud.pr.description == "Bitbucket Cloud PR Description"
+    assert danger.bitbucket_server.pr.description == "Bitbucket Server PR Description"
+    assert danger.gitlab.mr.changes_count == "10"
+    assert danger.settings.github.access_token == "99ba..."

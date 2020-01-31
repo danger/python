@@ -13,7 +13,7 @@ license = "MIT"
 python = "^3.7"
 click = "^7.0"
 click-default-group = "^1.2.2"
-dataclasses-json = "^0.3.7"
+pydantic = "^1.4"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.3.2"
@@ -26,6 +26,7 @@ flake8 = "^3.7.9"
 pylint = "^2.4.4"
 jinja2 = "^2.10.3"
 pyfakefs = "^3.7.1"
+stringcase = "^1.2.0"
 
 [tool.poetry.scripts]
 danger-python = 'danger_python.cli:cli'
