@@ -5,9 +5,18 @@ from unittest import mock
 
 import pytest
 
-from danger_python.danger import (Danger, DangerResults, Violation, fail,
-                                  load_dsl, markdown, message,
-                                  serialize_results, serialize_violation, warn)
+from danger_python.danger import (
+    Danger,
+    DangerResults,
+    Violation,
+    fail,
+    load_dsl,
+    markdown,
+    message,
+    serialize_results,
+    serialize_violation,
+    warn,
+)
 from tests.fixtures.danger import danger_input_file_fixture
 
 
