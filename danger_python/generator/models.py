@@ -39,12 +39,12 @@ class SchemaArray(SchemaItem):
 
 @dataclass
 class SchemaAllOf(SchemaItem):
-    all_of: [SchemaItem]
+    all_of: List[SchemaItem] = field(default_factory=list)
 
 
 @dataclass
 class SchemaAnyOf(SchemaItem):
-    any_of: [SchemaItem]
+    any_of: List[SchemaItem] = field(default_factory=list)
 
 
 @dataclass
