@@ -27,11 +27,20 @@ class Violation(BaseModel):
         fields = {"message": "message", "file_name": "file", "line": "line"}
 
 
+class DangerMeta(BaseModel):
+    href: str = "https://danger.systems/python"
+    name: str = "danger-python"
+
+    class Config:
+        fields = {"href": "runtimeHref", "name": "runtimeName"}
+
+
 class DangerResults(BaseModel):
     fails: List[Violation] = []
     warnings: List[Violation] = []
     messages: List[Violation] = []
     markdowns: List[Violation] = []
+    meta: DangerMeta = DangerMeta()
 
 
 def serialize_violation(violation: Violation) -> Dict[str, Any]:

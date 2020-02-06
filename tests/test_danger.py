@@ -57,6 +57,10 @@ def test_results_are_correctly_serialized():
         "warnings": [{"message": "Warning", "file": "warning.py", "line": 99}],
         "messages": [{"message": "Message"}],
         "markdowns": [{"message": "Markdown"}],
+        "meta": {
+            "runtimeName": "danger-python",
+            "runtimeHref": "https://danger.systems/python",
+        },
     }
 
 
@@ -215,3 +219,12 @@ def test_danger_wraps_top_level_json_properties(danger: Danger):
     assert danger.settings is not None
     assert danger.settings.github is not None
     assert danger.settings.github.access_token == "99ba..."
+
+
+@pytest.mark.usefixtures("danger")
+def test_danger_results_appends_correct_meta():
+    """
+    Test that correct metadata is appended to danger results.
+    """
+    assert Danger.results.meta.href == "https://danger.systems/python"
+    assert Danger.results.meta.name == "danger-python"
