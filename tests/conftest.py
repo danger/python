@@ -5,9 +5,9 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple
 from unittest import mock
 
 import pytest
+from pyfakefs.fake_filesystem_unittest import Patcher
 
 from danger_python.danger import Danger
-from pyfakefs.fake_filesystem_unittest import Patcher
 from tests.fixtures.danger import danger_input_file_fixture
 from tests.fixtures.shell import SubprocessFixture
 
