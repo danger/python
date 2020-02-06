@@ -16,7 +16,7 @@ def test_that_plugin_method_is_registered_in_global_namespace():
     the package containing the method.
     """
 
-    result = tests.fancy_method_returning_sum(8, 7)
+    result = tests.fancy_method_returning_sum(8, 7)  # type: ignore
 
     assert result == 15
 
@@ -38,7 +38,7 @@ def test_that_plugin_method_has_access_to_danger_and_reporting_methods(danger: D
     Test that plugin method has access to the danger DSL and also the methods
     for providing messages, markdowns, warnings and fails.
     """
-    tests.print_modified_files()
+    tests.print_modified_files()  # type: ignore
 
     assert danger.results == DangerResults(
         fails=[Violation(message="Files modified: 4", file_name="fail.py", line=3)],
