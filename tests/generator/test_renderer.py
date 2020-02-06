@@ -2,7 +2,6 @@ from danger_python.generator.models import (
     ClassDefinition,
     EnumDefinition,
     PropertyDefinition,
-    TypeDefinition,
 )
 from danger_python.generator.renderer import render_classes
 

@@ -5,7 +5,6 @@ from operator import attrgetter
 from typing import Any, Callable, Dict, List, Optional
 
 from pydantic import BaseModel
-from pydantic.dataclasses import dataclass
 
 from .models import (
     BitBucketCloudJSONDSL,

@@ -1,9 +1,4 @@
-import functools
-from typing import List
-
 import click
-
-from danger_python.shell import invoke_danger
 
 
 def danger_command(cli, command_name: str):

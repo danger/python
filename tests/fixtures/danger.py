@@ -1,14 +1,6 @@
-import json
-import sys
-from contextlib import contextmanager
-from io import StringIO
-from typing import Any, Dict, Iterator, List, Optional
-from unittest import mock
+from typing import Any, Dict
 
-import pytest
 from jinja2 import Environment, PackageLoader, select_autoescape
-
-from danger_python.danger import Danger
 
 
 def danger_input_file_fixture(**kwargs: Dict[str, Any]) -> str:

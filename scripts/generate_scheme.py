@@ -1,8 +1,5 @@
-import json
 import os
 import shutil
-from dataclasses import dataclass
-from typing import List, Optional
 
 from danger_python.generator.builder import build_types
 from danger_python.generator.parser import parse_schema

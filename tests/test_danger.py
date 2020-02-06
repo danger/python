@@ -1,7 +1,4 @@
-import sys
-from io import StringIO
 from typing import Dict
-from unittest import mock
 
 import pytest
 
@@ -56,9 +53,9 @@ def test_results_are_correctly_serialized():
     json = serialize_results(results)
 
     assert json == {
-        "fails": [{"message": "Fail"},],
-        "warnings": [{"message": "Warning", "file": "warning.py", "line": 99},],
-        "messages": [{"message": "Message"},],
+        "fails": [{"message": "Fail"}],
+        "warnings": [{"message": "Warning", "file": "warning.py", "line": 99}],
+        "messages": [{"message": "Message"}],
         "markdowns": [{"message": "Markdown"}],
     }
 
