@@ -68,7 +68,7 @@ def _build_types_for_class(
         name=class_name, properties=properties, depends_on=set(depends_on)
     )
 
-    types = [definition]
+    types: List[TypeDefinition] = [definition]
     types.extend(_build_nested_objects(object, class_name))
 
     return types
@@ -112,8 +112,10 @@ def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinit
         return _property_from_array(item, parent_class_name)
     if isinstance(item, SchemaAnyOf):
         return _property_from_any_of(item, parent_class_name)
-
-    return _property_from_value(item)
+    if isinstance(item, SchemaValue):
+        return _property_from_value(item)
+    else:
+        raise ValueError(f"Unknown SchemaItem type: {item.__class__.__name__}")
 
 
 def _property_from_value(value: SchemaValue) -> PropertyDefinition:
@@ -138,7 +140,7 @@ def _resolve_type(value_types: List[str]) -> str:
     return real_type
 
 
-def _property_from_object(object: SchemaObject, parent_name: str) -> PropertyDefinition:
+def _property_from_object(object: SchemaItem, parent_name: str) -> PropertyDefinition:
     type_name = _nested_object_name(object, parent_name)
     return _property(object.name, type_name, False)
 

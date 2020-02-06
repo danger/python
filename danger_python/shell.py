@@ -42,9 +42,11 @@ def execute_dangerfile(dangerfile: str):
             "message": message,
         }
         exec(compiled, {}, danger_globals)
+        assert Danger.results is not None
         print(json.dumps(serialize_results(Danger.results)))
     except Exception as error:
         _, _, trace = sys.exc_info()
+        assert trace is not None
         exception_message = __format_exception(error, trace)
     else:
         return
@@ -52,21 +54,22 @@ def execute_dangerfile(dangerfile: str):
     raise DangerfileException(exception_message)
 
 
-def __format_exception(error: Exception, trace: Optional[TracebackType]) -> str:
-    trace = trace.tb_next
+def __format_exception(error: Exception, trace: TracebackType) -> str:
+    trace_next = trace.tb_next
     error_class = error.__class__.__name__
     error_detail = error.args[0]
 
     if isinstance(error, SyntaxError):
         line_number = error.lineno
     else:
-        line_number = trace.tb_lineno
+        assert trace_next is not None
+        line_number = trace_next.tb_lineno
 
     message = (
         "There was an error when executing dangerfile.py:\n"
         f"{error_class} at line {line_number}: {error_detail}\n\n"
         "Stacktrace:\n"
-        f"{''.join(traceback.format_tb(trace))}"
+        f"{''.join(traceback.format_tb(trace_next))}"
     )
 
     return message

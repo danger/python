@@ -39,12 +39,12 @@ class SchemaArray(SchemaItem):
 
 @dataclass
 class SchemaAllOf(SchemaItem):
-    all_of: [SchemaItem]
+    all_of: List[SchemaItem] = field(default_factory=list)
 
 
 @dataclass
 class SchemaAnyOf(SchemaItem):
-    any_of: [SchemaItem]
+    any_of: List[SchemaItem] = field(default_factory=list)
 
 
 @dataclass
@@ -87,7 +87,7 @@ class PropertyDefinition:
 @dataclass
 class TypeDefinition:
     name: str
-    depends_on: Set["TypeDefinition"] = field(default_factory=set)
+    depends_on: Set[str] = field(default_factory=set)
 
 
 @dataclass

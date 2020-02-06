@@ -75,9 +75,31 @@ python generate_scheme.py
 
 This should update the `danger_python/models.py` file.
 
+### Building plugins
+
+To build a plugin, add a `danger-python` as a dependency and subclass the `DangerPlugin` class:
+
+```python
+from danger_python.plugins import DangerPlugin
+
+class ExamplePlugin(DangerPlugin):
+    def hello_world(self):
+        count = len(self.danger.git.modified_files)
+        self.message(f"ExamplePlugin says hello to {count} modified files")
+```
+
+Importing the package in a `dangerfile.py` will import all the instance methods to the module-level globals:
+
+```python
+import example_plugin 
+
+# calls hello_world method from the plugin class
+example_plugin.hello_world()
+```
+
 ### TODOs
 
 - [x] Parse complete Danger DSL
-- [ ] Plugin infrastructure
+- [x] Plugin infrastructure
 - [ ] Release the initial version of the package
 

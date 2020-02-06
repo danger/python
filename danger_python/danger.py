@@ -58,31 +58,37 @@ class Danger:
         if not Danger.results:
             Danger.results = DangerResults()
 
-    dsl: DangerDSLJSONType = None
-    results: DangerResults = None
+    dsl: Optional[DangerDSLJSONType] = None
+    results: Optional[DangerResults] = None
 
     @property
-    def git(self) -> GitJSONDSL:
+    def git(self) -> Optional[GitJSONDSL]:
+        assert Danger.dsl is not None
         return Danger.dsl.git
 
     @property
-    def github(self) -> GitHubDSL:
+    def github(self) -> Optional[GitHubDSL]:
+        assert Danger.dsl is not None
         return Danger.dsl.github
 
     @property
-    def bitbucket_cloud(self) -> BitBucketCloudJSONDSL:
+    def bitbucket_cloud(self) -> Optional[BitBucketCloudJSONDSL]:
+        assert Danger.dsl is not None
         return Danger.dsl.bitbucket_cloud
 
     @property
-    def bitbucket_server(self) -> BitBucketServerJSONDSL:
+    def bitbucket_server(self) -> Optional[BitBucketServerJSONDSL]:
+        assert Danger.dsl is not None
         return Danger.dsl.bitbucket_server
 
     @property
-    def gitlab(self) -> GitLabDSL:
+    def gitlab(self) -> Optional[GitLabDSL]:
+        assert Danger.dsl is not None
         return Danger.dsl.gitlab
 
     @property
-    def settings(self) -> DangerDSLJSONTypeSettings:
+    def settings(self) -> Optional[DangerDSLJSONTypeSettings]:
+        assert Danger.dsl is not None
         return Danger.dsl.settings
 
 
@@ -92,6 +98,7 @@ def _add_to_results(
     file_name: Optional[str] = None,
     line: Optional[int] = None,
 ):
+    assert Danger.results is not None
     violation = Violation(message=message, file_name=file_name, line=line)
     field(Danger.results).append(violation)
 

@@ -1,3 +1,5 @@
+import pytest
+
 from danger_python.generator.builder import build_types
 from danger_python.generator.models import (
     ClassDefinition,
@@ -7,6 +9,7 @@ from danger_python.generator.models import (
     SchemaAnyOf,
     SchemaArray,
     SchemaEnum,
+    SchemaItem,
     SchemaObject,
     SchemaReference,
     SchemaValue,
@@ -564,3 +567,21 @@ def test_type_builder_handles_specific_non_camel_case_property_names():
         ],
         depends_on=set(),
     )
+
+
+def test_type_builder_raises_exception_on_invalid_schema_item_type():
+    """
+    Test type builder raises an exception on invalid schema item type.
+    """
+
+    class UnknownSchemaItem(SchemaItem):
+        pass
+
+    schema = [
+        SchemaObject(
+            name="FakeObject", properties=[UnknownSchemaItem(name="objectUnknown")]
+        )
+    ]
+
+    with pytest.raises(ValueError):
+        _ = build_types(schema)
