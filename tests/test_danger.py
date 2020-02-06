@@ -198,9 +198,20 @@ def test_danger_wraps_top_level_json_properties(danger: Danger):
     Test that all top-level properties of the Danger JSON can be accessed
     from the Danger object.
     """
+    assert danger.git is not None
     assert danger.git.modified_files == ["python.py"]
+    assert danger.github is not None
+    assert danger.github.pr is not None
     assert danger.github.pr.body == "The test issue body"
+    assert danger.bitbucket_cloud is not None
+    assert danger.bitbucket_cloud.pr is not None
     assert danger.bitbucket_cloud.pr.description == "Bitbucket Cloud PR Description"
+    assert danger.bitbucket_server is not None
+    assert danger.bitbucket_server.pr is not None
     assert danger.bitbucket_server.pr.description == "Bitbucket Server PR Description"
+    assert danger.gitlab is not None
+    assert danger.gitlab.mr is not None
     assert danger.gitlab.mr.changes_count == "10"
+    assert danger.settings is not None
+    assert danger.settings.github is not None
     assert danger.settings.github.access_token == "99ba..."
