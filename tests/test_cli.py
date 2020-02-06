@@ -1,6 +1,4 @@
 import json
-from typing import List
-from unittest import mock
 
 import pytest
 from click.testing import CliRunner
@@ -167,6 +165,10 @@ def test_executing_dangerfile_prints_results_to_stdout():
         "warnings": [{"message": "This is the final warning"}],
         "messages": [{"message": "Hello world"}],
         "markdowns": [{"message": "Test markdown"}],
+        "meta": {
+            "runtimeHref": "https://danger.systems/python",
+            "runtimeName": "danger-python",
+        },
     }
 
     assert result.exit_code == 0

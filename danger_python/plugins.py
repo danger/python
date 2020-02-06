@@ -1,5 +1,4 @@
 import sys
-from typing import Optional
 
 from .danger import Danger, fail, markdown, message, warn
 

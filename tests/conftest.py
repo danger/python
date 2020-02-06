@@ -1,7 +1,7 @@
 import subprocess
 import sys
 from io import StringIO
-from typing import Dict, Iterator, List, Optional
+from typing import Any, Dict, Iterator, List, Optional, Tuple
 from unittest import mock
 
 import pytest
@@ -89,7 +89,9 @@ def run_subprocess(subprocesses: List[SubprocessFixture]) -> Iterator[None]:
     def match_fixture(
         fixture: SubprocessFixture, commands: List[str], **kwargs
     ) -> bool:
-        kwarg_match = lambda kv: kwargs.get(kv[0], None) == kv[1]
+        def kwarg_match(kwarg: Tuple[str, Any]):
+            return kwargs.get(kwarg[0], None) == kwarg[1]
+
         kwargs_match = all(map(kwarg_match, fixture.kwargs.items()))
         return fixture.commands == commands and kwargs_match
 
@@ -99,8 +101,10 @@ def run_subprocess(subprocesses: List[SubprocessFixture]) -> Iterator[None]:
         )
 
     def fake_run(commands, **kwargs):
+        def matcher(fixture: SubprocessFixture) -> bool:
+            return match_fixture(fixture, commands, **kwargs)
+
         try:
-            matcher = lambda f: match_fixture(f, commands, **kwargs)
             return completed_process(next(filter(matcher, subprocesses)))
         except StopIteration:
             msg = f"Could not find fixture for call with {commands} and {kwargs}"

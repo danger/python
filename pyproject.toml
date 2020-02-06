@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "danger-python"
-version = "0.0.1"
+version = "0.1.0"
 description = "Write your Dangerfiles in Python."
 authors = [
     "Orta Therox <danger@orta.io>",

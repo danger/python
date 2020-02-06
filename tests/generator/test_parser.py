@@ -1,5 +1,3 @@
-import pytest
-
 from danger_python.generator.models import (
     SchemaAllOf,
     SchemaAnyOf,
@@ -115,7 +113,7 @@ def test_schema_parser_parses_definitions():
             properties=[
                 SchemaObject(
                     name="html",
-                    properties=[SchemaValue(name="href", value_type="string"),],
+                    properties=[SchemaValue(name="href", value_type="string")],
                 ),
                 SchemaReference(name="ref_property", reference="BitBucketCloudPRDSL"),
             ],

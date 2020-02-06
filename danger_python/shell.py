@@ -3,7 +3,7 @@ import subprocess
 import sys
 import traceback
 from types import TracebackType
-from typing import List, Optional
+from typing import List
 
 from .danger import Danger, fail, markdown, message, serialize_results, warn
 from .exceptions import DangerfileException, SystemConfigurationException

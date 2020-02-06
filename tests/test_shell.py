@@ -1,8 +1,3 @@
-import subprocess
-import sys
-from io import StringIO
-from unittest import mock
-
 import pytest
 
 from danger_python.exceptions import DangerfileException, SystemConfigurationException
