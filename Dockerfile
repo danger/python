@@ -19,4 +19,4 @@ RUN cd /usr/src/danger-python && \
     poetry config virtualenvs.create false && \
     poetry install --no-dev
 
-ENTRYPOINT ["npx", "--package", "danger", "danger-python", "ci"]
+ENTRYPOINT ["npx", "--package", "danger", "danger-python", "ci", "-v"]
