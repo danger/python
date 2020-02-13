@@ -4,10 +4,10 @@ from typing import Dict, Iterator, List, Optional
 from unittest import mock
 
 import pytest
-from pyfakefs.fake_filesystem_unittest import Patcher
-from testfixtures.popen import MockPopen
 
 from danger_python.danger import Danger
+from pyfakefs.fake_filesystem_unittest import Patcher
+from testfixtures.popen import MockPopen
 from tests.fixtures.danger import danger_input_file_fixture
 from tests.fixtures.shell import SubprocessFixture
 
@@ -56,16 +56,16 @@ def danger_js_output() -> str:
 
 
 @pytest.fixture
-def danger_js_arguments() -> List[str]:
-    return []
+def danger_js_arguments() -> str:
+    return ""
 
 
 @pytest.fixture
 def subprocesses(
-    danger_js_path: Optional[str], danger_js_output: str, danger_js_arguments: List[str]
+    danger_js_path: Optional[str], danger_js_output: str, danger_js_arguments: str
 ) -> List[SubprocessFixture]:
     which_danger_subprocess = SubprocessFixture(
-        commands=["which", "danger"],
+        command="which danger",
         exit_code=0 if danger_js_path else 1,
         output=danger_js_path if danger_js_path else "danger not found",
     )
@@ -74,7 +74,7 @@ def subprocesses(
 
     if danger_js_path:
         danger_subprocess = SubprocessFixture(
-            commands=[danger_js_path] + danger_js_arguments,
+            command=danger_js_path + " " + danger_js_arguments,
             exit_code=0,
             output=danger_js_output,
         )
@@ -87,7 +87,7 @@ def run_subprocess(subprocesses: List[SubprocessFixture]) -> Iterator[None]:
     with mock.patch("subprocess.Popen", new_callable=MockPopen) as mock_popen:
         for process in subprocesses:
             mock_popen.set_command(
-                " ".join(process.commands),
+                process.command,
                 returncode=process.exit_code,
                 stdout=process.output.encode("utf-8") if process.output else None,
             )
