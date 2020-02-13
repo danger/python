@@ -5,14 +5,10 @@ from click.testing import CliRunner
 
 from danger_python.cli import cli
 
-DANGER_PR_ARGUMENTS = [
-    "pr",
-    "https://github.com/microsoft/TypeScript/pull/34806",
-    "--use-github-checks",
-    "-p",
-    "danger-python",
-    "-u",
-]
+DANGER_PR_ARGUMENTS = (
+    "pr https://github.com/microsoft/TypeScript/pull/34806 "
+    "--use-github-checks -p danger-python -u"
+)
 
 
 @pytest.mark.parametrize("danger_js_path", ["/usr/bin/danger-js"])
@@ -35,15 +31,7 @@ def test_pr_command_invokes_danger_js_passing_arguments():
     assert result.output == "danger-js output\n"
 
 
-DANGER_LOCAL_ARGUMENTS = [
-    "local",
-    "-i",
-    "fake_danger_id",
-    "-t",
-    "-p",
-    "danger-python",
-    "-u",
-]
+DANGER_LOCAL_ARGUMENTS = "local -i fake_danger_id -t -p danger-python -u"
 
 
 @pytest.mark.parametrize("danger_js_path", ["/usr/bin/js-danger"])
@@ -62,7 +50,7 @@ def test_local_command_invokes_danger_js_passing_arguments():
     assert result.output == "parsed local output\n"
 
 
-DANGER_CI_ARGUMENTS = ["ci", "-v", "--no-publish-check", "-p", "danger-python", "-u"]
+DANGER_CI_ARGUMENTS = "ci -v --no-publish-check -p danger-python -u"
 
 
 @pytest.mark.parametrize("danger_js_path", ["/usr/bin/very-danger"])
