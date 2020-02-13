@@ -4,4 +4,6 @@
 
 ### 0.1.0
 
-* Initial release of the plugin. - @turekj
+* Initial release of the plugin. - [@turekj]
+
+[@turekj]: https://github.com/turekj
