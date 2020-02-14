@@ -1,4 +1,5 @@
-[![PyPI version](https://badge.fury.io/py/danger-python.svg)](https://pypi.org/project/danger-python/)
+[![PyPI](https://img.shields.io/pypi/v/danger-python)](https://pypi.org/project/danger-python/)
+![Python versions](https://img.shields.io/pypi/pyversions/danger-python)
 [![Build Status](https://travis-ci.org/danger/python.svg?branch=master)](https://travis-ci.org/danger/python)
 
 # python
