@@ -1152,9 +1152,10 @@ class GitHubReview(BaseModel):
 
 class GitHubReviewState(Enum):
     APPROVED = "APPROVED"
-    COMMENT = "COMMENT"
+    CHANGES_REQUESTED = "CHANGES_REQUESTED"
+    COMMENTED = "COMMENTED"
+    DISMISSED = "DISMISSED"
     PENDING = "PENDING"
-    REQUEST_CHANGES = "REQUEST_CHANGES"
 
 
 class GitHubReviewers(BaseModel):

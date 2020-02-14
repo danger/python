@@ -4,10 +4,10 @@ from typing import Dict, Iterator, List, Optional
 from unittest import mock
 
 import pytest
-
-from danger_python.danger import Danger
 from pyfakefs.fake_filesystem_unittest import Patcher
 from testfixtures.popen import MockPopen
+
+from danger_python.danger import Danger
 from tests.fixtures.danger import danger_input_file_fixture
 from tests.fixtures.shell import SubprocessFixture
 

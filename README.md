@@ -49,6 +49,26 @@ title = danger.github.pr.title
 markdown(title)
 ```
 
+### Using as GitHub Action
+
+1. Create a `dangerfile.py` in the root directory of your repository.
+2. Add a following workflow:
+
+```yaml
+name: Danger
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: danger/python@f0ce9ea
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
 ### Development
 
 To develop the code, clone the repository and run the following commands:
