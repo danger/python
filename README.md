@@ -6,6 +6,8 @@ Write your Dangerfiles in Python.
 
 ### Requirements
 
+:warning: `danger-python` is currently work in progress. Breaking changes may occur.
+
 Running `danger-python` requires:
 
 * Python 3.7 (tested under Python 3.7.5)
