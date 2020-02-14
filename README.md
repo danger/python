@@ -1,8 +1,14 @@
+[![PyPI](https://img.shields.io/pypi/v/danger-python)](https://pypi.org/project/danger-python/)
+![Python versions](https://img.shields.io/pypi/pyversions/danger-python)
+[![Build Status](https://travis-ci.org/danger/python.svg?branch=master)](https://travis-ci.org/danger/python)
+
 # python
 
 Write your Dangerfiles in Python.
 
 ### Requirements
+
+:warning: `danger-python` is currently work in progress. Breaking changes may occur.
 
 Running `danger-python` requires:
 
@@ -11,21 +17,13 @@ Running `danger-python` requires:
 
 ### Installation
 
-:warning: The script is currently work in progress. Installation requires:
-
-* Poetry 1.0.2
-
 In order to test the script please run the following commands:
 
 ```sh
-# install danger
+# install danger-js
 npm install -g danger
-# install poetry
-pip install poetry
-# install project dependencies
-poetry install --no-dev
-# activate virtual environment
-poetry shell
+# install danger-python
+pip install danger-python
 # run danger-python
 danger-python pr https://github.com/microsoft/TypeScript/pull/34806
 ```
@@ -69,9 +67,38 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
+### Using as a CI step (Travis)
+
+1. Create a `dangerfile.py` in the root directory of your repository.
+2. Set up the CI to execute the `danger-python` script after the test suite.
+
+Example `.travis.yml` configuration:
+
+```yaml
+language: python
+python:
+    - "3.7"
+cache:
+    yarn: true
+    pip: true
+    directories:
+        - node_modules
+install:
+    - pip install poetry
+    - poetry install
+script:
+    - poetry run pytest
+after_script:
+    - nvm install 10.16.0
+    - nvm use 10.16.0
+    - yarn global add danger
+    - pip install danger-python
+    - danger-python ci -v
+```
+
 ### Development
 
-To develop the code, clone the repository and run the following commands:
+To develop the `danger-python`, clone the repository and run the following commands:
 
 ```sh
 # install danger
@@ -95,6 +122,8 @@ python generate_scheme.py
 
 This should update the `danger_python/models.py` file.
 
+:warning: Please, be careful with the generation script since the `master` branch contains the hand edits to the schema. They are all covered by the test suite, though.
+
 ### Building plugins
 
 To build a plugin, add a `danger-python` as a dependency and subclass the `DangerPlugin` class:
@@ -116,10 +145,3 @@ import example_plugin
 # calls hello_world method from the plugin class
 example_plugin.hello_world()
 ```
-
-### TODOs
-
-- [x] Parse complete Danger DSL
-- [x] Plugin infrastructure
-- [ ] Release the initial version of the package
-
