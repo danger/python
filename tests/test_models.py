@@ -1,5 +1,3 @@
-import pytest
-
 from danger_python.models import DangerDSLJSONType, GitHubReviewState
 
 
