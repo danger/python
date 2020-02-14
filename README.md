@@ -62,7 +62,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: danger/python@f0ce9ea
+    - uses: danger/python@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
