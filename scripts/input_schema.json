@@ -1733,7 +1733,12 @@
                 },
                 "merge_status": {
                     "enum": [
-                        "can_be_merged"
+                        "unchecked",
+                        "cannot_be_merged_recheck",
+                        "checking",
+                        "cannot_be_merged_rechecking",
+                        "can_be_merged",
+                        "cannot_be_merged"
                     ],
                     "type": "string"
                 },
