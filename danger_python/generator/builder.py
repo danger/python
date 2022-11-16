@@ -2,6 +2,7 @@ from functools import reduce
 from itertools import chain
 from operator import attrgetter
 from typing import Iterable, List, Optional
+import re
 
 import stringcase
 
@@ -178,11 +179,20 @@ def _property(name: str, type_name: str, known_type: bool) -> PropertyDefinition
     return PropertyDefinition(
         name=stringcase.snakecase(patched_name),
         key=name,
-        value_type=type_name,
+        value_type=strip_non_alpha_and_capitalize(type_name),
         known_type=known_type,
     )
 
+def strip_non_alpha_and_capitalize(name: str) -> str:
+    reserved_types = ("int", "bool", "str", "list", "dict")
+    if name in reserved_types:
+        return name
+
+    stripped_name:str = re.sub('[^0-9a-zA-Z\[\]]+', ' ', name)
+    parts = stripped_name.split()
+    parts_cap = [word[0].upper() + word[1:] for word in parts]
+    return "".join(parts_cap)
 
 def _nested_object_name(parent_object: SchemaItem, prefix: Optional[str] = None) -> str:
-    object_name = stringcase.pascalcase(parent_object.name)
+    object_name = stringcase.pascalcase(strip_non_alpha_and_capitalize(parent_object.name))
     return f"{prefix}{object_name}" if prefix else object_name

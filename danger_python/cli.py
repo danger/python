@@ -9,13 +9,14 @@ from danger_python.exceptions import DangerfileException
 from danger_python.shell import execute_dangerfile, invoke_danger
 
 
-@click.group(cls=DefaultGroup, default="run", default_if_no_args=True)
+@click.group(cls=DefaultGroup)
 def cli() -> None:
     pass
 
 
-@cli.command()
-def run() -> None:
+@danger_command(cli, "runner")
+def run(arguments: List[str]) -> None:
+    print(arguments)
     """Runs dangerfile.py as a danger process"""
     with open("dangerfile.py", "r") as dangerfile:
         try:
@@ -45,9 +46,8 @@ def ci(arguments: List[str]) -> None:
 
 
 def _execute_danger_js(command_name: str, arguments: List[str]) -> None:
-    command = [command_name]
-    command.extend(arguments)
-
-    process = invoke_danger(command)
+    process = invoke_danger(command_name, arguments)
     click.echo(process.stdout)
+    if process:
+        click.echo(process.stderr, err=True)
     sys.exit(process.returncode)
