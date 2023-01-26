@@ -17,6 +17,12 @@ def cli() -> None:
 @cli.command()
 def run() -> None:
     """Runs dangerfile.py as a danger process"""
+    runner()
+
+
+@danger_command(cli, "runner")
+def runner(arguments: List[str]) -> None:
+    """Runs dangerfile.py as a danger process, ignoring unknown options"""
     with open("dangerfile.py", "r") as dangerfile:
         try:
             execute_dangerfile(dangerfile.read())
