@@ -1847,7 +1847,7 @@
                         "closed",
                         "locked",
                         "merged",
-                        "open"
+                        "opened"
                     ],
                     "type": "string"
                 },

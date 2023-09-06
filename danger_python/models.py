@@ -1471,7 +1471,7 @@ class GitLabMRState(Enum):
     CLOSED = "closed"
     LOCKED = "locked"
     MERGED = "merged"
-    OPEN = "open"
+    OPEN = "opened"
 
 
 class GitLabMRTimeStats(BaseModel):
