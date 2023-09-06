@@ -1399,7 +1399,12 @@ class GitLabMRDiffRefs(BaseModel):
 
 
 class GitLabMRMergeStatus(Enum):
+    UNCHECKED = "unchecked"
+    CANNOT_BE_MERGED_RECHECK = "cannot_be_merged_recheck"
+    CHECKING = "checking"
+    CANNOT_BE_MERGED_RECHECKING = "cannot_be_merged_rechecking"
     CAN_BE_MERGED = "can_be_merged"
+    CANNOT_BE_MERGED = "cannot_be_merged"
 
 
 class GitLabMRMilestone(BaseModel):
