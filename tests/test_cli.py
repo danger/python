@@ -69,29 +69,31 @@ def test_ci_command_invokes_danger_js_passing_arguments():
     assert result.output == "The output!\n"
 
 
+@pytest.mark.parametrize("command", ["run", "runner"])
 @pytest.mark.parametrize(
     "dangerfile", ['print("Hello world")\n' 'print("Goodbye world")']
 )
 @pytest.mark.usefixtures("danger")
-def test_run_command_invokes_dangerfile():
+def test_run_command_invokes_dangerfile(command):
     """
     Test that run command invokes dangerfile.py contents.
     """
     runner = CliRunner()
-    result = runner.invoke(cli, ["run"])
+    result = runner.invoke(cli, [command])
 
     assert result.exit_code == 0
     assert result.output.startswith("Hello world\nGoodbye world\n")
 
 
+@pytest.mark.parametrize("command", ["run", "runner"])
 @pytest.mark.parametrize("dangerfile", ["This is not a valid syntax of Python"])
 @pytest.mark.usefixtures("danger")
-def test_run_command_shows_traceback_when_dangerfile_fails():
+def test_run_command_shows_traceback_when_dangerfile_fails(command):
     """
     Test that run command shows traceback when dangerfile.py fails.
     """
     runner = CliRunner(mix_stderr=False)
-    result = runner.invoke(cli, ["run"])
+    result = runner.invoke(cli, [command])
 
     expected_error = (
         "There was an error when executing dangerfile.py:\n"
@@ -116,21 +118,23 @@ def test_default_command_invokes_dangerfile():
     assert result.output.startswith("Default command\n")
 
 
+@pytest.mark.parametrize("command", ["run", "runner"])
 @pytest.mark.parametrize("modified_files", [["a.py", "b.py"]])
 @pytest.mark.parametrize("dangerfile", ["print(danger.git.modified_files)"])
 @pytest.mark.usefixtures("danger")
-def test_executing_dangerfile_passes_danger_instance_to_the_script():
+def test_executing_dangerfile_passes_danger_instance_to_the_script(command):
     """
     Test that executing run command passes danger instance with parsed input
     to the Dangerfile locals.
     """
     runner = CliRunner()
-    result = runner.invoke(cli, ["run"])
+    result = runner.invoke(cli, [command])
 
     assert result.exit_code == 0
     assert result.output.startswith("['a.py', 'b.py']\n")
 
 
+@pytest.mark.parametrize("command", ["run", "runner"])
 @pytest.mark.parametrize(
     "dangerfile",
     [
@@ -141,12 +145,12 @@ def test_executing_dangerfile_passes_danger_instance_to_the_script():
     ],
 )
 @pytest.mark.usefixtures("danger")
-def test_executing_dangerfile_prints_results_to_stdout():
+def test_executing_dangerfile_prints_results_to_stdout(command):
     """
     Test that executing run command reports results back to output.
     """
     runner = CliRunner()
-    result = runner.invoke(cli, ["run"])
+    result = runner.invoke(cli, [command])
 
     expected_json = {
         "fails": [{"message": "You are going to fail"}],
