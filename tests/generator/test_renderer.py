@@ -60,7 +60,6 @@ def test_renderer_renders_definitions_correctly():
         "\n"
         "APythonClass.update_forward_refs()"
         "\n"
-        "\n"
     )
 
 
@@ -91,7 +90,6 @@ def test_renderer_handles_empty_classes_and_enums():
         "\n"
         "\n"
         "EmptyClass.update_forward_refs()"
-        "\n"
         "\n"
     )
 
@@ -156,7 +154,6 @@ def test_renderer_renders_custom_attributes_correctly():
         "\n"
         "ClassWithUnknownTypes.update_forward_refs()"
         "\n"
-        "\n"
     )
 
 
@@ -208,6 +205,5 @@ def test_renderer_aliases_properties():
         "\n"
         "\n"
         "ClassWithAliases.update_forward_refs()"
-        "\n"
         "\n"
     )
