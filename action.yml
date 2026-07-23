@@ -1,0 +1,8 @@
+name: "danger-python"
+description: "Runs Python Dangerfiles"
+branding:
+  icon: "zap"
+  color: "blue"
+runs:
+  using: "docker"
+  image: "Dockerfile"
