@@ -90,7 +90,9 @@ def test_run_command_shows_traceback_when_dangerfile_fails(command):
     """
     Test that run command shows traceback when dangerfile.py fails.
     """
-    runner = CliRunner(mix_stderr=False)
+    # click 8.2+ removed the `mix_stderr` argument: CliRunner now always keeps
+    # stdout and stderr separate, so `result.stderr` is available by default.
+    runner = CliRunner()
     result = runner.invoke(cli, [command])
 
     expected_error = (
