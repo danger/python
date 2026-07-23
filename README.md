@@ -1,6 +1,6 @@
 [![PyPI](https://img.shields.io/pypi/v/danger-python)](https://pypi.org/project/danger-python/)
-![Python versions](https://img.shields.io/pypi/pyversions/danger-python)
-[![Build Status](https://travis-ci.org/danger/python.svg?branch=master)](https://travis-ci.org/danger/python)
+![Python versions](https://img.shields.io/badge/python-3.13%20%7C%203.14-blue)
+[![CI](https://github.com/giancarlosisasi/danger-python/actions/workflows/ci.yml/badge.svg)](https://github.com/giancarlosisasi/danger-python/actions/workflows/ci.yml)
 
 # python
 
@@ -12,7 +12,7 @@ Write your Dangerfiles in Python.
 
 Running `danger-python` requires:
 
-* Python 3.7 (tested under Python 3.7.5)
+* Python 3.13+ (developed and tested under Python 3.14)
 * danger-js 9.2 (tested under danger-js 9.2.10)
 
 ### Installation
@@ -61,39 +61,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: danger/python@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### Using as a CI step (Travis)
+### Using as a CI step
 
-1. Create a `dangerfile.py` in the root directory of your repository.
-2. Set up the CI to execute the `danger-python` script after the test suite.
-
-Example `.travis.yml` configuration:
+If you already run your own pipeline, add `danger-python` as a step after your test suite
+instead of using the prebuilt action above. This works on any CI provider — the example
+below uses GitHub Actions:
 
 ```yaml
-language: python
-python:
-    - "3.7"
-cache:
-    yarn: true
-    pip: true
-    directories:
-        - node_modules
-install:
-    - pip install poetry
-    - poetry install
-script:
-    - poetry run pytest
-after_script:
-    - nvm install 10.16.0
-    - nvm use 10.16.0
-    - yarn global add danger
-    - pip install danger-python
-    - danger-python ci -v
+name: CI
+on: [pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.14"
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+    # ... install dependencies and run your test suite here ...
+    - run: npm install -g danger
+    - run: pip install danger-python
+    - run: danger-python ci -v
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 ### Development
@@ -101,23 +101,23 @@ after_script:
 To develop the `danger-python`, clone the repository and run the following commands:
 
 ```sh
-# install danger
+# install danger-js
 npm install -g danger
-# install poetry
-pip install poetry
-# install project dependencies
-poetry install
-# activate virtual environment
-poetry shell
-# run tests
-pytest
+# install uv (https://docs.astral.sh/uv/getting-started/installation/)
+# create the virtual environment and install all dependencies from uv.lock
+uv sync
+# run the full local gate: format, lint, type-check, tests (enforces 100% coverage)
+uv run ruff format --check
+uv run ruff check
+uv run pyrefly check
+uv run pytest
 ```
 
 To regenerate the input JSONSchema, put the latest version in `scripts/input_schema.json` and run the following commands:
 
 ```sh
 cd scripts
-python generate_scheme.py
+uv run python generate_scheme.py
 ```
 
 This should update the `danger_python/models.py` file.
