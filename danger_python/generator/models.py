@@ -15,7 +15,7 @@ class SchemaObject(SchemaItem):
 @dataclass
 class SchemaValue(SchemaItem):
     value_types: list[str] = field(default_factory=list)
-    value_type: InitVar[str] = None
+    value_type: InitVar[str | None] = None
 
     def __post_init__(self, value_type: str | None):
         if value_type:
