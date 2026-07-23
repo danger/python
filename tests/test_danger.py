@@ -79,6 +79,7 @@ def test_load_dsl_method_works():
     dsl = load_dsl()
 
     assert dsl
+    assert dsl.git is not None
     assert dsl.git.modified_files == ["a.py"]
     assert dsl.git.created_files == ["b.py"]
     assert dsl.git.deleted_files == ["c.py"]
@@ -105,6 +106,7 @@ def test_message_method_appends_message_to_results():
     message("Hey, this is great!")
     message("This file is too big", "big_file.py", 2049)
 
+    assert Danger.results is not None
     assert len(Danger.results.messages) == 2
     assert Danger.results.messages[0] == Violation(message="Hey, this is great!")
     assert Danger.results.messages[1] == Violation(
@@ -120,6 +122,7 @@ def test_markdown_method_appends_markdown_to_results():
     markdown("Markdown #1")
     markdown("Markdown #2", "README.md", 1)
 
+    assert Danger.results is not None
     assert len(Danger.results.markdowns) == 2
     assert Danger.results.markdowns[0] == Violation(message="Markdown #1")
     assert Danger.results.markdowns[1] == Violation(
@@ -135,6 +138,7 @@ def test_warn_method_appends_warning_to_results():
     warn("Possible memory leak")
     warn("This method is deprecated", "deprecated.py", 29)
 
+    assert Danger.results is not None
     assert len(Danger.results.warnings) == 2
     assert Danger.results.warnings[0] == Violation(message="Possible memory leak")
     assert Danger.results.warnings[1] == Violation(
@@ -150,6 +154,7 @@ def test_fail_method_appends_failure_to_results():
     fail("Division by zero")
     fail("This crashes due to invalid shoe size", "shoes.py", 99)
 
+    assert Danger.results is not None
     assert len(Danger.results.fails) == 2
     assert Danger.results.fails[0] == Violation(message="Division by zero")
     assert Danger.results.fails[1] == Violation(
@@ -224,5 +229,6 @@ def test_danger_results_appends_correct_meta():
     """
     Test that correct metadata is appended to danger results.
     """
+    assert Danger.results is not None
     assert Danger.results.meta.href == "https://danger.systems/python"
     assert Danger.results.meta.name == "danger-python"

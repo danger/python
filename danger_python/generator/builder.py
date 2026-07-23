@@ -1,4 +1,4 @@
-from collections.abc import Iterable
+from collections.abc import Iterable, Sequence
 from functools import reduce
 from itertools import chain
 from operator import attrgetter
@@ -21,7 +21,7 @@ from .models import (
 )
 
 
-def build_types(schema: list[SchemaItem]) -> list[TypeDefinition]:
+def build_types(schema: Sequence[SchemaItem]) -> list[TypeDefinition]:
     built_types = list(chain.from_iterable(map(_build_types_for_item, schema)))
     return sorted(built_types, key=attrgetter("name"))
 

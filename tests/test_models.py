@@ -19,6 +19,8 @@ def test_github_dsl_handles_correct_review_states():
 
     dsl = DangerDSLJSONType(**dsl_json)
 
+    assert dsl.github is not None
+    assert dsl.github.reviews is not None
     assert len(dsl.github.reviews) == 5
     assert dsl.github.reviews[0].state == GitHubReviewState.APPROVED
     assert dsl.github.reviews[1].state == GitHubReviewState.CHANGES_REQUESTED

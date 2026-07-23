@@ -89,7 +89,7 @@ def run_subprocess(subprocesses: list[SubprocessFixture]) -> Iterator[None]:
             mock_popen.set_command(
                 process.command,
                 returncode=process.exit_code,
-                stdout=process.output.encode("utf-8") if process.output else None,
+                stdout=process.output.encode("utf-8") if process.output else b"",
             )
 
         yield
@@ -115,6 +115,7 @@ def files(
 @pytest.fixture
 def filesystem(files: dict[str, str]) -> Iterator[None]:
     with Patcher() as patcher:
+        assert patcher.fs is not None
         for filename, contents in files.items():
             patcher.fs.create_file(filename, contents=contents)
 
