@@ -5,7 +5,7 @@ from functools import partial
 from operator import attrgetter
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field
 
 from .models import (
     BitBucketCloudJSONDSL,
@@ -19,21 +19,20 @@ from .models import (
 
 
 class Violation(BaseModel):
-    message: str
-    file_name: str | None = None
-    line: int | None = None
+    # pydantic v1 `allow_population_by_field_name` -> v2 `populate_by_name`, so
+    # the model can still be built by field name (Violation(file_name=...)) while
+    # serializing to the danger-js alias (`file`).
+    model_config = ConfigDict(populate_by_name=True)
 
-    class Config:
-        allow_population_by_field_name = True
-        fields = {"message": "message", "file_name": "file", "line": "line"}
+    message: str
+    file_name: str | None = Field(default=None, alias="file")
+    line: int | None = None
 
 
 class DangerMeta(BaseModel):
-    href: str = "https://danger.systems/python"
-    name: str = "danger-python"
-
-    class Config:
-        fields = {"href": "runtimeHref", "name": "runtimeName"}
+    # v1 `Config.fields` alias map -> v2 per-field `Field(alias=...)`.
+    href: str = Field(default="https://danger.systems/python", alias="runtimeHref")
+    name: str = Field(default="danger-python", alias="runtimeName")
 
 
 class DangerResults(BaseModel):
@@ -45,11 +44,11 @@ class DangerResults(BaseModel):
 
 
 def serialize_violation(violation: Violation) -> dict[str, Any]:
-    return violation.dict(exclude_none=True, by_alias=True)
+    return violation.model_dump(exclude_none=True, by_alias=True)
 
 
 def serialize_results(results: DangerResults) -> dict[str, Any]:
-    return results.dict(exclude_none=True, by_alias=True)
+    return results.model_dump(exclude_none=True, by_alias=True)
 
 
 def load_dsl() -> DangerDSLJSONType:
