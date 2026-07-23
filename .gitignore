@@ -72,8 +72,7 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# pyenv
-.python-version
+# pyenv / uv — .python-version IS tracked: it pins the uv-managed interpreter (3.14)
 
 # celery beat schedule file
 celerybeat-schedule
