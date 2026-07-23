@@ -1,5 +1,4 @@
 import sys
-from typing import List
 
 import click
 from click_default_group import DefaultGroup
@@ -21,9 +20,9 @@ def run() -> None:
 
 
 @danger_command(cli, "runner")
-def runner(arguments: List[str]) -> None:
+def runner(arguments: list[str]) -> None:
     """Runs dangerfile.py as a danger process, ignoring unknown options"""
-    with open("dangerfile.py", "r") as dangerfile:
+    with open("dangerfile.py") as dangerfile:
         try:
             execute_dangerfile(dangerfile.read())
         except DangerfileException as exc:
@@ -32,25 +31,25 @@ def runner(arguments: List[str]) -> None:
 
 
 @danger_command(cli, "pr")
-def pr(arguments: List[str]) -> None:
+def pr(arguments: list[str]) -> None:
     """Runs your local Dangerfile against an existing GitHub PR.
-       Will not post on the PR"""
+    Will not post on the PR"""
     _execute_danger_js("pr", arguments)
 
 
 @danger_command(cli, "local")
-def local(arguments: List[str]) -> None:
+def local(arguments: list[str]) -> None:
     """Runs danger standalone on a repo, useful for git hooks"""
     _execute_danger_js("local", arguments)
 
 
 @danger_command(cli, "ci")
-def ci(arguments: List[str]) -> None:
+def ci(arguments: list[str]) -> None:
     """Runs Danger on CI"""
     _execute_danger_js("ci", arguments)
 
 
-def _execute_danger_js(command_name: str, arguments: List[str]) -> None:
+def _execute_danger_js(command_name: str, arguments: list[str]) -> None:
     command = [command_name]
     command.extend(arguments)
 

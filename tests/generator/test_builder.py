@@ -405,7 +405,9 @@ def test_type_builder_handles_top_level_enumerations():
 
     assert len(build_result) == 1
     assert build_result[0] == EnumDefinition(
-        name="TestEnum", values=[("A", "a"), ("B", "b"), ("C", "c")], depends_on=set(),
+        name="TestEnum",
+        values=[("A", "a"), ("B", "b"), ("C", "c")],
+        depends_on=set(),
     )
 
 
@@ -514,7 +516,10 @@ def test_type_builder_resolves_union_types_to_any():
         name="ObjectA",
         properties=[
             PropertyDefinition(
-                name="ref_b", key="refB", value_type="Any", known_type=True,
+                name="ref_b",
+                key="refB",
+                value_type="Any",
+                known_type=True,
             )
         ],
         depends_on=set(),
@@ -553,10 +558,16 @@ def test_type_builder_handles_specific_non_camel_case_property_names():
         name="NonStandardObject",
         properties=[
             PropertyDefinition(
-                name="base_url", key="baseURL", value_type="str", known_type=True,
+                name="base_url",
+                key="baseURL",
+                value_type="str",
+                known_type=True,
             ),
             PropertyDefinition(
-                name="defaults", key="DEFAULTS", value_type="Any", known_type=True,
+                name="defaults",
+                key="DEFAULTS",
+                value_type="Any",
+                known_type=True,
             ),
             PropertyDefinition(
                 name="this_pr", key="thisPR", value_type="Any", known_type=True

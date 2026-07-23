@@ -3,7 +3,6 @@ import subprocess
 import sys
 import traceback
 from types import TracebackType
-from typing import List
 
 from .danger import Danger, fail, markdown, message, serialize_results, warn
 from .exceptions import DangerfileException, SystemConfigurationException
@@ -19,12 +18,12 @@ def resolve_danger_path():
         raise SystemConfigurationException("danger-js not found in PATH")
 
 
-def invoke_danger(parameters: List[str]) -> subprocess.CompletedProcess:
+def invoke_danger(parameters: list[str]) -> subprocess.CompletedProcess:
     command = build_danger_command(parameters)
     return subprocess.run(command, capture_output=True)
 
 
-def build_danger_command(parameters: List[str]) -> List[str]:
+def build_danger_command(parameters: list[str]) -> list[str]:
     command = [resolve_danger_path()]
     command.extend(parameters)
     command.extend(["-p", "danger-python", "-u"])

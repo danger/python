@@ -16,10 +16,10 @@ def test_property_definition_formats_the_type_correctly():
     )
     integer = PropertyDefinition(name="", key="", value_type="int", known_type=True)
 
-    assert "Optional[str]" == optional_string.formatted_type
-    assert "List['CustomType']" == list_custom_type.formatted_type
-    assert "Optional['TheType']" == optional_custom_type.formatted_type
-    assert "int" == integer.formatted_type
+    assert optional_string.formatted_type == "Optional[str]"
+    assert list_custom_type.formatted_type == "List['CustomType']"
+    assert optional_custom_type.formatted_type == "Optional['TheType']"
+    assert integer.formatted_type == "int"
 
 
 def test_property_definition_returns_non_reserved_name():
@@ -34,9 +34,9 @@ def test_property_definition_returns_non_reserved_name():
     )
     id_int = PropertyDefinition(name="id", key="", value_type="int", known_type=True)
 
-    assert "from_" == from_string.non_reserved_name
-    assert "self_" == self_custom_type.non_reserved_name
-    assert "id" == id_int.non_reserved_name
+    assert from_string.non_reserved_name == "from_"
+    assert self_custom_type.non_reserved_name == "self_"
+    assert id_int.non_reserved_name == "id"
 
 
 def test_patched_property_type_formats_the_type_correctly():
@@ -55,8 +55,8 @@ def test_patched_property_type_formats_the_type_correctly():
     integer = PropertyDefinition(name="", key="", value_type="int", known_type=True)
     any_type = PropertyDefinition(name="", key="", value_type="Any", known_type=True)
 
-    assert "Optional[str]" == optional_string.patched_type
-    assert "Optional[List['CustomType']]" == list_custom_type.patched_type
-    assert "Optional['TheType']" == custom_type.patched_type
-    assert "Optional[int]" == integer.patched_type
-    assert "Any" == any_type.patched_type
+    assert optional_string.patched_type == "Optional[str]"
+    assert list_custom_type.patched_type == "Optional[List['CustomType']]"
+    assert custom_type.patched_type == "Optional['TheType']"
+    assert integer.patched_type == "Optional[int]"
+    assert any_type.patched_type == "Any"

@@ -64,7 +64,7 @@ def test_dangerfile_executor_formats_syntax_error_correctly():
     """
     Test that dangerfile executor formats the SyntaxError correctly.
     """
-    dangerfile = "a = 2\n" "b = 8\n" "This is not a valid Python syntax\n"
+    dangerfile = "a = 2\nb = 8\nThis is not a valid Python syntax\n"
 
     with pytest.raises(DangerfileException) as danger_exc:
         execute_dangerfile(dangerfile)
@@ -83,7 +83,7 @@ def test_dangerfile_executor_formats_name_error_correctly():
     """
     Test that dangerfile executor formats the NameError correctly.
     """
-    dangerfile = "a = 2\n" "c += 8\n" "b = 12\n"
+    dangerfile = "a = 2\nc += 8\nb = 12\n"
 
     with pytest.raises(DangerfileException) as danger_exc:
         execute_dangerfile(dangerfile)

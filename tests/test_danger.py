@@ -1,5 +1,3 @@
-from typing import Dict
-
 import pytest
 
 from danger_python.danger import (
@@ -64,7 +62,7 @@ def test_results_are_correctly_serialized():
     }
 
 
-def __load_dsl_files() -> Dict[str, str]:
+def __load_dsl_files() -> dict[str, str]:
     danger_dsl_json = danger_input_file_fixture(
         modified_files=["a.py"], created_files=["b.py"], deleted_files=["c.py"]
     )
@@ -159,7 +157,7 @@ def test_fail_method_appends_failure_to_results():
     )
 
 
-def _load_top_level_json() -> Dict[str, str]:
+def _load_top_level_json() -> dict[str, str]:
     danger_dsl_json = """{
         "danger": {
             "bitbucket_cloud": {

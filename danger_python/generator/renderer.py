@@ -1,12 +1,11 @@
 import subprocess
-from typing import List
 
 from jinja2 import Environment, PackageLoader, select_autoescape
 
 from .models import TypeDefinition
 
 
-def render_classes(to_render: List[TypeDefinition]) -> str:
+def render_classes(to_render: list[TypeDefinition]) -> str:
     template_environment = Environment(
         loader=PackageLoader("danger_python.generator", "templates"),
         autoescape=select_autoescape([]),

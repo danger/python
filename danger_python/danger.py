@@ -1,8 +1,9 @@
 import json
 import sys
+from collections.abc import Callable
 from functools import partial
 from operator import attrgetter
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -19,8 +20,8 @@ from .models import (
 
 class Violation(BaseModel):
     message: str
-    file_name: Optional[str] = None
-    line: Optional[int] = None
+    file_name: str | None = None
+    line: int | None = None
 
     class Config:
         allow_population_by_field_name = True
@@ -36,25 +37,25 @@ class DangerMeta(BaseModel):
 
 
 class DangerResults(BaseModel):
-    fails: List[Violation] = []
-    warnings: List[Violation] = []
-    messages: List[Violation] = []
-    markdowns: List[Violation] = []
+    fails: list[Violation] = []
+    warnings: list[Violation] = []
+    messages: list[Violation] = []
+    markdowns: list[Violation] = []
     meta: DangerMeta = DangerMeta()
 
 
-def serialize_violation(violation: Violation) -> Dict[str, Any]:
+def serialize_violation(violation: Violation) -> dict[str, Any]:
     return violation.dict(exclude_none=True, by_alias=True)
 
 
-def serialize_results(results: DangerResults) -> Dict[str, Any]:
+def serialize_results(results: DangerResults) -> dict[str, Any]:
     return results.dict(exclude_none=True, by_alias=True)
 
 
 def load_dsl() -> DangerDSLJSONType:
     file_url = sys.stdin.read().split("danger://dsl/")[-1]
 
-    with open(file_url, "r") as json_file:
+    with open(file_url) as json_file:
         input_json = json.loads(json_file.read())
         return DangerDSLJSONType(**input_json["danger"])
 
@@ -66,45 +67,45 @@ class Danger:
         if not Danger.results:
             Danger.results = DangerResults()
 
-    dsl: Optional[DangerDSLJSONType] = None
-    results: Optional[DangerResults] = None
+    dsl: DangerDSLJSONType | None = None
+    results: DangerResults | None = None
 
     @property
-    def git(self) -> Optional[GitJSONDSL]:
+    def git(self) -> GitJSONDSL | None:
         assert Danger.dsl is not None
         return Danger.dsl.git
 
     @property
-    def github(self) -> Optional[GitHubDSL]:
+    def github(self) -> GitHubDSL | None:
         assert Danger.dsl is not None
         return Danger.dsl.github
 
     @property
-    def bitbucket_cloud(self) -> Optional[BitBucketCloudJSONDSL]:
+    def bitbucket_cloud(self) -> BitBucketCloudJSONDSL | None:
         assert Danger.dsl is not None
         return Danger.dsl.bitbucket_cloud
 
     @property
-    def bitbucket_server(self) -> Optional[BitBucketServerJSONDSL]:
+    def bitbucket_server(self) -> BitBucketServerJSONDSL | None:
         assert Danger.dsl is not None
         return Danger.dsl.bitbucket_server
 
     @property
-    def gitlab(self) -> Optional[GitLabDSL]:
+    def gitlab(self) -> GitLabDSL | None:
         assert Danger.dsl is not None
         return Danger.dsl.gitlab
 
     @property
-    def settings(self) -> Optional[DangerDSLJSONTypeSettings]:
+    def settings(self) -> DangerDSLJSONTypeSettings | None:
         assert Danger.dsl is not None
         return Danger.dsl.settings
 
 
 def _add_to_results(
-    field: Callable[[DangerResults], List[Violation]],
+    field: Callable[[DangerResults], list[Violation]],
     message: str,
-    file_name: Optional[str] = None,
-    line: Optional[int] = None,
+    file_name: str | None = None,
+    line: int | None = None,
 ):
     assert Danger.results is not None
     violation = Violation(message=message, file_name=file_name, line=line)

@@ -70,9 +70,7 @@ def test_ci_command_invokes_danger_js_passing_arguments():
 
 
 @pytest.mark.parametrize("command", ["run", "runner"])
-@pytest.mark.parametrize(
-    "dangerfile", ['print("Hello world")\n' 'print("Goodbye world")']
-)
+@pytest.mark.parametrize("dangerfile", ['print("Hello world")\nprint("Goodbye world")'])
 @pytest.mark.usefixtures("danger")
 def test_run_command_invokes_dangerfile(command):
     """

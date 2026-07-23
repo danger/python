@@ -1,16 +1,16 @@
 from enum import Enum
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel
 
 
 class BitBucketCloudCommit(BaseModel):
     author: Optional["BitBucketCloudCommitAuthor"]
-    date: Optional[str]
-    hash: Optional[str]
+    date: str | None
+    hash: str | None
     links: Optional["BitBucketCloudCommitsLinks"]
-    message: Optional[str]
-    parents: Optional[List["BitBucketCloudCommitParents"]]
+    message: str | None
+    parents: list["BitBucketCloudCommitParents"] | None
 
     class Config:
         fields = {
@@ -24,7 +24,7 @@ class BitBucketCloudCommit(BaseModel):
 
 
 class BitBucketCloudCommitAuthor(BaseModel):
-    raw: Optional[str]
+    raw: str | None
     user: Optional["BitBucketCloudUser"]
 
     class Config:
@@ -35,7 +35,7 @@ class BitBucketCloudCommitAuthor(BaseModel):
 
 
 class BitBucketCloudCommitParents(BaseModel):
-    hash: Optional[str]
+    hash: str | None
 
     class Config:
         fields = {
@@ -53,7 +53,7 @@ class BitBucketCloudCommitsLinks(BaseModel):
 
 
 class BitBucketCloudCommitsLinksHtml(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -89,7 +89,7 @@ class BitBucketCloudCompletePRLinks(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksActivity(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -98,7 +98,7 @@ class BitBucketCloudCompletePRLinksActivity(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksApprove(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -107,7 +107,7 @@ class BitBucketCloudCompletePRLinksApprove(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksComments(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -116,7 +116,7 @@ class BitBucketCloudCompletePRLinksComments(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksCommits(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -125,7 +125,7 @@ class BitBucketCloudCompletePRLinksCommits(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksDecline(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -134,7 +134,7 @@ class BitBucketCloudCompletePRLinksDecline(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksDiff(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -143,7 +143,7 @@ class BitBucketCloudCompletePRLinksDiff(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksHtml(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -152,7 +152,7 @@ class BitBucketCloudCompletePRLinksHtml(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksMerge(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -161,7 +161,7 @@ class BitBucketCloudCompletePRLinksMerge(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksSelf(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -170,7 +170,7 @@ class BitBucketCloudCompletePRLinksSelf(BaseModel):
 
 
 class BitBucketCloudCompletePRLinksStatuses(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -179,9 +179,9 @@ class BitBucketCloudCompletePRLinksStatuses(BaseModel):
 
 
 class BitBucketCloudContent(BaseModel):
-    html: Optional[str]
-    markup: Optional[str]
-    raw: Optional[str]
+    html: str | None
+    markup: str | None
+    raw: str | None
     type: Optional["BitBucketCloudContentType"]
 
     class Config:
@@ -198,9 +198,9 @@ class BitBucketCloudContentType(Enum):
 
 
 class BitBucketCloudJSONDSL(BaseModel):
-    activities: Optional[List["BitBucketCloudPRActivity"]]
-    comments: Optional[List["BitBucketCloudPRComment"]]
-    commits: Optional[List["BitBucketCloudCommit"]]
+    activities: list["BitBucketCloudPRActivity"] | None
+    comments: list["BitBucketCloudPRComment"] | None
+    commits: list["BitBucketCloudCommit"] | None
     metadata: Optional["RepoMetaData"]
     pr: Optional["BitBucketCloudPRDSL"]
 
@@ -228,7 +228,7 @@ class BitBucketCloudMergeRef(BaseModel):
 
 
 class BitBucketCloudMergeRefBranch(BaseModel):
-    name: Optional[str]
+    name: str | None
 
     class Config:
         fields = {
@@ -237,7 +237,7 @@ class BitBucketCloudMergeRefBranch(BaseModel):
 
 
 class BitBucketCloudMergeRefCommit(BaseModel):
-    hash: Optional[str]
+    hash: str | None
 
     class Config:
         fields = {
@@ -257,8 +257,8 @@ class BitBucketCloudPRActivity(BaseModel):
 
 
 class BitBucketCloudPRActivityPullRequest(BaseModel):
-    id: Optional[int]
-    title: Optional[str]
+    id: int | None
+    title: str | None
 
     class Config:
         fields = {
@@ -269,14 +269,14 @@ class BitBucketCloudPRActivityPullRequest(BaseModel):
 
 class BitBucketCloudPRComment(BaseModel):
     content: Optional["BitBucketCloudContent"]
-    created_on: Optional[str]
-    deleted: Optional[bool]
-    id: Optional[int]
+    created_on: str | None
+    deleted: bool | None
+    id: int | None
     inline: Optional["BitBucketCloudPRCommentInline"]
     links: Optional["BitBucketCloudPRLinks"]
     pullrequest: Optional["BitBucketCloudPRCommentPullrequest"]
-    type: Optional[str]
-    updated_on: Optional[str]
+    type: str | None
+    updated_on: str | None
     user: Optional["BitBucketCloudUser"]
 
     class Config:
@@ -295,9 +295,9 @@ class BitBucketCloudPRComment(BaseModel):
 
 
 class BitBucketCloudPRCommentInline(BaseModel):
-    from_: Optional[int]
-    path: Optional[str]
-    to: Optional[int]
+    from_: int | None
+    path: str | None
+    to: int | None
 
     class Config:
         fields = {
@@ -308,9 +308,9 @@ class BitBucketCloudPRCommentInline(BaseModel):
 
 
 class BitBucketCloudPRCommentPullrequest(BaseModel):
-    id: Optional[int]
+    id: int | None
     links: Optional["BitBucketCloudPRLinks"]
-    title: Optional[str]
+    title: str | None
 
     class Config:
         fields = {
@@ -322,17 +322,17 @@ class BitBucketCloudPRCommentPullrequest(BaseModel):
 
 class BitBucketCloudPRDSL(BaseModel):
     author: Optional["BitBucketCloudUser"]
-    created_on: Optional[int]
-    description: Optional[str]
+    created_on: int | None
+    description: str | None
     destination: Optional["BitBucketCloudMergeRef"]
-    id: Optional[int]
+    id: int | None
     links: Optional["BitBucketCloudCompletePRLinks"]
-    participants: Optional[List["BitBucketCloudPRParticipant"]]
-    reviewers: Optional[List["BitBucketCloudUser"]]
+    participants: list["BitBucketCloudPRParticipant"] | None
+    reviewers: list["BitBucketCloudUser"] | None
     source: Optional["BitBucketCloudMergeRef"]
     state: Optional["BitBucketCloudPRDSLState"]
-    title: Optional[str]
-    updated_on: Optional[int]
+    title: str | None
+    updated_on: int | None
 
     class Config:
         fields = {
@@ -370,7 +370,7 @@ class BitBucketCloudPRLinks(BaseModel):
 
 
 class BitBucketCloudPRLinksHtml(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -379,7 +379,7 @@ class BitBucketCloudPRLinksHtml(BaseModel):
 
 
 class BitBucketCloudPRLinksSelf(BaseModel):
-    href: Optional[str]
+    href: str | None
 
     class Config:
         fields = {
@@ -388,7 +388,7 @@ class BitBucketCloudPRLinksSelf(BaseModel):
 
 
 class BitBucketCloudPRParticipant(BaseModel):
-    approved: Optional[bool]
+    approved: bool | None
     role: Optional["BitBucketCloudPRParticipantRole"]
     user: Optional["BitBucketCloudUser"]
 
@@ -406,9 +406,9 @@ class BitBucketCloudPRParticipantRole(Enum):
 
 
 class BitBucketCloudRepo(BaseModel):
-    full_name: Optional[str]
-    name: Optional[str]
-    uuid: Optional[str]
+    full_name: str | None
+    name: str | None
+    uuid: str | None
 
     class Config:
         fields = {
@@ -419,10 +419,10 @@ class BitBucketCloudRepo(BaseModel):
 
 
 class BitBucketCloudUser(BaseModel):
-    account_id: Optional[str]
-    display_name: Optional[str]
-    nickname: Optional[str]
-    uuid: Optional[str]
+    account_id: str | None
+    display_name: str | None
+    nickname: str | None
+    uuid: str | None
 
     class Config:
         fields = {
@@ -435,13 +435,13 @@ class BitBucketCloudUser(BaseModel):
 
 class BitBucketServerCommit(BaseModel):
     author: Optional["BitBucketServerCommitAuthor"]
-    author_timestamp: Optional[int]
+    author_timestamp: int | None
     committer: Optional["BitBucketServerCommitCommitter"]
-    committer_timestamp: Optional[int]
-    display_id: Optional[str]
-    id: Optional[str]
-    message: Optional[str]
-    parents: Optional[List["BitBucketServerCommitParents"]]
+    committer_timestamp: int | None
+    display_id: str | None
+    id: str | None
+    message: str | None
+    parents: list["BitBucketServerCommitParents"] | None
 
     class Config:
         fields = {
@@ -457,9 +457,9 @@ class BitBucketServerCommit(BaseModel):
 
 
 class BitBucketServerCommitAuthor(BaseModel):
-    display_name: Optional[str]
-    email_address: Optional[str]
-    name: Optional[str]
+    display_name: str | None
+    email_address: str | None
+    name: str | None
 
     class Config:
         fields = {
@@ -470,9 +470,9 @@ class BitBucketServerCommitAuthor(BaseModel):
 
 
 class BitBucketServerCommitCommitter(BaseModel):
-    display_name: Optional[str]
-    email_address: Optional[str]
-    name: Optional[str]
+    display_name: str | None
+    email_address: str | None
+    name: str | None
 
     class Config:
         fields = {
@@ -483,8 +483,8 @@ class BitBucketServerCommitCommitter(BaseModel):
 
 
 class BitBucketServerCommitParents(BaseModel):
-    display_id: Optional[str]
-    id: Optional[str]
+    display_id: str | None
+    id: str | None
 
     class Config:
         fields = {
@@ -494,10 +494,10 @@ class BitBucketServerCommitParents(BaseModel):
 
 
 class BitBucketServerJSONDSL(BaseModel):
-    activities: Optional[List["BitBucketServerPRActivity"]]
-    comments: Optional[List["BitBucketServerPRActivity"]]
-    commits: Optional[List["BitBucketServerCommit"]]
-    issues: Optional[List["JIRAIssue"]]
+    activities: list["BitBucketServerPRActivity"] | None
+    comments: list["BitBucketServerPRActivity"] | None
+    commits: list["BitBucketServerCommit"] | None
+    issues: list["JIRAIssue"] | None
     metadata: Optional["RepoMetaData"]
     pr: Optional["BitBucketServerPRDSL"]
 
@@ -518,9 +518,9 @@ class BitBucketServerLinks(Enum):
 
 
 class BitBucketServerMergeRef(BaseModel):
-    display_id: Optional[str]
-    id: Optional[str]
-    latest_commit: Optional[str]
+    display_id: str | None
+    id: str | None
+    latest_commit: str | None
     repository: Optional["BitBucketServerRepo"]
 
     class Config:
@@ -537,8 +537,8 @@ class BitBucketServerPRActivity(BaseModel):
     comment: Optional["BitBucketServerPRComment"]
     comment_action: Optional["BitBucketServerPRActivityCommentAction"]
     comment_anchor: Optional["BitBucketServerPRActivityCommentAnchor"]
-    created_date: Optional[int]
-    id: Optional[int]
+    created_date: int | None
+    id: int | None
     user: Optional["BitBucketServerUser"]
 
     class Config:
@@ -569,12 +569,12 @@ class BitBucketServerPRActivityCommentAction(Enum):
 class BitBucketServerPRActivityCommentAnchor(BaseModel):
     diff_type: Optional["BitBucketServerPRActivityCommentAnchorDiffType"]
     file_type: Optional["BitBucketServerPRActivityCommentAnchorFileType"]
-    from_hash: Optional[str]
-    line: Optional[int]
+    from_hash: str | None
+    line: int | None
     line_type: Optional["BitBucketServerPRActivityCommentAnchorLineType"]
-    path: Optional[str]
-    src_path: Optional[str]
-    to_hash: Optional[str]
+    path: str | None
+    src_path: str | None
+    to_hash: str | None
 
     class Config:
         fields = {
@@ -609,14 +609,14 @@ class BitBucketServerPRActivityCommentAnchorLineType(Enum):
 
 class BitBucketServerPRComment(BaseModel):
     author: Optional["BitBucketServerUser"]
-    comments: Optional[List["BitBucketServerPRActivity"]]
-    created_date: Optional[int]
-    id: Optional[int]
+    comments: list["BitBucketServerPRActivity"] | None
+    created_date: int | None
+    id: int | None
     parent: Optional["BitBucketServerPRCommentParent"]
     permitted_operations: Optional["BitBucketServerPRCommentPermittedOperations"]
-    text: Optional[str]
-    updated_date: Optional[int]
-    version: Optional[int]
+    text: str | None
+    updated_date: int | None
+    version: int | None
 
     class Config:
         fields = {
@@ -633,7 +633,7 @@ class BitBucketServerPRComment(BaseModel):
 
 
 class BitBucketServerPRCommentParent(BaseModel):
-    id: Optional[int]
+    id: int | None
 
     class Config:
         fields = {
@@ -642,8 +642,8 @@ class BitBucketServerPRCommentParent(BaseModel):
 
 
 class BitBucketServerPRCommentPermittedOperations(BaseModel):
-    deletable: Optional[bool]
-    editable: Optional[bool]
+    deletable: bool | None
+    editable: bool | None
 
     class Config:
         fields = {
@@ -654,21 +654,21 @@ class BitBucketServerPRCommentPermittedOperations(BaseModel):
 
 class BitBucketServerPRDSL(BaseModel):
     author: Optional["BitBucketServerPRParticipant"]
-    closed: Optional[bool]
-    created_date: Optional[int]
-    description: Optional[str]
+    closed: bool | None
+    created_date: int | None
+    description: str | None
     from_ref: Optional["BitBucketServerMergeRef"]
-    id: Optional[int]
+    id: int | None
     links: Optional["BitBucketServerPRDSLLinks"]
-    locked: Optional[bool]
-    open: Optional[bool]
-    participants: Optional[List["BitBucketServerPRParticipant"]]
-    reviewers: Optional[List["BitBucketServerPRParticipant"]]
+    locked: bool | None
+    open: bool | None
+    participants: list["BitBucketServerPRParticipant"] | None
+    reviewers: list["BitBucketServerPRParticipant"] | None
     state: Optional["BitBucketServerPRDSLState"]
-    title: Optional[str]
+    title: str | None
     to_ref: Optional["BitBucketServerMergeRef"]
-    updated_date: Optional[int]
-    version: Optional[int]
+    updated_date: int | None
+    version: int | None
 
     class Config:
         fields = {
@@ -703,7 +703,7 @@ class BitBucketServerPRDSLState(Enum):
 
 
 class BitBucketServerPRParticipant(BaseModel):
-    approved: Optional[bool]
+    approved: bool | None
     role: Optional["BitBucketServerPRParticipantRole"]
     status: Optional["BitBucketServerPRParticipantStatus"]
     user: Optional["BitBucketServerUser"]
@@ -730,13 +730,13 @@ class BitBucketServerPRParticipantStatus(Enum):
 
 
 class BitBucketServerRepo(BaseModel):
-    forkable: Optional[bool]
+    forkable: bool | None
     links: Optional["BitBucketServerLinks"]
-    name: Optional[str]
+    name: str | None
     project: Optional["BitBucketServerRepoProject"]
-    public: Optional[bool]
-    scm_id: Optional[str]
-    slug: Optional[str]
+    public: bool | None
+    scm_id: str | None
+    slug: str | None
 
     class Config:
         fields = {
@@ -751,12 +751,12 @@ class BitBucketServerRepo(BaseModel):
 
 
 class BitBucketServerRepoProject(BaseModel):
-    id: Optional[int]
-    key: Optional[str]
+    id: int | None
+    key: str | None
     links: Optional["BitBucketServerRepoProjectLinks"]
-    name: Optional[str]
-    public: Optional[bool]
-    type: Optional[str]
+    name: str | None
+    public: bool | None
+    type: str | None
 
     class Config:
         fields = {
@@ -774,12 +774,12 @@ class BitBucketServerRepoProjectLinks(Enum):
 
 
 class BitBucketServerUser(BaseModel):
-    active: Optional[bool]
-    display_name: Optional[str]
-    email_address: Optional[str]
-    id: Optional[int]
-    name: Optional[str]
-    slug: Optional[str]
+    active: bool | None
+    display_name: str | None
+    email_address: str | None
+    id: int | None
+    name: str | None
+    slug: str | None
     type: Optional["BitBucketServerUserType"]
 
     class Config:
@@ -800,12 +800,12 @@ class BitBucketServerUserType(Enum):
 
 
 class CliArgs(BaseModel):
-    base: Optional[str]
-    dangerfile: Optional[str]
-    external_ci_provider: Optional[str]
-    id: Optional[str]
-    text_only: Optional[str]
-    verbose: Optional[str]
+    base: str | None
+    dangerfile: str | None
+    external_ci_provider: str | None
+    id: str | None
+    text_only: str | None
+    verbose: str | None
 
     class Config:
         fields = {
@@ -849,9 +849,9 @@ class DangerDSLJSONTypeSettings(BaseModel):
 
 
 class DangerDSLJSONTypeSettingsGithub(BaseModel):
-    access_token: Optional[str]
+    access_token: str | None
     additional_headers: Any
-    base_url: Optional[str]
+    base_url: str | None
 
     class Config:
         fields = {
@@ -871,12 +871,12 @@ class Endpoint(BaseModel):
 
 
 class EndpointOptions(BaseModel):
-    base_url: Optional[str]
+    base_url: str | None
     data: Any
     headers: Optional["EndpointOptionsHeaders"]
     method: Optional["EndpointOptionsMethod"]
     request: Optional["EndpointOptionsRequest"]
-    url: Optional[str]
+    url: str | None
 
     class Config:
         fields = {
@@ -909,11 +909,11 @@ class EndpointOptionsRequest(BaseModel):
 class GitCommit(BaseModel):
     author: Optional["GitCommitAuthor"]
     committer: Optional["GitCommitAuthor"]
-    message: Optional[str]
-    parents: Optional[List[str]]
-    sha: Optional[str]
+    message: str | None
+    parents: list[str] | None
+    sha: str | None
     tree: Any
-    url: Optional[str]
+    url: str | None
 
     class Config:
         fields = {
@@ -928,9 +928,9 @@ class GitCommit(BaseModel):
 
 
 class GitCommitAuthor(BaseModel):
-    date: Optional[str]
-    email: Optional[str]
-    name: Optional[str]
+    date: str | None
+    email: str | None
+    name: str | None
 
     class Config:
         fields = {
@@ -941,9 +941,9 @@ class GitCommitAuthor(BaseModel):
 
 
 class GitHubAPIPR(BaseModel):
-    number: Optional[int]
-    owner: Optional[str]
-    repo: Optional[str]
+    number: int | None
+    owner: str | None
+    repo: str | None
 
     class Config:
         fields = {
@@ -957,9 +957,9 @@ class GitHubCommit(BaseModel):
     author: Optional["GitHubUser"]
     commit: Optional["GitCommit"]
     committer: Optional["GitHubUser"]
-    parents: Optional[List[Any]]
-    sha: Optional[str]
-    url: Optional[str]
+    parents: list[Any] | None
+    sha: str | None
+    url: str | None
 
     class Config:
         fields = {
@@ -974,11 +974,11 @@ class GitHubCommit(BaseModel):
 
 class GitHubDSL(BaseModel):
     api: Optional["Octokit"]
-    commits: Optional[List["GitHubCommit"]]
+    commits: list["GitHubCommit"] | None
     issue: Optional["GitHubIssue"]
     pr: Optional["GitHubPRDSL"]
     requested_reviewers: Optional["GitHubReviewers"]
-    reviews: Optional[List["GitHubReview"]]
+    reviews: list["GitHubReview"] | None
     this_pr: Optional["GitHubAPIPR"]
     utils: Optional["GitHubUtilsDSL"]
 
@@ -996,7 +996,7 @@ class GitHubDSL(BaseModel):
 
 
 class GitHubIssue(BaseModel):
-    labels: Optional[List["GitHubIssueLabel"]]
+    labels: list["GitHubIssueLabel"] | None
 
     class Config:
         fields = {
@@ -1005,10 +1005,10 @@ class GitHubIssue(BaseModel):
 
 
 class GitHubIssueLabel(BaseModel):
-    color: Optional[str]
-    id: Optional[int]
-    name: Optional[str]
-    url: Optional[str]
+    color: str | None
+    id: int | None
+    name: str | None
+    url: str | None
 
     class Config:
         fields = {
@@ -1020,10 +1020,10 @@ class GitHubIssueLabel(BaseModel):
 
 
 class GitHubMergeRef(BaseModel):
-    label: Optional[str]
-    ref: Optional[str]
+    label: str | None
+    ref: str | None
     repo: Optional["GitHubRepo"]
-    sha: Optional[str]
+    sha: str | None
     user: Optional["GitHubUser"]
 
     class Config:
@@ -1037,28 +1037,28 @@ class GitHubMergeRef(BaseModel):
 
 
 class GitHubPRDSL(BaseModel):
-    additions: Optional[int]
+    additions: int | None
     assignee: Optional["GitHubUser"]
-    assignees: Optional[List["GitHubUser"]]
+    assignees: list["GitHubUser"] | None
     author_association: Optional["GitHubPRDSLAuthorAssociation"]
     base: Optional["GitHubMergeRef"]
-    body: Optional[str]
-    changed_files: Optional[int]
-    closed_at: Optional[str]
-    comments: Optional[int]
-    commits: Optional[int]
-    created_at: Optional[str]
-    deletions: Optional[int]
+    body: str | None
+    changed_files: int | None
+    closed_at: str | None
+    comments: int | None
+    commits: int | None
+    created_at: str | None
+    deletions: int | None
     head: Optional["GitHubMergeRef"]
-    html_url: Optional[str]
-    locked: Optional[bool]
-    merged: Optional[bool]
-    merged_at: Optional[str]
-    number: Optional[int]
-    review_comments: Optional[int]
+    html_url: str | None
+    locked: bool | None
+    merged: bool | None
+    merged_at: str | None
+    number: int | None
+    review_comments: int | None
     state: Optional["GitHubPRDSLState"]
-    title: Optional[str]
-    updated_at: Optional[str]
+    title: str | None
+    updated_at: str | None
     user: Optional["GitHubUser"]
 
     class Config:
@@ -1108,15 +1108,15 @@ class GitHubPRDSLState(Enum):
 
 class GitHubRepo(BaseModel):
     assignee: Optional["GitHubUser"]
-    assignees: Optional[List["GitHubUser"]]
-    description: Optional[str]
-    fork: Optional[bool]
-    full_name: Optional[str]
-    html_url: Optional[str]
-    id: Optional[int]
-    name: Optional[str]
+    assignees: list["GitHubUser"] | None
+    description: str | None
+    fork: bool | None
+    full_name: str | None
+    html_url: str | None
+    id: int | None
+    name: str | None
     owner: Optional["GitHubUser"]
-    private: Optional[bool]
+    private: bool | None
 
     class Config:
         fields = {
@@ -1134,9 +1134,9 @@ class GitHubRepo(BaseModel):
 
 
 class GitHubReview(BaseModel):
-    body: Optional[str]
-    commit_id: Optional[str]
-    id: Optional[int]
+    body: str | None
+    commit_id: str | None
+    id: int | None
     state: Optional["GitHubReviewState"]
     user: Optional["GitHubUser"]
 
@@ -1159,8 +1159,8 @@ class GitHubReviewState(Enum):
 
 
 class GitHubReviewers(BaseModel):
-    teams: Optional[List[Any]]
-    users: Optional[List["GitHubUser"]]
+    teams: list[Any] | None
+    users: list["GitHubUser"] | None
 
     class Config:
         fields = {
@@ -1170,10 +1170,10 @@ class GitHubReviewers(BaseModel):
 
 
 class GitHubUser(BaseModel):
-    avatar_url: Optional[str]
-    href: Optional[str]
-    id: Optional[int]
-    login: Optional[str]
+    avatar_url: str | None
+    href: str | None
+    id: int | None
+    login: str | None
     type: Optional["GitHubUserType"]
 
     class Config:
@@ -1218,10 +1218,10 @@ class GitHubUtilsDSLCreateUpdatedIssueWithID(BaseModel):
 
 
 class GitJSONDSL(BaseModel):
-    commits: Optional[List["GitCommit"]]
-    created_files: Optional[List[str]]
-    deleted_files: Optional[List[str]]
-    modified_files: Optional[List[str]]
+    commits: list["GitCommit"] | None
+    created_files: list[str] | None
+    deleted_files: list[str] | None
+    modified_files: list[str] | None
 
     class Config:
         fields = {
@@ -1233,7 +1233,7 @@ class GitJSONDSL(BaseModel):
 
 
 class GitLabDSL(BaseModel):
-    commits: Optional[List["GitLabMRCommit"]]
+    commits: list["GitLabMRCommit"] | None
     metadata: Optional["RepoMetaData"]
     mr: Optional["GitLabMR"]
     utils: Optional["GitLabDSLUtils"]
@@ -1252,54 +1252,54 @@ class GitLabDSLUtils(BaseModel):
 
 
 class GitLabMR(BaseModel):
-    allow_collaboration: Optional[bool]
-    allow_maintainer_to_push: Optional[bool]
+    allow_collaboration: bool | None
+    allow_maintainer_to_push: bool | None
     approvals_before_merge: Any
     assignee: Optional["GitLabUser"]
     author: Optional["GitLabUser"]
-    changes_count: Optional[str]
-    closed_at: Optional[str]
+    changes_count: str | None
+    closed_at: str | None
     closed_by: Optional["GitLabUser"]
-    created_at: Optional[str]
-    description: Optional[str]
+    created_at: str | None
+    description: str | None
     diff_refs: Optional["GitLabMRDiffRefs"]
     discussion_locked: Any
-    diverged_commits_count: Optional[int]
-    downvotes: Optional[int]
-    first_deployed_to_production_at: Optional[str]
-    force_remove_source_branch: Optional[bool]
-    id: Optional[int]
-    iid: Optional[int]
-    labels: Optional[List[str]]
-    latest_build_finished_at: Optional[str]
-    latest_build_started_at: Optional[str]
-    merge_commit_sha: Optional[str]
+    diverged_commits_count: int | None
+    downvotes: int | None
+    first_deployed_to_production_at: str | None
+    force_remove_source_branch: bool | None
+    id: int | None
+    iid: int | None
+    labels: list[str] | None
+    latest_build_finished_at: str | None
+    latest_build_started_at: str | None
+    merge_commit_sha: str | None
     merge_error: Any
     merge_status: Optional["GitLabMRMergeStatus"]
-    merge_when_pipeline_succeeds: Optional[bool]
-    merged_at: Optional[str]
+    merge_when_pipeline_succeeds: bool | None
+    merged_at: str | None
     merged_by: Optional["GitLabUser"]
     milestone: Optional["GitLabMRMilestone"]
     pipeline: Optional["GitLabMRPipeline"]
-    project_id: Optional[int]
-    rebase_in_progress: Optional[bool]
-    sha: Optional[str]
-    should_remove_source_branch: Optional[bool]
-    source_branch: Optional[str]
-    source_project_id: Optional[int]
-    squash: Optional[bool]
+    project_id: int | None
+    rebase_in_progress: bool | None
+    sha: str | None
+    should_remove_source_branch: bool | None
+    source_branch: str | None
+    source_project_id: int | None
+    squash: bool | None
     state: Optional["GitLabMRState"]
-    subscribed: Optional[bool]
-    target_branch: Optional[str]
-    target_project_id: Optional[int]
+    subscribed: bool | None
+    target_branch: str | None
+    target_project_id: int | None
     time_stats: Optional["GitLabMRTimeStats"]
-    title: Optional[str]
-    updated_at: Optional[str]
-    upvotes: Optional[int]
+    title: str | None
+    updated_at: str | None
+    upvotes: int | None
     user: Optional["GitLabMRUser"]
-    user_notes_count: Optional[int]
-    web_url: Optional[str]
-    work_in_progress: Optional[bool]
+    user_notes_count: int | None
+    web_url: str | None
+    work_in_progress: bool | None
 
     class Config:
         fields = {
@@ -1355,18 +1355,18 @@ class GitLabMR(BaseModel):
 
 
 class GitLabMRCommit(BaseModel):
-    author_email: Optional[str]
-    author_name: Optional[str]
-    authored_date: Optional[str]
-    committed_date: Optional[str]
-    committer_email: Optional[str]
-    committer_name: Optional[str]
-    created_at: Optional[str]
-    id: Optional[str]
-    message: Optional[str]
-    parent_ids: Optional[List[str]]
-    short_id: Optional[str]
-    title: Optional[str]
+    author_email: str | None
+    author_name: str | None
+    authored_date: str | None
+    committed_date: str | None
+    committer_email: str | None
+    committer_name: str | None
+    created_at: str | None
+    id: str | None
+    message: str | None
+    parent_ids: list[str] | None
+    short_id: str | None
+    title: str | None
 
     class Config:
         fields = {
@@ -1386,9 +1386,9 @@ class GitLabMRCommit(BaseModel):
 
 
 class GitLabMRDiffRefs(BaseModel):
-    base_sha: Optional[str]
-    head_sha: Optional[str]
-    start_sha: Optional[str]
+    base_sha: str | None
+    head_sha: str | None
+    start_sha: str | None
 
     class Config:
         fields = {
@@ -1408,17 +1408,17 @@ class GitLabMRMergeStatus(Enum):
 
 
 class GitLabMRMilestone(BaseModel):
-    created_at: Optional[str]
-    description: Optional[str]
-    due_date: Optional[str]
-    id: Optional[int]
-    iid: Optional[int]
-    project_id: Optional[int]
-    start_date: Optional[str]
+    created_at: str | None
+    description: str | None
+    due_date: str | None
+    id: int | None
+    iid: int | None
+    project_id: int | None
+    start_date: str | None
     state: Optional["GitLabMRMilestoneState"]
-    title: Optional[str]
-    updated_at: Optional[str]
-    web_url: Optional[str]
+    title: str | None
+    updated_at: str | None
+    web_url: str | None
 
     class Config:
         fields = {
@@ -1442,11 +1442,11 @@ class GitLabMRMilestoneState(Enum):
 
 
 class GitLabMRPipeline(BaseModel):
-    id: Optional[int]
-    ref: Optional[str]
-    sha: Optional[str]
+    id: int | None
+    ref: str | None
+    sha: str | None
     status: Optional["GitLabMRPipelineStatus"]
-    web_url: Optional[str]
+    web_url: str | None
 
     class Config:
         fields = {
@@ -1475,10 +1475,10 @@ class GitLabMRState(Enum):
 
 
 class GitLabMRTimeStats(BaseModel):
-    human_time_estimate: Optional[int]
-    human_total_time_spent: Optional[int]
-    time_estimate: Optional[int]
-    total_time_spent: Optional[int]
+    human_time_estimate: int | None
+    human_total_time_spent: int | None
+    time_estimate: int | None
+    total_time_spent: int | None
 
     class Config:
         fields = {
@@ -1490,7 +1490,7 @@ class GitLabMRTimeStats(BaseModel):
 
 
 class GitLabMRUser(BaseModel):
-    can_merge: Optional[bool]
+    can_merge: bool | None
 
     class Config:
         fields = {
@@ -1499,12 +1499,12 @@ class GitLabMRUser(BaseModel):
 
 
 class GitLabUser(BaseModel):
-    avatar_url: Optional[str]
-    id: Optional[int]
-    name: Optional[str]
+    avatar_url: str | None
+    id: int | None
+    name: str | None
     state: Optional["GitLabUserState"]
-    username: Optional[str]
-    web_url: Optional[str]
+    username: str | None
+    web_url: str | None
 
     class Config:
         fields = {
@@ -1523,8 +1523,8 @@ class GitLabUserState(Enum):
 
 
 class JIRAIssue(BaseModel):
-    key: Optional[str]
-    url: Optional[str]
+    key: str | None
+    url: str | None
 
     class Config:
         fields = {
@@ -7320,8 +7320,8 @@ class PaginateIterator(BaseModel):
 
 
 class RepoMetaData(BaseModel):
-    pull_request_id: Optional[str]
-    repo_slug: Optional[str]
+    pull_request_id: str | None
+    repo_slug: str | None
 
     class Config:
         fields = {

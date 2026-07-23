@@ -54,3 +54,21 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-root = ""
 module-name = "danger_python"
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+# dangerfile.py runs under the danger runtime, which injects `danger`/`warn`
+# as globals; it was excluded from the old flake8 config for the same reason.
+extend-exclude = ["dangerfile.py"]
+
+[tool.ruff.lint]
+# Extend (not replace) Ruff's defaults so Pyflakes (F) and pycodestyle (E)
+# checks are retained; add import sorting (I), pyupgrade (UP), bugbear (B),
+# comprehensions (C4), and simplify (SIM).
+extend-select = ["E", "F", "I", "UP", "B", "C4", "SIM"]
+# Line length is enforced by the formatter (line-length = 88); E501 only fires
+# on lines the formatter cannot wrap (e.g. long string literals in the
+# generated models.py). The previous flake8 config ignored E501 for the same
+# reason — keep that intent so lint and format do not disagree.
+ignore = ["E501"]

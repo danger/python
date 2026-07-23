@@ -7,7 +7,7 @@ from danger_python.generator.renderer import render_classes
 
 
 def main():
-    with open("input_schema.json", "r") as schema_file:
+    with open("input_schema.json") as schema_file:
         types = build_types(parse_schema(schema_file.read()))
         rendered = render_classes(types)
 
