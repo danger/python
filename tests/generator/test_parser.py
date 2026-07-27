@@ -211,7 +211,7 @@ def test_schema_parser_parses_real_schema():
     """
     Test schema parser parses real schema.
     """
-    with open("tests/fixtures/input_schema.json", "r") as input_schema:
+    with open("tests/fixtures/input_schema.json") as input_schema:
         parsed_schema = parse_schema(input_schema.read())
 
     assert len(parsed_schema) == 52

@@ -1,5 +1,5 @@
 from dataclasses import InitVar, dataclass, field
-from typing import Any, List, Optional, Set, Tuple
+from typing import Any
 
 
 @dataclass
@@ -9,15 +9,15 @@ class SchemaItem:
 
 @dataclass
 class SchemaObject(SchemaItem):
-    properties: List["SchemaItem"] = field(default_factory=list)
+    properties: list["SchemaItem"] = field(default_factory=list)
 
 
 @dataclass
 class SchemaValue(SchemaItem):
-    value_types: List[str] = field(default_factory=list)
-    value_type: InitVar[str] = None
+    value_types: list[str] = field(default_factory=list)
+    value_type: InitVar[str | None] = None
 
-    def __post_init__(self, value_type: Optional[str]):
+    def __post_init__(self, value_type: str | None):
         if value_type:
             self.value_types = [value_type]
 
@@ -29,7 +29,7 @@ class SchemaReference(SchemaItem):
 
 @dataclass
 class SchemaEnum(SchemaValue):
-    values: List[Any] = field(default_factory=list)
+    values: list[Any] = field(default_factory=list)
 
 
 @dataclass
@@ -39,12 +39,12 @@ class SchemaArray(SchemaItem):
 
 @dataclass
 class SchemaAllOf(SchemaItem):
-    all_of: List[SchemaItem] = field(default_factory=list)
+    all_of: list[SchemaItem] = field(default_factory=list)
 
 
 @dataclass
 class SchemaAnyOf(SchemaItem):
-    any_of: List[SchemaItem] = field(default_factory=list)
+    any_of: list[SchemaItem] = field(default_factory=list)
 
 
 @dataclass
@@ -87,14 +87,14 @@ class PropertyDefinition:
 @dataclass
 class TypeDefinition:
     name: str
-    depends_on: Set[str] = field(default_factory=set)
+    depends_on: set[str] = field(default_factory=set)
 
 
 @dataclass
 class ClassDefinition(TypeDefinition):
-    properties: List[PropertyDefinition] = field(default_factory=list)
+    properties: list[PropertyDefinition] = field(default_factory=list)
 
 
 @dataclass
 class EnumDefinition(TypeDefinition):
-    values: List[Tuple[str, str]] = field(default_factory=list)
+    values: list[tuple[str, str]] = field(default_factory=list)

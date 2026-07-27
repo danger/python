@@ -1,7 +1,7 @@
+from collections.abc import Iterable, Sequence
 from functools import reduce
 from itertools import chain
 from operator import attrgetter
-from typing import Iterable, List, Optional
 
 import stringcase
 
@@ -21,7 +21,7 @@ from .models import (
 )
 
 
-def build_types(schema: List[SchemaItem]) -> List[TypeDefinition]:
+def build_types(schema: Sequence[SchemaItem]) -> list[TypeDefinition]:
     built_types = list(chain.from_iterable(map(_build_types_for_item, schema)))
     return sorted(built_types, key=attrgetter("name"))
 
@@ -33,8 +33,8 @@ def _normalize_typename(typename: str) -> str:
 
 
 def _build_types_for_item(
-    item: SchemaItem, prefix: Optional[str] = None
-) -> List[TypeDefinition]:
+    item: SchemaItem, prefix: str | None = None
+) -> list[TypeDefinition]:
     if isinstance(item, SchemaEnum):
         return _build_types_for_enum(item, prefix)
     elif isinstance(item, SchemaObject):
@@ -44,30 +44,30 @@ def _build_types_for_item(
 
 
 def _build_types_for_enum(
-    schema: SchemaEnum, prefix: Optional[str] = None
-) -> List[TypeDefinition]:
+    schema: SchemaEnum, prefix: str | None = None
+) -> list[TypeDefinition]:
     def format_case(enum_case: str) -> str:
         return stringcase.constcase(enum_case.lower())
 
     type_name = _nested_object_name(schema, prefix)
-    values = list(map(lambda v: (format_case(v), v), schema.values))
+    values = [(format_case(v), v) for v in schema.values]
     return [EnumDefinition(name=type_name, values=values, depends_on=set())]
 
 
 def _build_types_for_class(
-    object: SchemaObject, prefix: Optional[str] = None
-) -> List[TypeDefinition]:
+    object: SchemaObject, prefix: str | None = None
+) -> list[TypeDefinition]:
     class_name = _nested_object_name(object, prefix)
     properties = [_build_property(p, class_name) for p in object.properties]
-    depends_on = map(
-        lambda p: _normalize_typename(p.value_type),
-        filter(lambda p: not p.known_type, properties),
+    depends_on = (
+        _normalize_typename(p.value_type)
+        for p in filter(lambda p: not p.known_type, properties)
     )
     definition = ClassDefinition(
         name=class_name, properties=properties, depends_on=set(depends_on)
     )
 
-    types: List[TypeDefinition] = [definition]
+    types: list[TypeDefinition] = [definition]
     types.extend(_build_nested_objects(object, class_name))
 
     return types
@@ -77,10 +77,8 @@ def _build_nested_objects(
     object: SchemaObject, parent_class_name: str
 ) -> Iterable[TypeDefinition]:
     return chain.from_iterable(
-        map(
-            lambda p: _build_types_for_item(_item_for_nesting(p), parent_class_name),
-            object.properties,
-        )
+        _build_types_for_item(_item_for_nesting(p), parent_class_name)
+        for p in object.properties
     )
 
 
@@ -103,7 +101,7 @@ def _item_for_nesting(item: SchemaItem) -> SchemaItem:
 def _build_property(item: SchemaItem, parent_class_name: str) -> PropertyDefinition:
     if isinstance(item, SchemaReference):
         return _property(item.name, item.reference, False)
-    if isinstance(item, SchemaEnum) or isinstance(item, SchemaObject):
+    if isinstance(item, (SchemaEnum, SchemaObject)):
         return _property_from_object(item, parent_class_name)
     if isinstance(item, SchemaAllOf):
         return _build_property(_item_for_nesting(item), parent_class_name)
@@ -121,7 +119,7 @@ def _property_from_value(value: SchemaValue) -> PropertyDefinition:
     return _property(value.name, _resolve_type(value.value_types), True)
 
 
-def _resolve_type(value_types: List[str]) -> str:
+def _resolve_type(value_types: list[str]) -> str:
     mappings = {
         "string": "str",
         "boolean": "bool",
@@ -183,6 +181,6 @@ def _property(name: str, type_name: str, known_type: bool) -> PropertyDefinition
     )
 
 
-def _nested_object_name(parent_object: SchemaItem, prefix: Optional[str] = None) -> str:
+def _nested_object_name(parent_object: SchemaItem, prefix: str | None = None) -> str:
     object_name = stringcase.pascalcase(parent_object.name)
     return f"{prefix}{object_name}" if prefix else object_name

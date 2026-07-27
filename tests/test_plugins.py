@@ -21,12 +21,30 @@ def test_that_plugin_method_is_registered_in_global_namespace():
     assert result == 15
 
 
+@pytest.mark.usefixtures("danger")
+def test_that_danger_property_lazily_creates_and_caches_instance():
+    """
+    Test that the danger property creates the Danger instance on first access
+    and returns the same cached instance on subsequent accesses.
+    """
+    plugin = FirstPlugin()
+
+    first_access = plugin.danger
+    second_access = plugin.danger
+
+    assert first_access is second_access
+
+
 class ModifiedFilesPrinterPlugin(DangerPlugin):
     def print_modified_files(self):
         methods = [self.message, self.markdown, self.warn, self.fail]
 
-        for index, modified_file in enumerate(self.danger.git.modified_files):
-            number_of_files = len(self.danger.git.modified_files)
+        git = self.danger.git
+        assert git is not None
+        modified_files = git.modified_files
+        assert modified_files is not None
+        for index, modified_file in enumerate(modified_files):
+            number_of_files = len(modified_files)
             methods[index](f"Files modified: {number_of_files}", modified_file, index)
 
 

@@ -1,6 +1,6 @@
 import sys
+from collections.abc import Iterator
 from io import StringIO
-from typing import Dict, Iterator, List, Optional
 from unittest import mock
 
 import pytest
@@ -13,17 +13,17 @@ from tests.fixtures.shell import SubprocessFixture
 
 
 @pytest.fixture
-def modified_files() -> List[str]:
+def modified_files() -> list[str]:
     return []
 
 
 @pytest.fixture
-def created_files() -> List[str]:
+def created_files() -> list[str]:
     return []
 
 
 @pytest.fixture
-def deleted_files() -> List[str]:
+def deleted_files() -> list[str]:
     return []
 
 
@@ -46,7 +46,7 @@ def stdin(stdin_str: str) -> Iterator[None]:
 
 
 @pytest.fixture
-def danger_js_path() -> Optional[str]:
+def danger_js_path() -> str | None:
     return None
 
 
@@ -62,15 +62,15 @@ def danger_js_arguments() -> str:
 
 @pytest.fixture
 def subprocesses(
-    danger_js_path: Optional[str], danger_js_output: str, danger_js_arguments: str
-) -> List[SubprocessFixture]:
+    danger_js_path: str | None, danger_js_output: str, danger_js_arguments: str
+) -> list[SubprocessFixture]:
     which_danger_subprocess = SubprocessFixture(
         command="which danger",
         exit_code=0 if danger_js_path else 1,
         output=danger_js_path if danger_js_path else "danger not found",
     )
 
-    danger_subprocess: Optional[SubprocessFixture] = None
+    danger_subprocess: SubprocessFixture | None = None
 
     if danger_js_path:
         danger_subprocess = SubprocessFixture(
@@ -83,13 +83,13 @@ def subprocesses(
 
 
 @pytest.fixture
-def run_subprocess(subprocesses: List[SubprocessFixture]) -> Iterator[None]:
+def run_subprocess(subprocesses: list[SubprocessFixture]) -> Iterator[None]:
     with mock.patch("subprocess.Popen", new_callable=MockPopen) as mock_popen:
         for process in subprocesses:
             mock_popen.set_command(
                 process.command,
                 returncode=process.exit_code,
-                stdout=process.output.encode("utf-8") if process.output else None,
+                stdout=process.output.encode("utf-8") if process.output else b"",
             )
 
         yield
@@ -97,11 +97,11 @@ def run_subprocess(subprocesses: List[SubprocessFixture]) -> Iterator[None]:
 
 @pytest.fixture
 def files(
-    modified_files: List[str],
-    created_files: List[str],
-    deleted_files: List[str],
+    modified_files: list[str],
+    created_files: list[str],
+    deleted_files: list[str],
     dangerfile: str,
-) -> Dict[str, str]:
+) -> dict[str, str]:
     return {
         "/var/path/to/file.json": danger_input_file_fixture(
             modified_files=modified_files,
@@ -113,9 +113,10 @@ def files(
 
 
 @pytest.fixture
-def filesystem(files: Dict[str, str]) -> Iterator[None]:
+def filesystem(files: dict[str, str]) -> Iterator[None]:
     with Patcher() as patcher:
-        for (filename, contents) in files.items():
+        assert patcher.fs is not None
+        for filename, contents in files.items():
             patcher.fs.create_file(filename, contents=contents)
 
         yield
